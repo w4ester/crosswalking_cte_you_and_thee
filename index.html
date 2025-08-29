@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,11 +28,11 @@
         }
 
         h1 {
-            color: #2d3748;
+            color: #231F20;
             font-size: 3rem;
             margin-bottom: 15px;
             text-align: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #BD0934, #FFC838);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -40,7 +40,7 @@
 
         .subtitle {
             text-align: center;
-            color: #718096;
+            color: #231F20;
             margin-bottom: 50px;
             font-size: 1.2rem;
         }
@@ -64,18 +64,18 @@
         .cluster-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            border-color: #667eea;
+            border-color: #BD0934;
         }
 
         .cluster-title {
             font-size: 1.4rem;
-            color: #2d3748;
+            color: #231F20;
             margin-bottom: 10px;
             font-weight: 600;
         }
 
         .cluster-description {
-            color: #718096;
+            color: #231F20;
             margin-bottom: 20px;
             line-height: 1.6;
         }
@@ -90,7 +90,7 @@
             display: inline-flex;
             align-items: center;
             padding: 12px 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #BD0934, #FFC838);
             color: white;
             text-decoration: none;
             border-radius: 8px;
@@ -102,7 +102,7 @@
 
         .cluster-link:hover {
             transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(189, 9, 52, 0.4);
         }
 
         .cluster-link svg {
@@ -115,15 +115,15 @@
         }
 
         .info-section {
-            background: #f7fafc;
+            background: #E2E3E4;
             border-radius: 12px;
             padding: 25px;
             margin-top: 40px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #BD0934;
         }
 
         .info-section h2 {
-            color: #2d3748;
+            color: #231F20;
             margin-bottom: 15px;
             font-size: 1.5rem;
         }
@@ -145,7 +145,7 @@
             margin-top: 40px;
             padding-top: 20px;
             border-top: 1px solid #e2e8f0;
-            color: #718096;
+            color: #231F20;
         }
 
         @media (max-width: 768px) {
@@ -232,7 +232,7 @@
             <h2>About These Crosswalks</h2>
             <p>These crosswalk tables provide comprehensive alignment between Career and Technical Education (CTE) programs and various educational standards, career pathways, and industry requirements.</p>
             
-            <h3 style="margin-top: 20px; margin-bottom: 10px; color: #2d3748;">Features:</h3>
+            <h3 style="margin-top: 20px; margin-bottom: 10px; color: #231F20;">Features:</h3>
             <ul>
                 <li>Interactive tables with sorting and filtering capabilities</li>
                 <li>Export functionality to Excel for offline analysis</li>
@@ -241,7 +241,7 @@
                 <li>Postsecondary education alignment opportunities</li>
             </ul>
 
-            <h3 style="margin-top: 20px; margin-bottom: 10px; color: #2d3748;">How to Use:</h3>
+            <h3 style="margin-top: 20px; margin-bottom: 10px; color: #231F20;">How to Use:</h3>
             <ul>
                 <li>Click on any cluster button above to view the detailed crosswalk table</li>
                 <li>Use the search and filter features within each table to find specific programs</li>

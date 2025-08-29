@@ -16,8 +16,8 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -84,7 +84,7 @@
         
         button {
             padding: 12px 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -92,12 +92,12 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(189, 9, 52, 0.4);
         }
         
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 6px 20px rgba(189, 9, 52, 0.6);
         }
         
         .btn-secondary {
@@ -121,7 +121,7 @@
         }
         
         thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             color: white;
             position: sticky;
             top: 0;
@@ -146,7 +146,7 @@
         }
         
         tbody tr:hover {
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            background: linear-gradient(90deg, rgba(189, 9, 52, 0.1) 0%, rgba(255, 200, 56, 0.1) 100%);
             transform: scale(1.01);
         }
         
@@ -215,11 +215,11 @@
         .stat-number {
             font-size: 2em;
             font-weight: bold;
-            color: #667eea;
+            color: #BD0934;
         }
         
         .stat-label {
-            color: #718096;
+            color: #231F20;
             margin-top: 5px;
         }
         
@@ -260,7 +260,7 @@
             text-align: center;
             padding: 40px;
             font-size: 1.2em;
-            color: #718096;
+            color: #231F20;
         }
     </style>
 </head>

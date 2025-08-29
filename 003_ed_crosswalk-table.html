@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,11 +28,11 @@
         }
 
         h1 {
-            color: #2d3748;
+            color: #231F20;
             font-size: 2.5rem;
             margin-bottom: 10px;
             text-align: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #BD0934, #FFC838);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -40,7 +40,7 @@
 
         .subtitle {
             text-align: center;
-            color: #718096;
+            color: #231F20;
             margin-bottom: 30px;
             font-size: 1.1rem;
         }
@@ -55,9 +55,9 @@
 
         .program-btn {
             padding: 15px 30px;
-            border: 2px solid #667eea;
+            border: 2px solid #BD0934;
             background: white;
-            color: #667eea;
+            color: #BD0934;
             border-radius: 50px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -74,7 +74,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #BD0934, #FFC838);
             transition: left 0.3s;
             z-index: -1;
         }
@@ -88,7 +88,7 @@
         .program-btn.active {
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(189, 9, 52, 0.3);
         }
 
         .stats {
@@ -115,14 +115,14 @@
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #BD0934, #FFC838);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .stat-label {
-            color: #718096;
+            color: #231F20;
             margin-top: 5px;
         }
 
@@ -152,8 +152,8 @@
 
         .search-box input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #BD0934;
+            box-shadow: 0 0 0 3px rgba(189, 9, 52, 0.1);
         }
 
         .search-icon {
@@ -184,13 +184,13 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #BD0934, #FFC838);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(189, 9, 52, 0.3);
         }
 
         .btn-secondary {
@@ -230,7 +230,7 @@
         }
 
         thead {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #BD0934, #FFC838);
             color: white;
         }
 
@@ -254,7 +254,7 @@
         }
 
         tbody tr:hover {
-            background: #f7fafc;
+            background: #E2E3E4;
             transform: scale(1.01);
         }
 
@@ -307,7 +307,7 @@
             border-radius: 5px;
             font-size: 0.85rem;
             background: #f0f4f8;
-            color: #2d3748;
+            color: #231F20;
             border: 1px solid #cbd5e0;
         }
 
@@ -324,14 +324,14 @@
 
         .info-box {
             background: #edf2f7;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #BD0934;
             padding: 15px;
             margin: 20px 0;
             border-radius: 5px;
         }
 
         .info-box h3 {
-            color: #2d3748;
+            color: #231F20;
             margin-bottom: 10px;
         }
 
