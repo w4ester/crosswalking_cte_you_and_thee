@@ -1465,10 +1465,10 @@
         // Prevent accidental navigation when dropping screenshots/files onto the page (Safari/Chrome)
         window.addEventListener('dragover', function(e){ e.preventDefault(); });
         window.addEventListener('drop', function(e){
-            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length):
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
                 e.preventDefault();
                 alert('File drop disabled to prevent accidental navigation.');
-           
+            }
         });
     </script>
 </body>

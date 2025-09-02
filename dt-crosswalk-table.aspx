@@ -44,6 +44,12 @@
             margin-bottom: 30px;
             font-size: 1.1rem;
         }
+        /* Top cluster nav */
+        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; }
+        .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); margin: 10px auto; }
+        .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
+        .quick-jump a:hover { opacity:.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
 
         .program-selector {
             display: flex;
@@ -409,6 +415,9 @@
     </nav>
     <div class="container">
         <h1>Digital Technology Cluster Crosswalk Analysis</h1>
+        <div style="text-align:center; margin-bottom: 10px; color:#231F20; font-size:0.95rem;">
+            <a href="index.aspx">Home</a> &gt; Digital Technology
+        </div>
         <p class="subtitle">Maryland Educational Programs & Industry Credentials</p>
 
         <div class="program-selector">
