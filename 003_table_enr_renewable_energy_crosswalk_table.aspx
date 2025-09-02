@@ -6,9 +6,18 @@
     <title>ENR Renewable Energy Crosswalk Table</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
+            font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
         /* Top cluster nav */
         .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; margin-bottom: 10px; }
@@ -17,9 +26,14 @@
         .quick-jump a:hover { opacity:.9; }
         .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
         h1 {
-            color: #2c5f2d;
-            border-bottom: 3px solid #4a7c59;
-            padding-bottom: 10px;
+            color: #231F20;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            background: linear-gradient(135deg, #BD0934, #FFC838);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .table-container {
             overflow-x: auto;
@@ -34,16 +48,15 @@
             width: 100%;
             min-width: 1400px;
         }
+        thead { background: linear-gradient(135deg, #BD0934, #FFC838); color: white; }
         th {
-            background-color: #4a7c59;
-            color: white;
-            padding: 12px 8px;
+            padding: 15px 8px;
             text-align: left;
-            font-weight: bold;
+            font-weight: 600;
             position: sticky;
             top: 0;
             z-index: 10;
-            border: 1px solid #3d6448;
+            border: none;
         }
         td {
             padding: 10px 8px;
@@ -54,29 +67,25 @@
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        tr:hover {
-            background-color: #e8f5e9;
-        }
+        tr:hover { background: #E2E3E4; }
         .sector-2year {
             background-color: #fff8e1;
         }
         .sector-4year {
             background-color: #e8f5e9;
         }
-        .credential-yes {
-            color: #2e7d32;
-            font-weight: bold;
-        }
+        .credential-yes { color: #2e7d32; font-weight: 600; }
         .source-link {
             color: #1976d2;
             font-size: 12px;
         }
         .note {
-            background-color: #ffebee;
-            padding: 10px;
+            background: #E2E3E4;
+            padding: 15px;
             margin-top: 20px;
-            border-left: 4px solid #ef5350;
+            border-left: 4px solid #BD0934;
             font-size: 14px;
+            border-radius: 6px;
         }
     </style>
 </head>
@@ -91,6 +100,7 @@
             <a href="pss_crosswalk_html.aspx">PSS</a>
         </div>
     </nav>
+    <div class="container">
     <h1>ENR Cluster - Renewable Energy Postsecondary Crosswalk</h1>
     <div style="text-align:center; margin-bottom: 10px; color:#2c5f2d; font-size:0.95rem;">
         <a href="index.aspx">Home</a> &gt; ENR &gt; Renewable
@@ -342,7 +352,7 @@
     </div>
     
     <div style="margin-top: 20px; padding: 15px; background-color: #f0f4f8; border-radius: 5px;">
-        <h3 style="color: #2c5f2d;">Industry-Recognized Credentials Addressed:</h3>
+        <h3 style="color: #231F20;">Industry-Recognized Credentials Addressed:</h3>
         <ul>
             <li><strong>OSHA 10-Hour:</strong> General Industry or Construction Safety</li>
             <li><strong>CBLP:</strong> Chesapeake Bay Landscape Professional Certification</li>
