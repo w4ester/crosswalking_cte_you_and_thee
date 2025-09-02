@@ -15,6 +15,7 @@
         .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
         .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
         .quick-jump a:hover { opacity:.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
         h1 {
             color: #2c5f2d;
             border-bottom: 3px solid #4a7c59;
@@ -86,7 +87,7 @@
             <a href="dt-crosswalk-table.aspx">Digital Technology</a>
             <a href="003_ed_crosswalk-table.aspx">Education</a>
             <a href="enr-crosswalk-table.aspx">ENR General</a>
-            <a href="003_table_enr_renewable_energy_crosswalk_table.aspx">ENR Renewable</a>
+            <a href="003_table_enr_renewable_energy_crosswalk_table.aspx" class="active">ENR Renewable</a>
             <a href="pss_crosswalk_html.aspx">PSS</a>
         </div>
     </nav>
@@ -453,6 +454,14 @@
             applyFilters();
             updateIndicators();
         })();
+            // Prevent accidental navigation when dropping files/screenshots onto the page
+        window.addEventListener('dragover', function(e){ e.preventDefault(); });
+        window.addEventListener('drop', function(e){
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+                e.preventDefault();
+                alert('File drop disabled to prevent accidental navigation.');
+            }
+        });
     </script>
 </body>
 </html>
