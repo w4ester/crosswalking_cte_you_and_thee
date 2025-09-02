@@ -397,6 +397,16 @@
     </style>
 </head>
 <body>
+    <nav class="top-nav">
+        <div class="quick-jump">
+            <a href="index.aspx">Home</a>
+            <a href="dt-crosswalk-table.aspx">Digital Technology</a>
+            <a href="003_ed_crosswalk-table.aspx">Education</a>
+            <a href="enr-crosswalk-table.aspx">ENR General</a>
+            <a href="003_table_enr_renewable_energy_crosswalk_table.aspx">ENR Renewable</a>
+            <a href="pss_crosswalk_html.aspx">PSS</a>
+        </div>
+    </nav>
     <div class="container">
         <h1>Digital Technology Cluster Crosswalk Analysis</h1>
         <p class="subtitle">Maryland Educational Programs & Industry Credentials</p>
