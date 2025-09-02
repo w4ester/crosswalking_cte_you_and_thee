@@ -77,8 +77,21 @@
 <body>
     <h1>ENR Cluster - Renewable Energy Postsecondary Crosswalk</h1>
     
+    <div class="controls" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:12px 0 16px;">
+        <div class="search-box" style="position:relative;flex:1;min-width:260px;">
+            <input id="searchInput" type="text" placeholder="Search institution, program, credential..." style="width:100%;padding:10px 40px 10px 12px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;">
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#a0aec0;">🔍</span>
+        </div>
+        <div class="btns" style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="showAllBtn" style="background:#48bb78;color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;">Show All</button>
+            <button id="twoYearBtn" style="background:#4a7c59;color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;">2-Year</button>
+            <button id="fourYearBtn" style="background:#2c5f2d;color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;">4-Year</button>
+            <button id="exportBtn" style="background:linear-gradient(135deg,#BD0934,#FFC838);color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;">📊 Export CSV</button>
+        </div>
+    </div>
+
     <div class="table-container">
-        <table>
+        <table id="enrRenewTable">
             <thead>
                 <tr>
                     <th>High School Program</th>
@@ -320,5 +333,116 @@
             <li><strong>Photovoltaic Associate:</strong> Knowledge-based (installation requires electrical license)</li>
         </ul>
     </div>
+    <script>
+        (function(){
+            const table = document.getElementById('enrRenewTable');
+            const tbody = table.querySelector('tbody');
+            const searchInput = document.getElementById('searchInput');
+            let sectorFilter = 'all';
+
+            function linkifySources(){
+                tbody.querySelectorAll('td.source-link').forEach(td => {
+                    const txt = (td.textContent || '').trim();
+                    if (!txt) return;
+                    // Avoid double-linking
+                    if (td.querySelector('a')) return;
+                    const href = txt.startsWith('http') ? txt : `https://${txt}`;
+                    const a = document.createElement('a');
+                    a.href = href;
+                    a.textContent = txt;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.style.color = '#1976d2';
+                    td.textContent = '';
+                    td.appendChild(a);
+                });
+            }
+
+            function matchesSector(tr){
+                if (sectorFilter === 'all') return true;
+                if (sectorFilter === '2') return tr.classList.contains('sector-2year');
+                if (sectorFilter === '4') return tr.classList.contains('sector-4year');
+                return true;
+            }
+
+            function matchesSearch(tr){
+                const q = (searchInput.value || '').toLowerCase();
+                if (!q) return true;
+                return tr.textContent.toLowerCase().includes(q);
+            }
+
+            function applyFilters(){
+                tbody.querySelectorAll('tr').forEach(tr => {
+                    const visible = matchesSector(tr) && matchesSearch(tr);
+                    tr.style.display = visible ? '' : 'none';
+                });
+            }
+
+            function exportVisible(){
+                const headers = Array.from(table.querySelectorAll('thead th')).map(th => '"' + th.textContent.trim().replace(/"/g,'""') + '"');
+                let csv = headers.join(',') + '\n';
+                Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
+                    if (tr.style.display === 'none') return;
+                    const cells = Array.from(tr.querySelectorAll('td')).map(td => '"' + (td.textContent || '').trim().replace(/"/g,'""') + '"');
+                    csv += cells.join(',') + '\n';
+                });
+                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'ENR_Renewable_Energy_Crosswalk.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // Sorting
+            let sortIndex = null, sortAsc = true;
+            function applySort(){
+                if (sortIndex === null) return;
+                const rows = Array.from(tbody.querySelectorAll('tr')).filter(tr => tr.style.display !== 'none');
+                rows.sort((a,b) => {
+                    const ta = (a.children[sortIndex]?.textContent || '').trim().toLowerCase();
+                    const tb = (b.children[sortIndex]?.textContent || '').trim().toLowerCase();
+                    return sortAsc ? ta.localeCompare(tb) : tb.localeCompare(ta);
+                });
+                // Re-append in sorted order; hidden rows keep their position after visible ones
+                rows.forEach(r => tbody.appendChild(r));
+            }
+            (function setupHeaderSort(){
+                const ths = table.querySelectorAll('thead th');
+                ths.forEach((th, idx) => {
+                    th.style.cursor = 'pointer';
+                    th.title = 'Click to sort';
+                    th.addEventListener('click', () => {
+                        if (sortIndex === idx) sortAsc = !sortAsc; else { sortIndex = idx; sortAsc = true; }
+                        applySort();
+                        updateIndicators();
+                    });
+                });
+            })();
+            function updateIndicators(){
+                const ths = table.querySelectorAll('thead th');
+                ths.forEach((th, idx) => {
+                    const base = th.dataset.base || th.textContent.trim();
+                    th.dataset.base = base;
+                    th.textContent = base + (sortIndex === idx ? (sortAsc ? ' ▲' : ' ▼') : '');
+                });
+            }
+
+            // Wire up controls
+            document.getElementById('showAllBtn').addEventListener('click', () => { sectorFilter = 'all'; applyFilters(); });
+            document.getElementById('twoYearBtn').addEventListener('click', () => { sectorFilter = '2'; applyFilters(); });
+            document.getElementById('fourYearBtn').addEventListener('click', () => { sectorFilter = '4'; applyFilters(); });
+            document.getElementById('exportBtn').addEventListener('click', exportVisible);
+            searchInput.addEventListener('input', applyFilters);
+
+            // Init
+            linkifySources();
+            applyFilters();
+            updateIndicators();
+        })();
+    </script>
 </body>
 </html>

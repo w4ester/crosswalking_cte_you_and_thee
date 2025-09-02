@@ -485,6 +485,7 @@
                         <th>Certificates</th>
                         <th>Key Features</th>
                         <th>Industry Credentials Aligned</th>
+                        <th>Source</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -1252,7 +1253,8 @@
                                     row.programArea === 'ML/DS' ? 'type-ml' : 'type-networking';
                 
                 const nsaBadge = row.nsaDesignated ? '<span class="designation-badge">NSA/DHS</span>' : '';
-                
+                const query = encodeURIComponent(`${row.institution} ${row.programs}`);
+                const sourceUrl = `https://www.google.com/search?q=${query}`;
                 tr.innerHTML = `
                     <td><span class="program-type ${programClass}">${row.programArea}</span></td>
                     <td><strong>${row.institution}</strong>${nsaBadge}</td>
@@ -1261,11 +1263,14 @@
                     <td>${row.certificates ? row.certificates.split(',').map(c => `<span class="certificate-tag">${c.trim()}</span>`).join('') : '-'}</td>
                     <td>${row.features}</td>
                     <td>${row.credentials ? row.credentials.split(',').map(c => `<span class="credential-badge">${c.trim()}</span>`).join('') : '-'}</td>
+                    <td><a href="${sourceUrl}" target="_blank" rel="noopener">Find program</a></td>
                 `;
                 tableBody.appendChild(tr);
             });
             
             updateStats(filteredData);
+            // Re-apply any active sort after repopulating
+            applySort();
         }
 
         function updateStats(data = programData) {
@@ -1312,10 +1317,12 @@
         });
 
         function exportToExcel() {
-            let csvContent = "Program Area,Institution,Type,Programs/Degrees,Certificates,Key Features,Industry Credentials,NSA Designated\n";
+            let csvContent = "Program Area,Institution,Type,Programs/Degrees,Certificates,Key Features,Industry Credentials,NSA Designated,Source\n";
             
             programData.forEach(row => {
-                csvContent += `"${row.programArea}","${row.institution}","${row.type}","${row.programs}","${row.certificates || '-'}","${row.features}","${row.credentials || '-'}","${row.nsaDesignated ? 'Yes' : 'No'}"\n`;
+                const q = encodeURIComponent(`${row.institution} ${row.programs}`);
+                const link = `https://www.google.com/search?q=${q}`;
+                csvContent += `"${row.programArea}","${row.institution}","${row.type}","${row.programs}","${row.certificates || '-'}","${row.features}","${row.credentials || '-'}","${row.nsaDesignated ? 'Yes' : 'No'}","${link}"\n`;
             });
             
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1329,8 +1336,51 @@
             document.body.removeChild(link);
         }
 
+        // Sorting support
+        let sortState = { index: null, asc: true };
+        function applySort() {
+            if (sortState.index === null) return;
+            const tbody = document.getElementById('tableBody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            rows.sort((a,b) => {
+                const ta = (a.children[sortState.index]?.textContent || '').trim().toLowerCase();
+                const tb = (b.children[sortState.index]?.textContent || '').trim().toLowerCase();
+                return sortState.asc ? ta.localeCompare(tb) : tb.localeCompare(ta);
+            });
+            rows.forEach(r => tbody.appendChild(r));
+            updateSortIndicators();
+        }
+        function updateSortIndicators(){
+            const ths = document.querySelectorAll('#dataTable thead th');
+            ths.forEach((th, idx) => {
+                const base = th.dataset.base || th.textContent.trim();
+                th.dataset.base = base;
+                th.textContent = base + (sortState.index === idx ? (sortState.asc ? ' ▲' : ' ▼') : '');
+            });
+        }
+        // Attach header click listeners
+        (function setupSorting(){
+            const ths = document.querySelectorAll('#dataTable thead th');
+            ths.forEach((th, idx) => {
+                th.style.cursor = 'pointer';
+                th.title = 'Click to sort';
+                th.addEventListener('click', () => {
+                    if (sortState.index === idx) {
+                        sortState.asc = !sortState.asc;
+                    } else {
+                        sortState.index = idx;
+                        sortState.asc = true;
+                    }
+                    applySort();
+                });
+            });
+            updateSortIndicators();
+        })();
+
         // Initialize table on page load
         populateTable();
+        // Ensure sort applies after initial render
+        applySort();
     </script>
 </body>
 </html>

@@ -1287,6 +1287,50 @@
             document.querySelector('.loading').style.display = 'none';
             document.getElementById('dataTable').style.display = 'table';
         }
+
+        // Sorting
+        let sortState = { index: null, asc: true };
+        function applySort() {
+            if (sortState.index === null) return;
+            const keyMap = {
+                0: 'program',
+                1: 'institution',
+                2: 'sector',
+                3: 'degree',
+                4: 'major',
+                5: 'certificates',
+                6: 'credentials',
+                7: 'source'
+            };
+            const key = keyMap[sortState.index];
+            if (!key) return;
+            filteredData.sort((a,b) => {
+                const ta = (a[key] || '').toLowerCase();
+                const tb = (b[key] || '').toLowerCase();
+                return sortState.asc ? ta.localeCompare(tb) : tb.localeCompare(ta);
+            });
+        }
+        function setupSorting() {
+            const ths = document.querySelectorAll('#dataTable thead th');
+            ths.forEach((th, idx) => {
+                th.style.cursor = 'pointer';
+                th.title = 'Click to sort';
+                th.addEventListener('click', () => {
+                    if (sortState.index === idx) sortState.asc = !sortState.asc; else { sortState.index = idx; sortState.asc = true; }
+                    applySort();
+                    displayData();
+                    updateSortIndicators();
+                });
+            });
+        }
+        function updateSortIndicators(){
+            const ths = document.querySelectorAll('#dataTable thead th');
+            ths.forEach((th, idx) => {
+                const base = th.dataset.base || th.textContent.trim();
+                th.dataset.base = base;
+                th.textContent = base + (sortState.index === idx ? (sortState.asc ? ' ▲' : ' ▼') : '');
+            });
+        }
         
         // Filter functions
         function applyFilters() {
@@ -1305,6 +1349,7 @@
                 return matchProgram && matchSector && matchSearch;
             });
             
+            applySort();
             displayData();
             updateStats();
         }
@@ -1315,6 +1360,7 @@
             document.getElementById('sectorFilter').value = '';
             document.getElementById('searchInput').value = '';
             filteredData = [...allData];
+            applySort();
             displayData();
             updateStats();
         }
@@ -1375,11 +1421,13 @@
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             initializeData();
+            setupSorting();
             
             // Add event listeners for filters
             document.getElementById('programFilter').addEventListener('change', applyFilters);
             document.getElementById('sectorFilter').addEventListener('change', applyFilters);
             document.getElementById('searchInput').addEventListener('input', applyFilters);
+            updateSortIndicators();
         });
     </script>
 </body>
