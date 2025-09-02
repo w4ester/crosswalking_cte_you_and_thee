@@ -469,7 +469,7 @@
                     institution: "University of Maryland, College Park",
                     sector: "4-Year University",
                     degree: "BS",
-                    major: "Criminology and Criminal Justice",
+                    major: "Criminology && Criminal Justice",
                     certificates: "",
                     credentials: "Partial - through partnerships",
                     source: "https://ccjs.umd.edu/"
@@ -529,7 +529,7 @@
                     institution: "Frostburg State University",
                     sector: "4-Year University",
                     degree: "BS",
-                    major: "Law and Society",
+                    major: "Law && Society",
                     certificates: "",
                     credentials: "Partial",
                     source: "https://www.frostburg.edu"
@@ -733,7 +733,7 @@
                     institution: "Capitol Technology University",
                     sector: "4-Year University",
                     degree: "BS",
-                    major: "Emergency and Protective Services Management",
+                    major: "Emergency && Protective Services Management",
                     certificates: "",
                     credentials: "Partial",
                     source: "https://www.captechu.edu"
@@ -897,7 +897,7 @@
                     institution: "Capitol Technology University",
                     sector: "4-Year University",
                     degree: "BS",
-                    major: "Emergency and Protective Services Management / Critical Infrastructure",
+                    major: "Emergency && Protective Services Management / Critical Infrastructure",
                     certificates: "",
                     credentials: "Partial",
                     source: "https://www.captechu.edu"
@@ -1071,7 +1071,7 @@
                     institution: "Capitol Technology University",
                     sector: "4-Year University",
                     degree: "BS",
-                    major: "Emergency and Protective Services Management - Fire Service",
+                    major: "Emergency && Protective Services Management - Fire Service",
                     certificates: "",
                     credentials: "Partial",
                     source: "https://www.captechu.edu"
@@ -1459,6 +1459,15 @@
             document.getElementById('sectorFilter').addEventListener('change', applyFilters);
             document.getElementById('searchInput').addEventListener('input', applyFilters);
             updateSortIndicators();
+        });
+
+        // Prevent accidental navigation when dropping screenshots/files onto the page (Safari/Chrome)
+        window.addEventListener('dragover', function(e){ e.preventDefault(); });
+        window.addEventListener('drop', function(e){
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length):
+                e.preventDefault();
+                alert('File drop disabled to prevent accidental navigation.');
+           
         });
     </script>
 </body>
