@@ -934,6 +934,35 @@
 
         let currentFilter = 'all';
 
+        // Institution homepage domains for Source links
+        const institutionDomains = {
+            'Anne Arundel CC (AACC)': 'aacc.edu',
+            'Montgomery College (MC)': 'montgomerycollege.edu',
+            "Prince George's CC (PGCC)": 'pgcc.edu',
+            'Community College of Baltimore County (CCBC)': 'ccbcmd.edu',
+            'Howard CC (HCC)': 'howardcc.edu',
+            'Carroll CC': 'carrollcc.edu',
+            'Wor-Wic CC': 'worwic.edu',
+            'Chesapeake College': 'chesapeake.edu',
+            'College of Southern Maryland (CSM)': 'csmd.edu',
+            'Harford Community College': 'harford.edu',
+            'Cecil College': 'cecil.edu',
+            'Frederick Community College (FCC)': 'frederick.edu',
+            'University of Maryland, College Park': 'umd.edu',
+            'Towson University': 'towson.edu',
+            'Salisbury University': 'salisbury.edu',
+            'Coppin State University': 'coppin.edu',
+            'Bowie State University': 'bowiestate.edu',
+            'Frostburg State University': 'frostburg.edu',
+            'University of Maryland Eastern Shore (UMES)': 'umes.edu',
+            'Morgan State University': 'morgan.edu',
+            'Hood College': 'hood.edu',
+            'McDaniel College': 'mcdaniel.edu',
+            'Notre Dame of Maryland University': 'ndm.edu',
+            'Loyola University Maryland': 'loyola.edu',
+            'Washington College': 'washcoll.edu'
+        };
+
         function populateTable(filter = 'all') {
             const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = '';
@@ -952,8 +981,8 @@
                                   row.type === 'Private' ? 'type-private' : 'type-university';
                 const programClass = row.programArea === 'ECE' ? 'type-ece' : 'type-tam';
                 
-                const query = encodeURIComponent(`${row.institution} ${row.programs}`);
-                const sourceUrl = `https://www.google.com/search?q=${query}`;
+                const domain = institutionDomains[row.institution];
+                const sourceUrl = domain ? `https://${domain}` : `https://www.google.com/search?q=${encodeURIComponent(row.institution + ' ' + row.programs)}`;
                 tr.innerHTML = `
                     <td><span class="program-type ${programClass}">${row.programArea}</span></td>
                     <td><strong>${row.institution}</strong></td>
@@ -1036,15 +1065,20 @@
         }
 
         // Sorting support
-        let sortState = { index: null, asc: true };
+        // Multi-column sort
+        let sortKeys = [];
         function applySort() {
-            if (sortState.index === null) return;
+            if (!sortKeys.length) return;
             const tbody = document.getElementById('tableBody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
             rows.sort((a,b) => {
-                const ta = (a.children[sortState.index]?.textContent || '').trim().toLowerCase();
-                const tb = (b.children[sortState.index]?.textContent || '').trim().toLowerCase();
-                return sortState.asc ? ta.localeCompare(tb) : tb.localeCompare(ta);
+                for (const key of sortKeys) {
+                    const ta = (a.children[key.index]?.textContent || '').trim().toLowerCase();
+                    const tb = (b.children[key.index]?.textContent || '').trim().toLowerCase();
+                    const cmp = ta.localeCompare(tb);
+                    if (cmp !== 0) return key.asc ? cmp : -cmp;
+                }
+                return 0;
             });
             rows.forEach(r => tbody.appendChild(r));
         }
@@ -1053,16 +1087,27 @@
             ths.forEach((th, idx) => {
                 const base = th.dataset.base || th.textContent.trim();
                 th.dataset.base = base;
-                th.textContent = base + (sortState.index === idx ? (sortState.asc ? ' ▲' : ' ▼') : '');
+                const pos = sortKeys.findIndex(k => k.index === idx);
+                if (pos >= 0) {
+                    const asc = sortKeys[pos].asc;
+                    th.textContent = `${base} ${asc ? '▲' : '▼'}${pos+1}`;
+                } else {
+                    th.textContent = base;
+                }
             });
         }
         (function setupSorting(){
             const ths = document.querySelectorAll('#dataTable thead th');
             ths.forEach((th, idx) => {
                 th.style.cursor = 'pointer';
-                th.title = 'Click to sort';
-                th.addEventListener('click', () => {
-                    if (sortState.index === idx) sortState.asc = !sortState.asc; else { sortState.index = idx; sortState.asc = true; }
+                th.title = 'Click to sort (Shift-click to add)';
+                th.addEventListener('click', (e) => {
+                    const existing = sortKeys.findIndex(k => k.index === idx);
+                    if (e.shiftKey) {
+                        if (existing >= 0) sortKeys[existing].asc = !sortKeys[existing].asc; else sortKeys.push({ index: idx, asc: true });
+                    } else {
+                        if (existing >= 0) sortKeys = [{ index: idx, asc: !sortKeys[existing].asc }]; else sortKeys = [{ index: idx, asc: true }];
+                    }
                     applySort();
                     updateSortIndicators();
                 });

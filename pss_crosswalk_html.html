@@ -1289,9 +1289,9 @@
         }
 
         // Sorting
-        let sortState = { index: null, asc: true };
+        let sortKeys = [];
         function applySort() {
-            if (sortState.index === null) return;
+            if (!sortKeys.length) return;
             const keyMap = {
                 0: 'program',
                 1: 'institution',
@@ -1302,21 +1302,31 @@
                 6: 'credentials',
                 7: 'source'
             };
-            const key = keyMap[sortState.index];
-            if (!key) return;
             filteredData.sort((a,b) => {
-                const ta = (a[key] || '').toLowerCase();
-                const tb = (b[key] || '').toLowerCase();
-                return sortState.asc ? ta.localeCompare(tb) : tb.localeCompare(ta);
+                for (const k of sortKeys) {
+                    const key = keyMap[k.index];
+                    if (!key) continue;
+                    const ta = (a[key] || '').toLowerCase();
+                    const tb = (b[key] || '').toLowerCase();
+                    const cmp = ta.localeCompare(tb);
+                    if (cmp !== 0) {
+                        return k.asc ? cmp : -cmp
+                }
+                return 0;
             });
         }
         function setupSorting() {
             const ths = document.querySelectorAll('#dataTable thead th');
             ths.forEach((th, idx) => {
                 th.style.cursor = 'pointer';
-                th.title = 'Click to sort';
-                th.addEventListener('click', () => {
-                    if (sortState.index === idx) sortState.asc = !sortState.asc; else { sortState.index = idx; sortState.asc = true; }
+                th.title = 'Click to sort (Shift-click to add)';
+                th.addEventListener('click', (e) => {
+                    const existing = sortKeys.findIndex(k => k.index === idx);
+                    if (e.shiftKey) {
+                        if (existing >= 0) sortKeys[existing].asc = !sortKeys[existing].asc; else sortKeys.push({ index: idx, asc: true });
+                    } else {
+                        if (existing >= 0) sortKeys = [{ index: idx, asc: !sortKeys[existing].asc }]; else sortKeys = [{ index: idx, asc: true }];
+                    }
                     applySort();
                     displayData();
                     updateSortIndicators();
@@ -1328,7 +1338,13 @@
             ths.forEach((th, idx) => {
                 const base = th.dataset.base || th.textContent.trim();
                 th.dataset.base = base;
-                th.textContent = base + (sortState.index === idx ? (sortState.asc ? ' ▲' : ' ▼') : '');
+                const pos = sortKeys.findIndex(k => k.index === idx);
+                if (pos >= 0) {
+                    const asc = sortKeys[pos].asc;
+                    th.textContent = `${base} ${asc ? '▲' : '▼'}${pos+1}`;
+                } else {
+                    th.textContent = base;
+                }
             });
         }
         
