@@ -148,6 +148,7 @@
             transition: opacity 0.2s ease;
         }
         .quick-jump a:hover { opacity: 0.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
 
         /* Audience Access */
         .audience-access {
@@ -234,8 +235,9 @@
             color: #231F20;
         }
 
-        /* Audience Guidance section now shown via modals */
-        #audience-guidance { display: none; }
+        /* Feedback floating button */
+        #feedbackFab { position: fixed; right: calc(20px + env(safe-area-inset-right)); bottom: calc(20px + env(safe-area-inset-bottom)); background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border:none; border-radius:999px; padding:12px 16px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.25); cursor:pointer; z-index: 350; }
+        #feedbackText { width:100%; min-height:120px; border:1px solid #e2e8f0; border-radius:8px; padding:10px; font-family: inherit; }
 
         /* Modal styles */
         .modal {
@@ -285,15 +287,44 @@
 <body>
     <nav class="top-nav">
         <div class="quick-jump">
-            <a href="#" data-modal="students">Students &amp; Parents</a>
-            <a href="#" data-modal="counselors">Counselors</a>
-            <a href="#" data-modal="teachers">Teachers</a>
+            <a href="index.aspx" class="active">Home</a>
+            <a href="dt-crosswalk-table.aspx">Digital Technology</a>
+            <a href="003_ed_crosswalk-table.aspx">Education</a>
+            <a href="enr-crosswalk-table.aspx">ENR</a>
+            <a href="pss_crosswalk_html.aspx">PSS</a>
+            <a href="assessments.html">Assessments</a>
         </div>
     </nav>
     <div class="container">
         <h1>CTE Cluster Crosswalk Repository</h1>
         <p class="subtitle">Maryland State Department of Education - Career and Technical Education Program Crosswalks</p>
-        
+        <div class="info-section" id="audience-guides">
+            <h2>Audience Guides</h2>
+            <div class="clusters-grid">
+                <div class="cluster-card">
+                    <h2 class="cluster-title">Students &amp; Parents/Guardians</h2>
+                    <p class="cluster-description">Quick tips to explore programs, plan courses, and discuss options.</p>
+                    <div class="cluster-links">
+                        <a href="#" class="cluster-link" data-modal="students">How to Use</a>
+                    </div>
+                </div>
+                <div class="cluster-card">
+                    <h2 class="cluster-title">Counselors</h2>
+                    <p class="cluster-description">Filtering, exports, and alignment tips for advising conversations.</p>
+                    <div class="cluster-links">
+                        <a href="#" class="cluster-link" data-modal="counselors">How to Use</a>
+                    </div>
+                </div>
+                <div class="cluster-card">
+                    <h2 class="cluster-title">Teachers</h2>
+                    <p class="cluster-description">Connect lessons to pathways, certifications, and cross-cluster links.</p>
+                    <div class="cluster-links">
+                        <a href="#" class="cluster-link" data-modal="teachers">How to Use</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         
         <div class="audience-access">
             <h2>Audience Access</h2>
@@ -473,20 +504,38 @@
             </div>
         </div>
 
+        <!-- Feedback modal -->
+        <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="feedbackTitle" style="color:#231F20;">Send Feedback</h2>
+                    <button class="modal-close" data-close aria-label="Close">×</button>
+                </div>
+                <p style="color:#334155;margin:0 0 8px;">Tell us what’s working and what to improve.</p>
+                <textarea id="feedbackText" placeholder="Your feedback..."></textarea>
+                <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+                    <button id="copyFeedback" class="cluster-link" style="background:#0ea5e9;">Copy</button>
+                    <button id="emailFeedback" class="cluster-link">Email</button>
+                </div>
+            </div>
+        </div>
+
         <div class="footer">
             <p>Maryland State Department of Education - Division of Career and College Readiness</p>
             <p style="margin-top: 10px; font-size: 0.9rem;">© 2025 MSDE CTE Crosswalk Repository</p>
         </div>
     </div>
+    <button id="feedbackFab" aria-label="Open feedback">Feedback</button>
 </body>
 </html>
 <script>
     (function(){
-        const openers = document.querySelectorAll('.quick-jump a[data-modal]');
+        const openers = document.querySelectorAll('[data-modal]');
         const modals = {
             students: document.getElementById('modal-students'),
             counselors: document.getElementById('modal-counselors'),
-            teachers: document.getElementById('modal-teachers')
+            teachers: document.getElementById('modal-teachers'),
+            feedback: document.getElementById('modal-feedback')
         };
         function openModal(key){
             const m = modals[key];
@@ -499,8 +548,9 @@
             m.setAttribute('aria-hidden','true');
         }
         openers.forEach(a => a.addEventListener('click', (e) => {
-            e.preventDefault();
             const key = a.getAttribute('data-modal');
+            if (!key) return;
+            e.preventDefault();
             openModal(key);
         }));
         document.querySelectorAll('.modal').forEach(m => {
@@ -513,5 +563,25 @@
                 document.querySelectorAll('.modal.open').forEach(closeModal);
             }
         });
+        // Feedback FAB
+        const fab = document.getElementById('feedbackFab');
+        if (fab) {
+            fab.addEventListener('click', () => openModal('feedback'));
+        }
+        const copyBtn = document.getElementById('copyFeedback');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', async () => {
+                const txt = document.getElementById('feedbackText').value.trim();
+                try { await navigator.clipboard.writeText(txt); alert('Copied to clipboard.'); } catch {}
+            });
+        }
+        const emailBtn = document.getElementById('emailFeedback');
+        if (emailBtn) {
+            emailBtn.addEventListener('click', () => {
+                const txt = encodeURIComponent(document.getElementById('feedbackText').value.trim());
+                const subj = encodeURIComponent('CTE Crosswalks Feedback');
+                window.location.href = `mailto:occpcteprograms.msde@maryland.gov?subject=${subj}&body=${txt}`;
+            });
+        }
     })();
 </script>
