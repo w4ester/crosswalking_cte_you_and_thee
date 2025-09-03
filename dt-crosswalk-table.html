@@ -601,11 +601,10 @@
             }); box.appendChild(wrap); box.scrollTop=box.scrollHeight;
         }
         (function dtChatInit(){
-            const recs = dtBuildRecords();
             const open=document.getElementById('chatLauncher'); const panel=document.getElementById('chatPanel'); const closeBtn=document.getElementById('chatClose');
             const sendBtn=document.getElementById('chatSend'); const input=document.getElementById('chatInput');
             open.addEventListener('click',()=>{ panel.style.display='flex'; }); closeBtn.addEventListener('click',()=>{ panel.style.display='none'; });
-            function handle(q){ dtAppendMsg(q,true); const rs=dtSearchRecords(recs,q.toLowerCase()); dtAppendResults(rs);} 
+            function handle(q){ dtAppendMsg(q,true); const recsNow=dtBuildRecords(); const rs=dtSearchRecords(recsNow,q.toLowerCase()); dtAppendResults(rs);} 
             sendBtn.addEventListener('click',()=>{ const q=input.value; if(q.trim()){ input.value=''; handle(q);} });
             input.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendBtn.click(); }});
             document.querySelectorAll('.chat-suggest').forEach(b=> b.addEventListener('click', ()=> handle(b.getAttribute('data-q')) ));
