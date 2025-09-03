@@ -205,35 +205,14 @@
             font-weight: 600;
         }
         
-        .stats {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-top: 2px solid #dee2e6;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .stat-card {
-            text-align: center;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            min-width: 150px;
-        }
-        
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #BD0934;
-        }
-        
-        .stat-label {
-            color: #231F20;
-            margin-top: 5px;
-        }
+        /* Banner-style stats */
+        .stats-banner { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; padding: 0 30px 16px 30px; }
+        .banner { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:12px; background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%); color:#fff; box-shadow:0 6px 18px rgba(189,9,52,.25); }
+        .banner .stat-number { font-size: 1.8em; font-weight: 800; color:#fff; }
+        .banner .stat-label { font-size: 0.95em; opacity: .95; margin-left: 8px; color:#fff; }
+        /* Hide legacy cards if present */
+        .stats { display: none; }
+        .stat-card { display: none; }
         
         a {
             color: #3498db;
@@ -255,7 +234,7 @@
                 border-radius: 0;
             }
             
-            .controls, .stats {
+            .controls, .stats, .stats-banner {
                 display: none;
             }
             
@@ -282,8 +261,7 @@
             <a href="index.aspx">Home</a>
             <a href="dt-crosswalk-table.aspx">Digital Technology</a>
             <a href="003_ed_crosswalk-table.aspx">Education</a>
-            <a href="enr-crosswalk-table.aspx">ENR General</a>
-            <a href="003_table_enr_renewable_energy_crosswalk_table.aspx">ENR Renewable</a>
+            <a href="enr-crosswalk-table.aspx">ENR</a>
             <a href="pss_crosswalk_html.aspx" class="active">PSS</a>
         </div>
     </nav>
@@ -294,6 +272,25 @@
         </div>
         <div style="text-align:center; margin-bottom: 10px; color:#231F20; font-size:0.95rem;">
             <a href="index.aspx">Home</a> &gt; PSS
+        </div>
+        <!-- Top stats banners -->
+        <div class="stats-banner">
+            <div class="banner" aria-label="Total records">
+                <div class="stat-label">Total Records</div>
+                <div class="stat-number" id="totalRecords">0</div>
+            </div>
+            <div class="banner" aria-label="Community colleges">
+                <div class="stat-label">Community Colleges</div>
+                <div class="stat-number" id="ccCount">0</div>
+            </div>
+            <div class="banner" aria-label="4-year universities">
+                <div class="stat-label">4-Year Universities</div>
+                <div class="stat-number" id="uniCount">0</div>
+            </div>
+            <div class="banner" aria-label="With certificates">
+                <div class="stat-label">With Certificates</div>
+                <div class="stat-number" id="certCount">0</div>
+            </div>
         </div>
         
         <div class="controls">
@@ -323,6 +320,29 @@
             </div>
         </div>
         
+        <!-- Chat launcher and panel (client-only, page-scoped) -->
+        <button id="chatLauncher" aria-label="Open AI chat" style="position:fixed;right:calc(20px + env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#BD0934,#FFC838);color:#fff;border:none;border-radius:999px;padding:12px 16px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.25);cursor:pointer;z-index:2000;">Chat</button>
+        <div id="chatPanel" style="position:fixed;right:calc(20px + env(safe-area-inset-right));bottom:calc(80px + env(safe-area-inset-bottom));width:360px;max-width:92vw;max-height:75vh;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.3);display:none;flex-direction:column;overflow:hidden;z-index:2000;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#E2E3E4;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:1;">
+                <strong style="color:#231F20;">Ask about PSS</strong>
+                <button id="chatClose" aria-label="Close chat" style="background:transparent;border:none;font-size:18px;color:#231F20;cursor:pointer;">×</button>
+            </div>
+            <div id="chatMsgs" style="padding:12px;display:flex;flex-direction:column;gap:10px;flex:1 1 auto;overflow:auto;">
+                <div style="background:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;color:#231F20;">Hi! Ask me about PSS programs, credentials, or institutions. Try: "EMT certificate"</div>
+            </div>
+            <div style="position:sticky;bottom:0;background:#fff;border-top:1px solid #e2e8f0;z-index:1;">
+                <div style="padding:8px;display:flex;gap:8px;">
+                    <input id="chatInput" type="text" placeholder="Ask about programs, credentials..." style="flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
+                    <button id="chatSend" style="background:linear-gradient(135deg,#BD0934,#FFC838);color:#fff;border:none;border-radius:8px;padding:10px 12px;cursor:pointer;">Send</button>
+                </div>
+                <div style="padding:8px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid #f1f5f9;background:#fff;">
+                    <button class="chat-suggest" data-q="EMT certificate" style="border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:6px 10px;cursor:pointer;">EMT certificate</button>
+                    <button class="chat-suggest" data-q="JROTC universities" style="border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:6px 10px;cursor:pointer;">JROTC universities</button>
+                    <button class="chat-suggest" data-q="Criminal Justice community colleges" style="border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:6px 10px;cursor:pointer;">Criminal Justice community colleges</button>
+                </div>
+            </div>
+        </div>
+        
         <div class="table-container">
             <div class="loading">Loading data...</div>
             <table id="dataTable" style="display: none;">
@@ -343,24 +363,6 @@
             </table>
         </div>
         
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="totalRecords">0</div>
-                <div class="stat-label">Total Records</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="ccCount">0</div>
-                <div class="stat-label">Community Colleges</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="uniCount">0</div>
-                <div class="stat-label">4-Year Universities</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="certCount">0</div>
-                <div class="stat-label">With Certificates</div>
-            </div>
-        </div>
     </div>
     
     <script>
@@ -1395,6 +1397,36 @@
             XLSX.writeFile(wb, filename);
         }
         
+        // PSS chat helpers
+        function pssBuildRecords(){
+            const rows=document.querySelectorAll('#tableBody tr');
+            const recs=[];
+            rows.forEach((tr,idx)=>{
+                const tds=tr.querySelectorAll('td');
+                if(tds.length<8) return;
+                recs.push({idx,
+                    program: tds[0].textContent.trim(),
+                    institution: tds[1].textContent.trim(),
+                    sector: tds[2].textContent.trim(),
+                    degree: tds[3].textContent.trim(),
+                    major: tds[4].textContent.trim(),
+                    certificates: tds[5].textContent.trim(),
+                    credentials: tds[6].textContent.trim()
+                });
+            });
+            return recs;
+        }
+        function pssSearchRecords(recs,q){
+            q=q.trim().toLowerCase(); if(!q) return [];
+            const tokens=q.split(/\s+/).filter(Boolean);
+            const want2=/(2[-\s]?year|community)/.test(q); const want4=/(4[-\s]?year|university|universities)/.test(q);
+            const credWords=/\b(cpr|ems|emt|paramedic|nims|ics|cert|leadership|rotc)\b/i;
+            const filtered=recs.filter(r=>{ if(want2 && !/community/i.test(r.sector)) return false; if(want4 && !/university/i.test(r.sector)) return false; return true;});
+            const scored=filtered.map(r=>{ const t={program:r.program.toLowerCase(),institution:r.institution.toLowerCase(),sector:r.sector.toLowerCase(),degree:r.degree.toLowerCase(),major:r.major.toLowerCase(),certificates:(r.certificates||'').toLowerCase(),credentials:(r.credentials||'').toLowerCase()}; let s=0; tokens.forEach(k=>{ s += (t.institution.includes(k)?2:0)+(t.program.includes(k)?2:0)+(t.major.includes(k)?2:0)+(t.certificates.includes(k)?2:0)+(t.credentials.includes(k)?3:0)+(t.sector.includes(k)?1:0); if(credWords.test(k)){ if(t.credentials.includes(k)) s+=5; if(t.certificates.includes(k)) s+=3; } }); return {r,score:s}; }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,5).map(x=>x.r); return scored; }
+        function pssAppendMsg(text,isUser){ const box=document.getElementById('chatMsgs'); const div=document.createElement('div'); div.style.border='1px solid #e2e8f0'; div.style.borderRadius='8px'; div.style.padding='8px 10px'; div.style.background=isUser?'#fff':'#f7fafc'; div.style.color='#231F20'; div.textContent=text; box.appendChild(div); box.scrollTop=box.scrollHeight; }
+        function pssAppendResults(results){ const box=document.getElementById('chatMsgs'); if(!results.length){ pssAppendMsg('No direct match. Try specific terms like "EMT", "JROTC", or "Criminal Justice".', false); return;} const wrap=document.createElement('div'); wrap.style.display='flex'; wrap.style.flexDirection='column'; wrap.style.gap='8px'; results.forEach(r=>{ const card=document.createElement('div'); card.style.border='1px solid #e2e8f0'; card.style.borderRadius='8px'; card.style.padding='8px 10px'; card.innerHTML=`<strong>${r.institution}</strong> — ${r.program}<br><span style=\"color:#231F20\">Sector:</span> ${r.sector} · <span style=\"color:#231F20\">Degree:</span> ${r.degree}<br><span style=\"color:#231F20\">Certs:</span> ${r.certificates||'-'} · <span style=\"color:#231F20\">Creds:</span> ${r.credentials||'-'}`; const btn=document.createElement('button'); btn.textContent='Open matching rows'; btn.style.marginTop='6px'; btn.style.background='linear-gradient(135deg,#BD0934,#FFC838)'; btn.style.color='#fff'; btn.style.border='none'; btn.style.borderRadius='6px'; btn.style.padding='6px 10px'; btn.style.cursor='pointer'; btn.addEventListener('click',()=>{ const q=[r.institution,r.program].filter(Boolean).join(' '); const si=document.getElementById('searchInput'); if(si){ si.value=q; si.dispatchEvent(new Event('input')); document.getElementById('dataTable')?.scrollIntoView({behavior:'smooth'});} }); card.appendChild(btn); wrap.appendChild(card);}); box.appendChild(wrap); box.scrollTop=box.scrollHeight; }
+        (function pssChatInit(){ const open=document.getElementById('chatLauncher'); const panel=document.getElementById('chatPanel'); const closeBtn=document.getElementById('chatClose'); const sendBtn=document.getElementById('chatSend'); const input=document.getElementById('chatInput'); if(!open) return; open.addEventListener('click',()=>{ panel.style.display='flex';}); closeBtn.addEventListener('click',()=>{ panel.style.display='none';}); function handle(q){ pssAppendMsg(q,true); const rs=pssSearchRecords(pssBuildRecords(), q.toLowerCase()); pssAppendResults(rs);} sendBtn.addEventListener('click',()=>{ const q=input.value; if(q.trim()){ input.value=''; handle(q);}}); input.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendBtn.click(); }}); document.querySelectorAll('.chat-suggest').forEach(b=> b.addEventListener('click', ()=> handle(b.getAttribute('data-q')) )); })();
+
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             initializeData();

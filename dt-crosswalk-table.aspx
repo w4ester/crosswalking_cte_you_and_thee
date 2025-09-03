@@ -412,8 +412,7 @@
             <a href="index.aspx">Home</a>
             <a href="dt-crosswalk-table.aspx" class="active">Digital Technology</a>
             <a href="003_ed_crosswalk-table.aspx">Education</a>
-            <a href="enr-crosswalk-table.aspx">ENR General</a>
-            <a href="003_table_enr_renewable_energy_crosswalk_table.aspx">ENR Renewable</a>
+            <a href="enr-crosswalk-table.aspx">ENR</a>
             <a href="pss_crosswalk.html">PSS</a>
         </div>
     </nav>

@@ -359,20 +359,15 @@
 
             <div class="cluster-card">
                 <h2 class="cluster-title">Environmental & Natural Resources</h2>
-                <p class="cluster-description">Two comprehensive crosswalks for Environmental and Natural Resources programs, including renewable energy specializations.</p>
+                <p class="cluster-description">Comprehensive crosswalk for Environmental & Natural Resources programs, including renewable energy specializations.</p>
                 <div class="cluster-links">
-                    <a href="enr-crosswalk-table.html" class="cluster-link">
-                        View ENR General Crosswalk
+                    <a href="enr-crosswalk-table.aspx" class="cluster-link">
+                        View ENR Crosswalk
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </a>
-                    <a href="003_table_enr_renewable_energy_crosswalk_table.html" class="cluster-link">
-                        View ENR Renewable Energy Crosswalk
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
+                    
                 </div>
             </div>
 

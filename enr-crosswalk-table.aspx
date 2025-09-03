@@ -7,7 +7,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENR Renewable Energy Crosswalk Analysis</title>
+    <title>ENR Cluster Crosswalk Analysis</title>
     <style>
         * {
             margin: 0;
@@ -290,15 +290,14 @@
             <a href="index.aspx">Home</a>
             <a href="dt-crosswalk-table.aspx">Digital Technology</a>
             <a href="003_ed_crosswalk-table.aspx">Education</a>
-            <a href="enr-crosswalk-table.aspx" class="active">ENR General</a>
-            <a href="003_table_enr_renewable_energy_crosswalk_table.aspx">ENR Renewable</a>
-            <a href="pss_crosswalk.html">PSS</a>
+            <a href="enr-crosswalk-table.aspx" class="active">ENR</a>
+            <a href="pss_crosswalk_html.aspx">PSS</a>
         </div>
     </nav>
     <div class="container">
-        <h1>ENR Renewable Energy Crosswalk Analysis</h1>
+        <h1>ENR Cluster Crosswalk Analysis</h1>
         <div style="text-align:center; margin-bottom: 10px; color:#231F20; font-size:0.95rem;">
-            <a href="index.aspx">Home</a> &gt; ENR General
+            <a href="index.aspx">Home</a> &gt; ENR
         </div>
         <p class="subtitle">Maryland Educational Programs & Industry Credentials</p>
 
@@ -325,6 +324,14 @@
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Search programs, institutions, or credentials...">
                 <span class="search-icon">🔍</span>
+            </div>
+            <div class="btn-group">
+                <label for="trackFilter" style="display:none;">Track</label>
+                <select id="trackFilter" title="Filter by track">
+                    <option value="all">All Tracks</option>
+                    <option value="general">General ENR</option>
+                    <option value="renewable">Renewable Energy</option>
+                </select>
             </div>
             <div class="btn-group">
                 <button class="btn-secondary" onclick="filterTable('all')">Show All</button>
@@ -513,34 +520,38 @@
         }
 
         function updateStats() {
-            document.getElementById('totalPrograms').textContent = programData.length;
-            document.getElementById('communityColleges').textContent = programData.filter(p => p.type === 'Community College').length;
-            document.getElementById('universities').textContent = programData.filter(p => p.type === 'University').length;
-            document.getElementById('certificatePrograms').textContent = programData.filter(p => p.certificates !== '').length;
+            const rows = Array.from(document.querySelectorAll('#tableBody tr'));
+            const visible = rows.filter(r => r.style.display !== 'none');
+            document.getElementById('totalPrograms').textContent = visible.length;
+            document.getElementById('communityColleges').textContent = visible.filter(r => r.innerHTML.includes('type-community')).length;
+            document.getElementById('universities').textContent = visible.filter(r => r.innerHTML.includes('type-university')).length;
+            document.getElementById('certificatePrograms').textContent = visible.filter(r => /certificate-tag/.test(r.innerHTML)).length;
         }
 
-        function filterTable(type) {
+        let currentTypeFilter = 'all';
+        function filterTable(type) { currentTypeFilter = type; applyFilters(); }
+        function applyFilters(){
+            const q = document.getElementById('searchInput').value.toLowerCase().trim();
+            const tokens = q.split(/\s+/).filter(Boolean);
+            const track = document.getElementById('trackFilter').value;
+            const isRenewableText = (text) => /(\brenewable\b|alternative energy|solar|wind|pv|photovoltaic|hydro|energy technology)/i.test(text);
             const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach(row => {
-                if (type === 'all') {
-                    row.style.display = '';
-                } else if (type === 'community') {
-                    row.style.display = row.innerHTML.includes('type-community') ? '' : 'none';
-                } else if (type === 'university') {
-                    row.style.display = row.innerHTML.includes('type-university') ? '' : 'none';
-                }
-            });
-        }
-
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-            
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                let typeOk = true;
+                if (currentTypeFilter === 'community') typeOk = row.innerHTML.includes('type-community');
+                if (currentTypeFilter === 'university') typeOk = row.innerHTML.includes('type-university');
+                let trackOk = true;
+                if (track === 'renewable') trackOk = isRenewableText(text);
+                else if (track === 'general') trackOk = !isRenewableText(text);
+                let searchOk = tokens.length === 0 || tokens.every(t => text.includes(t));
+                row.style.display = (typeOk && trackOk && searchOk) ? '' : 'none';
             });
-        });
+            updateStats();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('trackFilter').addEventListener('change', applyFilters);
 
         function exportToExcel() {
             let csvContent = "Institution,Type,Program/Degree,Certificates,Key Features,Industry Credentials\n";
@@ -553,7 +564,7 @@
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', 'ENR_Renewable_Energy_Crosswalk.csv');
+            link.setAttribute('download', 'ENR_Crosswalk.csv');
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();

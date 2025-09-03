@@ -207,6 +207,13 @@
             font-weight: 600;
         }
 
+        /* Top cluster nav */
+        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; }
+        .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); margin: 10px auto; }
+        .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
+        .quick-jump a:hover { opacity:.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+
         .warning-note {
             background: #fff5f5;
             border-left: 4px solid #fc8181;
@@ -278,6 +285,15 @@
     </style>
 </head>
 <body>
+    <nav class="top-nav">
+        <div class="quick-jump">
+            <a href="index.aspx">Home</a>
+            <a href="dt-crosswalk-table.aspx">Digital Technology</a>
+            <a href="003_ed_crosswalk-table.aspx">Education</a>
+            <a href="enr-crosswalk-table.aspx">ENR</a>
+            <a href="pss_crosswalk_html.aspx">PSS</a>
+        </div>
+    </nav>
     <div class="container">
         <h1>ENR Renewable Energy Crosswalk Analysis</h1>
         <p class="subtitle">Maryland Educational Programs & Industry Credentials</p>
