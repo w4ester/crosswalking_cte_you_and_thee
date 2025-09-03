@@ -380,7 +380,7 @@
                 <h2 class="cluster-title">Public Safety and Services (PSS)</h2>
                 <p class="cluster-description">Public Safety and Services cluster crosswalk with detailed alignment to career pathways and industry requirements.</p>
                 <div class="cluster-links">
-                    <a href="pss_crosswalk_html.html" class="cluster-link">
+                    <a href="pss_crosswalk.html" class="cluster-link">
                         View PSS Crosswalk
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
