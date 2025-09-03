@@ -1,600 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <!-- Robust drop prevention (capture-level) -->
-    <script>(function(){function block(e){e.preventDefault();e.stopPropagation();}window.addEventListener('dragover',block,{capture:true});window.addEventListener('drop',block,{capture:true});document.addEventListener('dragover',block,{capture:true});document.addEventListener('drop',block,{capture:true});})();</script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTE Cluster Crosswalk Repository</title>
+    <title>MSDE Crosswalks — Home</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        h1 {
-            color: #231F20;
-            font-size: 3rem;
-            margin-bottom: 15px;
-            text-align: center;
-            background: linear-gradient(135deg, #BD0934, #FFC838);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #231F20;
-            margin-bottom: 50px;
-            font-size: 1.2rem;
-        }
-
-        .clusters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .cluster-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .cluster-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            border-color: #BD0934;
-        }
-
-        .cluster-title {
-            font-size: 1.4rem;
-            color: #231F20;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .cluster-description {
-            color: #231F20;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .cluster-links {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .cluster-link {
-            display: inline-flex;
-            align-items: center;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #BD0934, #FFC838);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-align: center;
-            justify-content: center;
-        }
-
-        .cluster-link:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(189, 9, 52, 0.4);
-        }
-
-        .cluster-link svg {
-            margin-left: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .cluster-link:hover svg {
-            transform: translateX(3px);
-        }
-        .top-nav {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 12px;
-            position: sticky;
-            top: 0;
-            z-index: 200;
-        }
-
-        /* Quick-jump nav */
-        .quick-jump {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 999px;
-            padding: 8px 12px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-        }
-        .quick-jump a {
-            display: inline-block;
-            padding: 8px 12px;
-            background: #231F20;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 999px;
-            font-size: 0.95rem;
-            transition: opacity 0.2s ease;
-        }
-        .quick-jump a:hover { opacity: 0.9; }
-
-        /* Audience Access */
-        .audience-access {
-            margin-bottom: 40px;
-            display: none; /* hidden to keep crosswalks the focus */
-        }
-        .audience-access h2 {
-            color: #231F20;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-        .audience-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 25px;
-            align-items: stretch;
-        }
-        .cta-stack {
-            display: grid;
-            grid-template-rows: 1fr 1fr;
-            gap: 25px;
-        }
-        .cta-card {
-            background: white;
-            border-radius: 15px;
-            padding: 24px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            display: flex;
-            flex-direction: column;
-        }
-        .cta-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            border-color: #BD0934;
-        }
-        .cta-title {
-            font-size: 1.3rem;
-            color: #231F20;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        .cta-description {
-            color: #231F20;
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-        .cta-primary {
-            border-left: 4px solid #BD0934;
-        }
-
-        .info-section {
-            background: #E2E3E4;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 40px;
-            border-left: 4px solid #BD0934;
-        }
-
-        .info-section h2 {
-            color: #231F20;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-
-        .info-section p {
-            color: #4a5568;
-            line-height: 1.8;
-            margin-bottom: 10px;
-        }
-
-        .info-section ul {
-            margin-left: 25px;
-            color: #4a5568;
-            line-height: 1.8;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-            color: #231F20;
-        }
-
-        /* Audience Guidance section now shown via modals */
-        #audience-guidance { display: none; }
-
-        /* Modal styles */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 200;
-        }
-        .modal.open { display: flex; }
-        .modal-content {
-            background: #fff;
-            border-radius: 12px;
-            max-width: 720px;
-            width: 100%;
-            padding: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            border-left: 4px solid #BD0934;
-        }
-        .modal-header { display:flex; justify-content: space-between; align-items:center; margin-bottom: 10px; }
-        .modal-close { border:none; background:transparent; font-size: 1.5rem; cursor:pointer; color:#231F20; }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .clusters-grid {
-                grid-template-columns: 1fr;
-            }
-            .audience-grid {
-                grid-template-columns: 1fr;
-            }
-            .cta-stack {
-                grid-template-rows: auto;
-            }
-            
-            .container {
-                padding: 25px;
-            }
-        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif; margin: 0; background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: rgba(255,255,255,0.97); border-radius: 20px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        h1 { text-align:center; margin: 0 0 8px; font-size: 2.2rem; background: linear-gradient(135deg,#BD0934,#FFC838); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; color: transparent; }
+        p.lead { text-align:center; color:#231F20; margin: 0 0 24px; }
+        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
+        .quick-jump a:hover { opacity:.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+        .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 18px; }
+        .card { background:#fff; border:1px solid #e2e8f0; border-radius: 14px; padding: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); display:flex; flex-direction:column; gap:8px; }
+        .card h3 { margin: 0; color:#231F20; }
+        .card p { margin: 0; color:#334155; font-size: 0.95rem; }
+        .card a.btn { align-self:flex-start; margin-top: 8px; padding:10px 14px; border-radius:10px; text-decoration:none; color:#fff; background: linear-gradient(135deg,#BD0934,#FFC838); font-weight:700; }
+        .meta { margin-top: 22px; color:#475569; font-size: 0.9rem; }
+        @media (max-width: 640px){ .container{ padding: 20px; } }
     </style>
+    <!-- Prevent accidental file drops navigating away -->
+    <script>(function(){function block(e){e.preventDefault();e.stopPropagation();}window.addEventListener('dragover',block,{capture:true});window.addEventListener('drop',block,{capture:true});document.addEventListener('dragover',block,{capture:true});document.addEventListener('drop',block,{capture:true});})();</script>
+    <meta name="description" content="Maryland MSDE cluster crosswalks linking K-12 programs to postsecondary pathways and credentials.">
+    <meta name="theme-color" content="#BD0934">
+    <link rel="icon" href="data:,">
+    <style media="print">.top-nav{display:none}</style>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; img-src 'self' data: blob: https:;">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
 </head>
 <body>
     <nav class="top-nav">
         <div class="quick-jump">
-            <a href="#" data-modal="students">Students &amp; Parents</a>
-            <a href="#" data-modal="counselors">Counselors</a>
-            <a href="#" data-modal="teachers">Teachers</a>
-            <a href="#" id="openFeedback" data-modal="feedback" onclick="var m=document.getElementById('modal-feedback'); if(m){m.classList.add('open'); m.setAttribute('aria-hidden','false');} return false;">Feedback</a>
+            <a href="index.html" class="active">Home</a>
+            <a href="dt-crosswalk-table.html">Digital Technology</a>
+            <a href="003_ed_crosswalk-table.html">Education</a>
+            <a href="enr-crosswalk-table.html">ENR</a>
+            <a href="pss_crosswalk.html">PSS</a>
+            <a href="assessments.html">Assessments</a>
         </div>
     </nav>
     <div class="container">
-        <h1>CTE Cluster Crosswalk Repository</h1>
-        <p class="subtitle">Maryland State Department of Education - Career and Technical Education Program Crosswalks</p>
-
-        
-        <div class="audience-access">
-            <h2>Audience Access</h2>
-            <div class="audience-grid">
-                <div class="cta-card cta-primary">
-                    <h3 class="cta-title">Students &amp; Parents</h3>
-                    <p class="cta-description">Explore Programs &amp; Pathways — Find CTE programs, see aligned careers, and learn how to use crosswalks to plan courses and next steps.</p>
-                    <a href="#students-parents" class="cluster-link">Explore Programs &amp; Pathways
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
-                <div class="cta-stack">
-                    <div class="cta-card">
-                        <h3 class="cta-title">Counselors</h3>
-                        <p class="cta-description">Advising With Crosswalks — Use filters and exports to guide student course selection, pathways, and postsecondary alignment.</p>
-                        <a href="#counselors" class="cluster-link">Open Advising Guidance
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="cta-card">
-                        <h3 class="cta-title">Teachers</h3>
-                        <p class="cta-description">Align Courses &amp; Standards — Connect course content to pathways, certifications, and program standards; plan updates and integrations.</p>
-                        <a href="#teachers" class="cluster-link">Open Alignment Guidance
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
+        <h1>MSDE Cluster Crosswalks</h1>
+        <p class="lead">Explore aligned Maryland programs, credentials, and resources. Start with an interest inventory to shape a 6-year plan.</p>
+        <div class="grid">
+            <div class="card">
+                <h3>Student Assessments</h3>
+                <p>RIASEC + True Colors + Team Roles with save, import/export. Suggests clusters and starts a 6-year plan.</p>
+                <a class="btn" href="assessments.html">Open Assessments</a>
+            </div>
+            <div class="card">
+                <h3>Digital Technology</h3>
+                <p>Programs and credentials across programming, cybersecurity, data/ML, and networking.</p>
+                <a class="btn" href="dt-crosswalk-table.html">Open DT Crosswalk</a>
+            </div>
+            <div class="card">
+                <h3>Education</h3>
+                <p>Teacher Academy and Early Childhood alignments; degrees, certificates, and credentials.</p>
+                <a class="btn" href="003_ed_crosswalk-table.html">Open ED Crosswalk</a>
+            </div>
+            <div class="card">
+                <h3>ENR Cluster</h3>
+                <p>Unified ENR crosswalk with General and Renewable tracks; filter and export.</p>
+                <a class="btn" href="enr-crosswalk-table.html">Open ENR Crosswalk</a>
+            </div>
+            <div class="card">
+                <h3>PSS Cluster</h3>
+                <p>Public Safety & Security programs and credentials; EMT, CJ/Law, Fire, JROTC.</p>
+                <a class="btn" href="pss_crosswalk.html">Open PSS Crosswalk</a>
             </div>
         </div>
-        
-        <div class="clusters-grid">
-            <div class="cluster-card">
-                <h2 class="cluster-title">Digital Technology</h2>
-                <p class="cluster-description">Comprehensive crosswalk analysis for Digital Technology programs, including curriculum alignment and career pathways.</p>
-                <div class="cluster-links">
-                    <a href="dt-crosswalk-table.html" class="cluster-link">
-                        View Digital Technology Crosswalk
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="cluster-card">
-                <h2 class="cluster-title">Education</h2>
-                <p class="cluster-description">Education cluster crosswalk detailing teaching preparation programs and educational support services pathways.</p>
-                <div class="cluster-links">
-                    <a href="003_ed_crosswalk-table.html" class="cluster-link">
-                        View Education Crosswalk
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="cluster-card">
-                <h2 class="cluster-title">Environmental & Natural Resources</h2>
-                <p class="cluster-description">Comprehensive crosswalk for Environmental & Natural Resources programs, including renewable energy specializations.</p>
-                <div class="cluster-links">
-                    <a href="enr-crosswalk-table.html" class="cluster-link">
-                        View ENR Crosswalk
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                    
-                </div>
-            </div>
-
-            <div class="cluster-card">
-                <h2 class="cluster-title">Public Safety and Services (PSS)</h2>
-                <p class="cluster-description">Public Safety and Services cluster crosswalk with detailed alignment to career pathways and industry requirements.</p>
-                <div class="cluster-links">
-                    <a href="pss_crosswalk.html" class="cluster-link">
-                        View PSS Crosswalk
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="info-section" id="contact-training">
-            <h2>Contact &amp; Training</h2>
-            <p>Have questions or want to request a roadshow session? Reach out to our team.</p>
-            <div class="contact-actions" style="display:flex;flex-wrap:wrap;gap:12px;">
-                <a class="cluster-link" href="mailto:occpcteprograms.msde@maryland.gov?subject=From%20CTE%20Crosswalking%20-%20Contact&amp;body=hello%20%7Binsert%20name%7D%2C%0A%0APlease%20include%20your%20best%20email%20for%20contact.%0A%0ATopic%2FQuestion%3A%20">Contact Us
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </a>
-                <a class="cluster-link" href="mailto:occpcteprograms.msde@maryland.gov?subject=From%20CTE%20Crosswalking%20-%20Roadshow%20Request&amp;body=hello%20%7Binsert%20name%7D%2C%0A%0APlease%20include%20your%20best%20email%20for%20contact.%0A%0ADistrict%2FSchool%3A%20%0ARole%3A%20%0APreferred%20dates%2Ftimes%3A%20%0AAudience%20(administrators%2Fcounselors%2Fteachers)%3A%20%0AEstimated%20audience%20size%3A%20%0ALocation%2Fvirtual%20preference%3A%20">Request a Roadshow
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </a>
-            </div>
-        </div>
-
-        <div class="info-section">
-            <h2>About These Crosswalks</h2>
-            <p>These crosswalk tables provide comprehensive alignment between Career and Technical Education (CTE) programs and various educational standards, career pathways, and industry requirements.</p>
-            
-            <h3 style="margin-top: 20px; margin-bottom: 10px; color: #231F20;">Features:</h3>
-            <ul>
-                <li>Interactive tables with sorting and filtering capabilities</li>
-                <li>Export functionality to Excel for offline analysis</li>
-                <li>Detailed program-to-pathway alignments</li>
-                <li>Career cluster mappings and industry connections</li>
-                <li>Postsecondary education alignment opportunities</li>
-            </ul>
-
-            <h3 style="margin-top: 20px; margin-bottom: 10px; color: #231F20;">How to Use:</h3>
-            <ul>
-                <li>Click on any cluster button above to view the detailed crosswalk table</li>
-                <li>Use the search and filter features within each table to find specific programs</li>
-                <li>Export tables to Excel using the download button for further analysis</li>
-                <li>Print individual crosswalks using your browser's print function</li>
-            </ul>
-
-            <h3 style="margin-top: 20px; margin-bottom: 10px; color: #231F20;">Blueprint Alignment & Outreach</h3>
-            <p>We imagine an accompanying website or landing page that provides clear instructions on how to navigate these crosswalks and explains how this work supports the Blueprint for Maryland's Future.</p>
-            <p>We also envision taking this on a roadshow to engage LEA administrators, counselors, and teachers.</p>
-        </div>
-
-        <!-- Audience Guidance now provided via modals -->
-        
-        <div class="modal" id="modal-students" aria-hidden="true" role="dialog" aria-labelledby="studentsTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="studentsTitle" style="color:#231F20;">Students &amp; Parents</h2>
-                    <button class="modal-close" data-close aria-label="Close">×</button>
-                </div>
-                <ul style="margin-left:20px;color:#4a5568;line-height:1.8;">
-                    <li>Use the cluster buttons to explore programs and related careers.</li>
-                    <li>Check requirements and recommended sequences to plan courses.</li>
-                    <li>Export a table view to discuss options with your counselor.</li>
-                    <li>Where available, use the Source/program links in tables to review requirements and recommended sequences.</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="modal" id="modal-counselors" aria-hidden="true" role="dialog" aria-labelledby="counselorsTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="counselorsTitle" style="color:#231F20;">Counselors</h2>
-                    <button class="modal-close" data-close aria-label="Close">×</button>
-                </div>
-                <ul style="margin-left:20px;color:#4a5568;line-height:1.8;">
-                    <li>Filter crosswalks by program, credential, or pathway for advising.</li>
-                    <li>Export and annotate tables to support academic planning meetings.</li>
-                    <li>Reference postsecondary alignments when discussing dual enrollment/AP options.</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="modal" id="modal-teachers" aria-hidden="true" role="dialog" aria-labelledby="teachersTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="teachersTitle" style="color:#231F20;">Teachers</h2>
-                    <button class="modal-close" data-close aria-label="Close">×</button>
-                </div>
-                <ul style="margin-left:20px;color:#4a5568;line-height:1.8;">
-                    <li>Map lesson plans to pathway standards and industry certifications.</li>
-                    <li>Identify integration points with related programs and clusters.</li>
-                    <li>Share exports with PLCs for alignment and curriculum updates.</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Feedback Modal -->
-        <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="feedbackTitle" style="color:#231F20;">Share Your Feedback</h2>
-                    <button class="modal-close" data-close aria-label="Close">×</button>
-                </div>
-                <form id="feedbackForm" onsubmit="return submitFeedback(event)" style="display:flex; flex-direction:column; gap:12px;">
-                    <div>
-                        <label for="fbName" style="display:block;color:#231F20;margin-bottom:4px;">Your Name</label>
-                        <input id="fbName" type="text" placeholder="First Last" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
-                    </div>
-                    <div>
-                        <label for="fbEmail" style="display:block;color:#231F20;margin-bottom:4px;">Your Email</label>
-                        <input id="fbEmail" type="email" placeholder="you@example.com" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
-                    </div>
-                    <div>
-                        <label for="fbRole" style="display:block;color:#231F20;margin-bottom:4px;">Your Role</label>
-                        <select id="fbRole" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
-                            <option value="">Select a role</option>
-                            <option>Student</option>
-                            <option>Parent/Guardian</option>
-                            <option>Counselor</option>
-                            <option>Teacher</option>
-                            <option>Administrator</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="fbDistrict" style="display:block;color:#231F20;margin-bottom:4px;">District/School (optional)</label>
-                        <input id="fbDistrict" type="text" placeholder="e.g., MCPS / Gaithersburg HS" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
-                    </div>
-                    <div>
-                        <label for="fbTopic" style="display:block;color:#231F20;margin-bottom:4px;">Topic</label>
-                        <input id="fbTopic" type="text" placeholder="What is this about?" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
-                    </div>
-                    <div>
-                        <label for="fbDetails" style="display:block;color:#231F20;margin-bottom:4px;">Feedback</label>
-                        <textarea id="fbDetails" rows="5" placeholder="Share details or suggestions..." style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;"></textarea>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <input id="fbFollow" type="checkbox">
-                        <label for="fbFollow" style="color:#231F20;">I’m okay with follow-up via email</label>
-                    </div>
-                    <div style="display:flex;gap:10px;justify-content:flex-end;">
-                        <button type="button" class="cluster-link" style="background:#718096;" data-close>Cancel</button>
-                        <button type="submit" class="cluster-link">Submit Feedback</button>
-                    </div>
-                    <p style="font-size:12px;color:#4a5568;margin-top:6px;">Submitting opens your email client with your responses pre-filled.</p>
-                </form>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>Maryland State Department of Education - Division of Career and College Readiness</p>
-            <p style="margin-top: 10px; font-size: 0.9rem;">© 2025 MSDE CTE Crosswalk Repository</p>
-        </div>
+        <div class="meta">More clusters coming soon.</div>
     </div>
-
-<script>
-function submitFeedback(e){
-  if(e) e.preventDefault();
-  var to='occpcteprograms.msde@maryland.gov';
-  var subj='CTE Crosswalks Feedback';
-  function gv(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
-  var name=gv('fbName'); var email=gv('fbEmail'); var role=gv('fbRole'); var district=gv('fbDistrict'); var topic=gv('fbTopic'); var details=gv('fbDetails');
-  var follow=(document.getElementById('fbFollow')&&document.getElementById('fbFollow').checked)?'Yes':'No';
-  var lines=[
-    'Feedback Submission','',
-    'Name: '+(name||'-'),
-    'Email: '+(email||'-'),
-    'Role: '+(role||'-'),
-    'District/School: '+(district||'-'),
-    'Topic: '+(topic||'-'),
-    'Feedback:',
-    (details||'-'),
-    '',
-    'Okay to follow-up by email? '+follow
-  ];
-  var body=encodeURIComponent(lines.join('
-'));
-  var a=document.createElement('a'); a.href='mailto:'+to+'?subject='+encodeURIComponent(subj)+'&body='+body; a.style.display='none';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  return false;
-}
-</script>
 </body>
 </html>
-<script>
-    (function(){
-        const openers = document.querySelectorAll('.quick-jump a[data-modal]');
-        const modals = {
-            students: document.getElementById('modal-students'),
-            counselors: document.getElementById('modal-counselors'),
-            teachers: document.getElementById('modal-teachers')
-        };
-        function openModal(key){
-            const m = modals[key];
-            if (!m) return;
-            m.classList.add('open');
-            m.setAttribute('aria-hidden','false');
-        }
-        function closeModal(m){
-            m.classList.remove('open');
-            m.setAttribute('aria-hidden','true');
-        }
-        openers.forEach(a => a.addEventListener('click', (e) => {
-            e.preventDefault();
-            const key = a.getAttribute('data-modal');
-            openModal(key);
-        }));
-        document.querySelectorAll('.modal').forEach(m => {
-            m.addEventListener('click', (e) => {
-                if (e.target === m || e.target.hasAttribute('data-close')) closeModal(m);
-            });
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal.open').forEach(closeModal);
-            }
-        });
-    })();
-</script>
-

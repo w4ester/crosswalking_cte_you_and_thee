@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Assessments & 6-Year Plan</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Montserrat','Calibri','Segoe UI',sans-serif; margin:0; background: linear-gradient(135deg,#BD0934 0%, #FFC838 100%); min-height:100vh; padding:20px; }
+        .container { max-width: 1100px; margin:0 auto; background: rgba(255,255,255,0.97); border-radius: 20px; padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        h1 { text-align:center; margin:0 0 6px; font-size:2.2rem; background: linear-gradient(135deg,#BD0934,#FFC838); -webkit-background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
+        p.lead { text-align:center; color:#231F20; margin: 0 0 22px; }
+        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
+        .quick-jump a:hover { opacity:.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+        .grid { display:grid; grid-template-columns:1fr; gap:16px; }
+        .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+        .card h2 { margin: 0 0 8px; color:#231F20; font-size:1.2rem; }
+        .section { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 12px; }
+        fieldset { border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px; }
+        legend { padding: 0 6px; color:#111827; font-weight:700; }
+        label { display:block; color:#334155; font-size:0.95rem; margin: 6px 0; }
+        .controls { display:flex; flex-wrap:wrap; gap:10px; }
+        button, .btn { padding:10px 14px; border:none; border-radius:10px; background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
+        .btn-secondary { background:#0ea5e9; }
+        .btn-outline { background:#fff; color:#111827; border:1px solid #e2e8f0; }
+        .row { display:flex; flex-wrap:wrap; gap: 12px; }
+        .col { flex:1 1 280px; }
+        .pill { display:inline-block; background:#f1f5f9; border:1px solid #e2e8f0; color:#0f172a; padding:6px 10px; border-radius:999px; margin: 4px 4px 0 0; font-size: 0.85rem; }
+        .list { margin: 6px 0 0 16px; color:#334155; }
+        textarea { width:100%; min-height: 100px; padding:10px; border:1px solid #e2e8f0; border-radius:10px; font-family: inherit; }
+        input[type="text"] { width:100%; padding:8px 10px; border:1px solid #e2e8f0; border-radius:8px; }
+        .plan-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        @media (max-width: 800px){ .plan-grid{ grid-template-columns: 1fr; } }
+        .year { border:1px solid #e2e8f0; border-radius: 12px; padding: 10px; background:#fff; }
+        .year h4 { margin: 2px 0 8px; color:#111827; }
+        .year ul { margin: 0 0 0 18px; min-height: 28px; }
+        .muted { color:#64748b; font-size: 0.9rem; }
+        .hint { color:#0f172a; font-size:0.95rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px; }
+        .spaced { margin-top: 8px; }
+        .right { display:flex; gap:8px; justify-content:flex-end; }
+        .danger { background:#ef4444; }
+    </style>
+    <!-- Prevent accidental file drops navigating away -->
+    <script>(function(){function block(e){e.preventDefault();e.stopPropagation();}window.addEventListener('dragover',block,{capture:true});window.addEventListener('drop',block,{capture:true});document.addEventListener('dragover',block,{capture:true});document.addEventListener('drop',block,{capture:true});})();</script>
+    <meta name="description" content="Student interest inventory (RIASEC, True Colors, Team Roles) with local save and 6-year plan scaffold.">
+    <style media="print">.top-nav{display:none}</style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="quick-jump">
+            <a href="index.html">Home</a>
+            <a href="dt-crosswalk-table.html">Digital Technology</a>
+            <a href="enr-crosswalk-table.html">ENR</a>
+            <a href="assessments.html" class="active">Assessments</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Student Assessments</h1>
+        <p class="lead">Quick inventory to suggest clusters and start a 6-year plan. Data stays in your browser.</p>
+
+        <div class="grid">
+            <div class="card">
+                <h2>RIASEC Interests</h2>
+                <div class="section">
+                    <fieldset id="r-realistic">
+                        <legend>R — Realistic</legend>
+                        <label><input type="checkbox" value="1"> I like working with tools, machines, outdoors</label>
+                        <label><input type="checkbox" value="1"> I enjoy hands-on tasks and fixing things</label>
+                        <label><input type="checkbox" value="1"> I prefer practical, physical projects</label>
+                        <label><input type="checkbox" value="1"> I enjoy building or assembling</label>
+                        <label><input type="checkbox" value="1"> I like working with plants or the environment</label>
+                    </fieldset>
+                    <fieldset id="r-investigative">
+                        <legend>I — Investigative</legend>
+                        <label><input type="checkbox" value="1"> I enjoy analyzing data and patterns</label>
+                        <label><input type="checkbox" value="1"> I like solving complex problems</label>
+                        <label><input type="checkbox" value="1"> I’m curious about how things work</label>
+                        <label><input type="checkbox" value="1"> I enjoy experiments or research</label>
+                        <label><input type="checkbox" value="1"> I like math and science challenges</label>
+                    </fieldset>
+                    <fieldset id="r-artistic">
+                        <legend>A — Artistic</legend>
+                        <label><input type="checkbox" value="1"> I enjoy creative expression (art, music, writing)</label>
+                        <label><input type="checkbox" value="1"> I like design and aesthetics</label>
+                        <label><input type="checkbox" value="1"> I prefer unstructured tasks</label>
+                        <label><input type="checkbox" value="1"> I enjoy storytelling or content creation</label>
+                        <label><input type="checkbox" value="1"> I like exploring new ideas visually</label>
+                    </fieldset>
+                    <fieldset id="r-social">
+                        <legend>S — Social</legend>
+                        <label><input type="checkbox" value="1"> I like helping and teaching others</label>
+                        <label><input type="checkbox" value="1"> I enjoy collaborating in groups</label>
+                        <label><input type="checkbox" value="1"> I’m a good listener and supporter</label>
+                        <label><input type="checkbox" value="1"> I enjoy mentoring or tutoring</label>
+                        <label><input type="checkbox" value="1"> I value community impact</label>
+                    </fieldset>
+                    <fieldset id="r-enterprising">
+                        <legend>E — Enterprising</legend>
+                        <label><input type="checkbox" value="1"> I enjoy leading teams and initiatives</label>
+                        <label><input type="checkbox" value="1"> I’m drawn to business/entrepreneurship</label>
+                        <label><input type="checkbox" value="1"> I’m comfortable persuading or pitching</label>
+                        <label><input type="checkbox" value="1"> I like setting goals and achieving them</label>
+                        <label><input type="checkbox" value="1"> I enjoy organizing events or projects</label>
+                    </fieldset>
+                    <fieldset id="r-conventional">
+                        <legend>C — Conventional</legend>
+                        <label><input type="checkbox" value="1"> I like organizing information and details</label>
+                        <label><input type="checkbox" value="1"> I enjoy working with spreadsheets or logs</label>
+                        <label><input type="checkbox" value="1"> I prefer structure and clear steps</label>
+                        <label><input type="checkbox" value="1"> I’m careful with accuracy and records</label>
+                        <label><input type="checkbox" value="1"> I like tracking metrics and progress</label>
+                    </fieldset>
+                </div>
+                <div class="controls spaced">
+                    <button id="calcRIASEC">Calculate RIASEC</button>
+                    <span id="riasecOut" class="pill" title="Top codes"></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>True Colors</h2>
+                <div class="row">
+                    <div class="col">
+                        <label>Primary Color</label>
+                        <select id="colorPrimary">
+                            <option value="">— Select —</option>
+                            <option>Gold (organized, dependable)</option>
+                            <option>Blue (empathetic, cooperative)</option>
+                            <option>Green (analytical, curious)</option>
+                            <option>Orange (energetic, hands-on)</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label>Secondary Color</label>
+                        <select id="colorSecondary">
+                            <option value="">— Select —</option>
+                            <option>Gold (organized, dependable)</option>
+                            <option>Blue (empathetic, cooperative)</option>
+                            <option>Green (analytical, curious)</option>
+                            <option>Orange (energetic, hands-on)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Team Roles</h2>
+                <div class="row">
+                    <div class="col">
+                        <label>Preferred Role</label>
+                        <select id="teamRole">
+                            <option value="">— Select —</option>
+                            <option>Leader/Coordinator</option>
+                            <option>Analyst/Researcher</option>
+                            <option>Builder/Technician</option>
+                            <option>Communicator/Educator</option>
+                        </select>
+                        <p class="muted">Pick the role you feel most aligned with when working in a group.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Save, Import/Export</h2>
+                <div class="controls">
+                    <button id="saveAll">Save to browser</button>
+                    <button id="loadAll" class="btn-secondary">Load saved</button>
+                    <button id="clearAll" class="danger">Clear saved</button>
+                    <button id="exportAll" class="btn-outline">Export JSON</button>
+                </div>
+                <div class="spaced">
+                    <label>Import JSON</label>
+                    <textarea id="importText" placeholder='Paste previously exported JSON here to import'></textarea>
+                    <div class="right"><button id="importBtn" class="btn-secondary">Import</button></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Suggested Clusters</h2>
+                <div id="suggestions" class="hint">Run RIASEC or set colors/role to see suggestions.</div>
+            </div>
+
+            <div class="card">
+                <h2>6-Year Plan (draft)</h2>
+                <p class="muted">Use these slots to capture a rough path (courses, micro-credentials, internships, dual enrollment, etc.). Saved locally.</p>
+                <div class="controls spaced">
+                    <button id="addYear">Add Year</button>
+                    <button id="resetPlan" class="btn-outline">Reset to 6 years</button>
+                </div>
+                <div id="plan" class="plan-grid spaced"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LS_KEY_ASMT = 'studentAssessmentsV1';
+        const LS_KEY_PLAN = 'studentPlanV1';
+
+        function getChecksSum(fsId){
+            const fs = document.getElementById(fsId); if(!fs) return 0;
+            return Array.from(fs.querySelectorAll('input[type=checkbox]')).reduce((s,cb)=> s + (cb.checked?1:0), 0);
+        }
+
+        function calcRIASEC(){
+            const scores = {
+                R: getChecksSum('r-realistic'),
+                I: getChecksSum('r-investigative'),
+                A: getChecksSum('r-artistic'),
+                S: getChecksSum('r-social'),
+                E: getChecksSum('r-enterprising'),
+                C: getChecksSum('r-conventional')
+            };
+            const ordered = Object.entries(scores).sort((a,b)=> b[1]-a[1]);
+            const top = ordered.slice(0,3).map(x=>x[0]).join('');
+            document.getElementById('riasecOut').textContent = top ? `Top: ${top}` : '';
+            return { scores, top };
+        }
+
+        function collectAssessments(){
+            const ri = calcRIASEC();
+            return {
+                riasec: ri,
+                colorPrimary: document.getElementById('colorPrimary').value || '',
+                colorSecondary: document.getElementById('colorSecondary').value || '',
+                teamRole: document.getElementById('teamRole').value || ''
+            };
+        }
+
+        function saveAssessments(){ localStorage.setItem(LS_KEY_ASMT, JSON.stringify(collectAssessments())); }
+        function loadAssessments(){
+            try { const data = JSON.parse(localStorage.getItem(LS_KEY_ASMT)||'{}');
+                // RIASEC checks
+                const map = { R:'r-realistic', I:'r-investigative', A:'r-artistic', S:'r-social', E:'r-enterprising', C:'r-conventional' };
+                Object.values(map).forEach(id=>{
+                    const fs = document.getElementById(id);
+                    if (fs) fs.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false);
+                });
+                // We cannot reconstruct exact checks from scores only; leave checks as-is.
+                // Colors/role
+                if (data.colorPrimary) document.getElementById('colorPrimary').value = data.colorPrimary;
+                if (data.colorSecondary) document.getElementById('colorSecondary').value = data.colorSecondary;
+                if (data.teamRole) document.getElementById('teamRole').value = data.teamRole;
+                // Recalc and show suggestions
+                calcRIASEC();
+                renderSuggestions();
+            } catch(e) { console.warn(e); }
+        }
+
+        function exportAll(){
+            const blob = new Blob([JSON.stringify({ assessments: collectAssessments(), plan: getPlanModel() }, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'student_assessments_and_plan.json';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+
+        function importAll(){
+            try {
+                const txt = document.getElementById('importText').value.trim();
+                if (!txt) return alert('Paste exported JSON first.');
+                const data = JSON.parse(txt);
+                if (data.assessments) localStorage.setItem(LS_KEY_ASMT, JSON.stringify(data.assessments));
+                if (data.plan) localStorage.setItem(LS_KEY_PLAN, JSON.stringify(data.plan));
+                loadAssessments();
+                renderPlan();
+                alert('Imported successfully.');
+            } catch(e) {
+                alert('Invalid JSON.');
+            }
+        }
+
+        // Suggestions mapping
+        function renderSuggestions(){
+            const s = document.getElementById('suggestions');
+            const a = collectAssessments();
+            const codes = (a.riasec.top||'').split('');
+            const recs = new Map();
+            // Lightweight heuristic based on top code(s)
+            if (codes.includes('I') || a.colorPrimary.includes('Green')) {
+                recs.set('Digital Technology', 'dt-crosswalk-table.html');
+            }
+            if (codes.includes('R') || a.colorPrimary.includes('Orange')) {
+                recs.set('ENR Cluster', 'enr-crosswalk-table.html');
+            }
+            if (codes.includes('C')) {
+                recs.set('Digital Technology (Data/IT)', 'dt-crosswalk-table.html');
+            }
+            if (codes.includes('S') || a.teamRole.includes('Educator')) {
+                // Placeholder for Education cluster (not present)
+                recs.set('Education (coming soon)', '#');
+            }
+            if (!recs.size) {
+                s.innerHTML = 'No strong match yet — try selecting interests or colors.';
+            } else {
+                s.innerHTML = '';
+                recs.forEach((href, name) => {
+                    const aEl = document.createElement('a');
+                    aEl.textContent = name;
+                    aEl.href = href;
+                    aEl.className = 'pill';
+                    if (href === '#') aEl.style.opacity = '0.6';
+                    s.appendChild(aEl);
+                });
+            }
+        }
+
+        // 6-Year Plan
+        function defaultPlan(){
+            return Array.from({length:6}).map((_,i)=>({ year: i+1, items: [] }));
+        }
+        function getPlanModel(){ try { return JSON.parse(localStorage.getItem(LS_KEY_PLAN)||'[]'); } catch { return []; } }
+        function savePlanModel(m){ localStorage.setItem(LS_KEY_PLAN, JSON.stringify(m)); }
+        function ensurePlan(){ let m = getPlanModel(); if (!Array.isArray(m) || !m.length) { m = defaultPlan(); savePlanModel(m); } return m; }
+        function renderPlan(){
+            const root = document.getElementById('plan');
+            const model = ensurePlan();
+            root.innerHTML = '';
+            model.forEach((yr, idx)=>{
+                const box = document.createElement('div'); box.className = 'year';
+                const h = document.createElement('h4'); h.textContent = `Year ${yr.year}`; box.appendChild(h);
+                const ul = document.createElement('ul');
+                yr.items.forEach((t, j)=>{ const li = document.createElement('li'); li.textContent = t; const del = document.createElement('button'); del.textContent='Remove'; del.className='btn-outline'; del.style.marginLeft='8px'; del.onclick=()=>{ const m = ensurePlan(); m[idx].items.splice(j,1); savePlanModel(m); renderPlan(); }; li.appendChild(del); ul.appendChild(li); });
+                box.appendChild(ul);
+                const input = document.createElement('input'); input.type='text'; input.placeholder='Add item (course, credential, internship, etc.)'; input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ addItem(idx, input.value); input.value=''; }});
+                const addBtn = document.createElement('button'); addBtn.textContent='Add'; addBtn.onclick=()=>{ addItem(idx, input.value); input.value=''; };
+                const row = document.createElement('div'); row.className='row spaced'; const col1=document.createElement('div'); col1.className='col'; col1.appendChild(input); const col2=document.createElement('div'); col2.className='col'; col2.appendChild(addBtn);
+                row.appendChild(col1); row.appendChild(col2);
+                box.appendChild(row);
+                root.appendChild(box);
+            });
+        }
+        function addItem(yearIdx, text){ if(!text.trim()) return; const m = ensurePlan(); m[yearIdx].items.push(text.trim()); savePlanModel(m); renderPlan(); }
+        function addYear(){ const m = ensurePlan(); m.push({ year: m.length+1, items: []}); savePlanModel(m); renderPlan(); }
+        function resetPlan(){ savePlanModel(defaultPlan()); renderPlan(); }
+
+        // Wire controls
+        document.getElementById('calcRIASEC').addEventListener('click', ()=>{ calcRIASEC(); renderSuggestions(); });
+        document.getElementById('saveAll').addEventListener('click', ()=>{ saveAssessments(); savePlanModel(getPlanModel()); alert('Saved to browser.'); });
+        document.getElementById('loadAll').addEventListener('click', ()=>{ loadAssessments(); renderPlan(); });
+        document.getElementById('clearAll').addEventListener('click', ()=>{ localStorage.removeItem(LS_KEY_ASMT); localStorage.removeItem(LS_KEY_PLAN); document.getElementById('riasecOut').textContent=''; renderSuggestions(); renderPlan(); alert('Cleared saved data.'); });
+        document.getElementById('exportAll').addEventListener('click', exportAll);
+        document.getElementById('importBtn').addEventListener('click', importAll);
+        document.getElementById('addYear').addEventListener('click', addYear);
+        document.getElementById('resetPlan').addEventListener('click', resetPlan);
+
+        // Init
+        window.addEventListener('DOMContentLoaded', ()=>{ loadAssessments(); renderPlan(); renderSuggestions(); });
+    </script>
+</body>
+</html>
+
