@@ -1462,7 +1462,7 @@
         
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            initializeData();
+            try { initializeData(); } catch(e) { console.error('[PSS] init error', e); }
             setupSorting();
             
             // Add event listeners for filters
@@ -1470,6 +1470,14 @@
             document.getElementById('sectorFilter').addEventListener('change', applyFilters);
             document.getElementById('searchInput').addEventListener('input', applyFilters);
             updateSortIndicators();
+        });
+
+        // Fallback: if table still hidden after load, retry initialize
+        window.addEventListener('load', function(){
+            var tbl = document.getElementById('dataTable');
+            if (tbl && (tbl.style.display === '' || tbl.style.display === 'none')) {
+                try { initializeData(); } catch(e) { console.error('[PSS] load fallback error', e); }
+            }
         });
 
         // Prevent accidental navigation when dropping screenshots/files onto the page (Safari/Chrome)

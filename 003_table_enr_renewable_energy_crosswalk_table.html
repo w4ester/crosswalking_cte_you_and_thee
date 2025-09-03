@@ -91,6 +91,15 @@
             font-size: 14px;
             border-radius: 6px;
         }
+
+        /* Responsive controls to prevent overlap */
+        @media (max-width: 960px) {
+            .controls { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+            .controls .search-box { width: 100% !important; flex: 1 1 auto !important; }
+            .controls .btns { width: 100% !important; justify-content: flex-start !important; position: relative; z-index: 0; }
+            .controls .btns button { flex: 1 1 auto; }
+        }
+
     </style>
 </head>
 <body>
