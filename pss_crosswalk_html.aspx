@@ -1317,16 +1317,14 @@
         function applyFilters() {
             const programFilter = document.getElementById('programFilter').value;
             const sectorFilter = document.getElementById('sectorFilter').value;
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const q = document.getElementById('searchInput').value.toLowerCase().trim();
+            const tokens = q.split(/\s+/).filter(Boolean);
             
             filteredData = allData.filter(row => {
                 const matchProgram = !programFilter || row.program === programFilter;
                 const matchSector = !sectorFilter || row.sector === sectorFilter;
-                const matchSearch = !searchTerm || 
-                    row.institution.toLowerCase().includes(searchTerm) ||
-                    row.major.toLowerCase().includes(searchTerm) ||
-                    row.certificates.toLowerCase().includes(searchTerm);
-                
+                const text = (row.program + ' ' + row.institution + ' ' + row.sector + ' ' + row.degree + ' ' + row.major + ' ' + (row.certificates||'') + ' ' + (row.credentials||'')).toLowerCase();
+                const matchSearch = tokens.length === 0 || tokens.every(t => text.includes(t));
                 return matchProgram && matchSector && matchSearch;
             });
             

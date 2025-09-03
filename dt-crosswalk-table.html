@@ -570,6 +570,7 @@
                 if (want4 && !/university/i.test(r.type)) return false;
                 return true;
             });
+            const credWords = /\b(cda|parapro|compTIA|data\+|network\+|security\+|ccna|aws|azure|google|ibm|cysa\+|a\+|n\+|pcep|it specialist|cblp|osha)\b/i;
             const scored = filtered.map(r => {
                 const text = { institution:r.institution.toLowerCase(), programArea:r.programArea.toLowerCase(),
                     programs:r.programs.toLowerCase(), certificates:r.certificates.toLowerCase(),

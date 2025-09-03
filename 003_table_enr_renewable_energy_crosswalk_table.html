@@ -424,9 +424,11 @@
             }
 
             function matchesSearch(tr){
-                const q = (searchInput.value || '').toLowerCase();
+                const q = (searchInput.value || '').toLowerCase().trim();
                 if (!q) return true;
-                return tr.textContent.toLowerCase().includes(q);
+                const tokens = q.split(/\s+/).filter(Boolean);
+                const text = tr.textContent.toLowerCase();
+                return tokens.every(t => text.includes(t));
             }
 
             function applyFilters(){
