@@ -18,8 +18,8 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -34,7 +34,7 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -71,7 +71,7 @@
         
         select, input[type="text"] {
             padding: 10px 15px;
-            border: 2px solid #3498db;
+            border: 2px solid #e2e8f0;
             border-radius: 8px;
             font-size: 14px;
             transition: all 0.3s ease;
@@ -80,13 +80,13 @@
         
         select:focus, input[type="text"]:focus {
             outline: none;
-            border-color: #2c3e50;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: #BD0934;
+            box-shadow: 0 0 0 3px rgba(189, 9, 52, 0.1);
         }
         
         button {
             padding: 12px 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -94,7 +94,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(189, 9, 52, 0.4);
         }
         
         button:hover {
@@ -123,7 +123,7 @@
         }
         
         thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
             color: white;
             position: sticky;
             top: 0;
@@ -148,8 +148,7 @@
         }
         
         tbody tr:hover {
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            transform: scale(1.01);
+            background: #E2E3E4;
         }
         
         tbody tr:nth-child(even) {
@@ -217,11 +216,11 @@
         .stat-number {
             font-size: 2em;
             font-weight: bold;
-            color: #667eea;
+            color: #BD0934;
         }
         
         .stat-label {
-            color: #718096;
+            color: #231F20;
             margin-top: 5px;
         }
         
@@ -262,7 +261,7 @@
             text-align: center;
             padding: 40px;
             font-size: 1.2em;
-            color: #718096;
+            color: #231F20;
         }
     </style>
 </head>
@@ -271,6 +270,24 @@
         <div class="header">
             <h1>PSS Cluster Postsecondary Crosswalk</h1>
             <p>Maryland Public Safety & Security Programs Alignment</p>
+        </div>
+        
+        <div class="stats-removed">
+            <div class="stat-card">
+                <div class="stat-number" id="totalRecords">0</div>
+                <div class="stat-label">Total Records</div>
+    
+                <div class="stat-number" id="ccCount">0</div>
+                <div class="stat-label">Community Colleges</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="uniCount">0</div>
+                <div class="stat-label">4-Year Universities</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="certCount">0</div>
+                <div class="stat-label">With Certificates</div>
+            </div>
         </div>
         
         <div class="controls">
@@ -320,7 +337,7 @@
             </table>
         </div>
         
-        <div class="stats">
+        
             <div class="stat-card">
                 <div class="stat-number" id="totalRecords">0</div>
                 <div class="stat-label">Total Records</div>
