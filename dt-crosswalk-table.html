@@ -1445,12 +1445,15 @@
         }
 
         document.getElementById('searchInput').addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
+            const q = this.value.toLowerCase().trim();
+            const tokens = q.split(/\s+/).filter(Boolean);
             const rows = document.querySelectorAll('#tableBody tr');
-            
+
             rows.forEach(row => {
+                if (tokens.length === 0) { row.style.display = ''; return; }
                 const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                const match = tokens.every(t => text.includes(t));
+                row.style.display = match ? '' : 'none';
             });
         });
 
