@@ -10,15 +10,7 @@
     <title>PSS Cluster Crosswalk - Maryland Postsecondary Programs</title>
     
     <!-- SheetJS Library for Excel Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">        // Prevent accidental navigation when dropping files/screenshots onto the page
-        window.addEventListener('dragover', function(e){ e.preventDefault(); });
-        window.addEventListener('drop', function(e){
-            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
-                e.preventDefault();
-                alert('File drop disabled to prevent accidental navigation.');
-            }
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
         * {
@@ -37,14 +29,14 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: white;
+            background: rgba(255, 255, 255, 0.97);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
         }
         
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: transparent;
             color: white;
             padding: 30px;
             text-align: center;
@@ -53,7 +45,10 @@
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #BD0934, #FFC838);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .header p {
@@ -87,7 +82,7 @@
         
         select, input[type="text"] {
             padding: 10px 15px;
-            border: 2px solid #3498db;
+            border: 2px solid #e2e8f0;
             border-radius: 8px;
             font-size: 14px;
             transition: all 0.3s ease;
@@ -96,8 +91,8 @@
         
         select:focus, input[type="text"]:focus {
             outline: none;
-            border-color: #2c3e50;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: #BD0934;
+            box-shadow: 0 0 0 3px rgba(189, 9, 52, 0.1);
         }
         
         button {
@@ -151,7 +146,7 @@
             text-align: left;
             font-weight: 600;
             letter-spacing: 0.5px;
-            border-bottom: 3px solid #5a67d8;
+            border-bottom: none;
         }
         
         td {
@@ -164,8 +159,7 @@
         }
         
         tbody tr:hover {
-            background: linear-gradient(90deg, rgba(189, 9, 52, 0.1) 0%, rgba(255, 200, 56, 0.1) 100%);
-            transform: scale(1.01);
+            background: #E2E3E4;
         }
         
         tbody tr:nth-child(even) {
@@ -297,6 +291,9 @@
         <div class="header">
             <h1>PSS Cluster Postsecondary Crosswalk</h1>
             <p>Maryland Public Safety & Security Programs Alignment</p>
+        </div>
+        <div style="text-align:center; margin-bottom: 10px; color:#231F20; font-size:0.95rem;">
+            <a href="index.aspx">Home</a> &gt; PSS
         </div>
         
         <div class="controls">
