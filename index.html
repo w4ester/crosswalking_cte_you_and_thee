@@ -288,6 +288,7 @@
             <a href="#" data-modal="students">Students &amp; Parents</a>
             <a href="#" data-modal="counselors">Counselors</a>
             <a href="#" data-modal="teachers">Teachers</a>
+            <a href="#" id="openFeedback">Feedback</a>
         </div>
     </nav>
     <div class="container">
@@ -478,6 +479,59 @@
             </div>
         </div>
 
+        <!-- Feedback Modal -->
+        <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="feedbackTitle" style="color:#231F20;">Share Your Feedback</h2>
+                    <button class="modal-close" data-close aria-label="Close">×</button>
+                </div>
+                <form id="feedbackForm" style="display:flex; flex-direction:column; gap:12px;">
+                    <div>
+                        <label for="fbName" style="display:block;color:#231F20;margin-bottom:4px;">Your Name</label>
+                        <input id="fbName" type="text" placeholder="First Last" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
+                    </div>
+                    <div>
+                        <label for="fbEmail" style="display:block;color:#231F20;margin-bottom:4px;">Your Email</label>
+                        <input id="fbEmail" type="email" placeholder="you@example.com" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
+                    </div>
+                    <div>
+                        <label for="fbRole" style="display:block;color:#231F20;margin-bottom:4px;">Your Role</label>
+                        <select id="fbRole" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
+                            <option value="">Select a role</option>
+                            <option>Student</option>
+                            <option>Parent/Guardian</option>
+                            <option>Counselor</option>
+                            <option>Teacher</option>
+                            <option>Administrator</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="fbDistrict" style="display:block;color:#231F20;margin-bottom:4px;">District/School (optional)</label>
+                        <input id="fbDistrict" type="text" placeholder="e.g., MCPS / Gaithersburg HS" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
+                    </div>
+                    <div>
+                        <label for="fbTopic" style="display:block;color:#231F20;margin-bottom:4px;">Topic</label>
+                        <input id="fbTopic" type="text" placeholder="What is this about?" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
+                    </div>
+                    <div>
+                        <label for="fbDetails" style="display:block;color:#231F20;margin-bottom:4px;">Feedback</label>
+                        <textarea id="fbDetails" rows="5" placeholder="Share details or suggestions..." style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;"></textarea>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input id="fbFollow" type="checkbox">
+                        <label for="fbFollow" style="color:#231F20;">I’m okay with follow-up via email</label>
+                    </div>
+                    <div style="display:flex;gap:10px;justify-content:flex-end;">
+                        <button type="button" class="cluster-link" style="background:#718096;" data-close>Cancel</button>
+                        <button type="submit" class="cluster-link">Submit Feedback</button>
+                    </div>
+                    <p style="font-size:12px;color:#4a5568;margin-top:6px;">Submitting opens your email client with your responses pre-filled.</p>
+                </form>
+            </div>
+        </div>
+
         <div class="footer">
             <p>Maryland State Department of Education - Division of Career and College Readiness</p>
             <p style="margin-top: 10px; font-size: 0.9rem;">© 2025 MSDE CTE Crosswalk Repository</p>
@@ -519,4 +573,48 @@
             }
         });
     })();
+</script>
+
+
+<script>
+// Feedback modal open + mailto submission
+(function(){
+  const fbBtn = document.getElementById('openFeedback');
+  const fbModal = document.getElementById('modal-feedback');
+  if (fbBtn && fbModal) {
+    fbBtn.addEventListener('click', function(e){ e.preventDefault(); fbModal.classList.add('open'); fbModal.setAttribute('aria-hidden','false'); });
+  }
+  const form = document.getElementById('feedbackForm');
+  if (form) {
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const to = 'occpcteprograms.msde@maryland.gov';
+      const subj = 'CTE Crosswalks Feedback';
+      const name = document.getElementById('fbName').value.trim();
+      const email = document.getElementById('fbEmail').value.trim();
+      const role = document.getElementById('fbRole').value.trim();
+      const district = document.getElementById('fbDistrict').value.trim();
+      const topic = document.getElementById('fbTopic').value.trim();
+      const details = document.getElementById('fbDetails').value.trim();
+      const follow = document.getElementById('fbFollow').checked ? 'Yes' : 'No';
+      const lines = [
+        'Feedback Submission',
+        '',
+        'Name: ' + (name || '-'),
+        'Email: ' + (email || '-'),
+        'Role: ' + (role || '-'),
+        'District/School: ' + (district || '-'),
+        'Topic: ' + (topic || '-'),
+        'Feedback:',
+        details || '-',
+        '',
+        'Okay to follow-up by email? ' + follow
+      ];
+      const body = encodeURIComponent(lines.join('
+'));
+      const mailto = 'mailto:' + to + '?subject=' + encodeURIComponent(subj) + '&body=' + body;
+      window.location.href = mailto;
+    });
+  }
+})();
 </script>
