@@ -288,7 +288,7 @@
             <a href="#" data-modal="students">Students &amp; Parents</a>
             <a href="#" data-modal="counselors">Counselors</a>
             <a href="#" data-modal="teachers">Teachers</a>
-            <a href="#" id="openFeedback">Feedback</a>
+            <a href="#" id="openFeedback" data-modal="feedback" onclick="var m=document.getElementById('modal-feedback'); if(m){m.classList.add('open'); m.setAttribute('aria-hidden','false');} return false;">Feedback</a>
         </div>
     </nav>
     <div class="container">
@@ -486,7 +486,7 @@
                     <h2 id="feedbackTitle" style="color:#231F20;">Share Your Feedback</h2>
                     <button class="modal-close" data-close aria-label="Close">×</button>
                 </div>
-                <form id="feedbackForm" style="display:flex; flex-direction:column; gap:12px;">
+                <form id="feedbackForm" onsubmit="return submitFeedback(event)" style="display:flex; flex-direction:column; gap:12px;">
                     <div>
                         <label for="fbName" style="display:block;color:#231F20;margin-bottom:4px;">Your Name</label>
                         <input id="fbName" type="text" placeholder="First Last" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">
@@ -537,6 +537,34 @@
             <p style="margin-top: 10px; font-size: 0.9rem;">© 2025 MSDE CTE Crosswalk Repository</p>
         </div>
     </div>
+
+<script>
+function submitFeedback(e){
+  if(e) e.preventDefault();
+  var to='occpcteprograms.msde@maryland.gov';
+  var subj='CTE Crosswalks Feedback';
+  function gv(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+  var name=gv('fbName'); var email=gv('fbEmail'); var role=gv('fbRole'); var district=gv('fbDistrict'); var topic=gv('fbTopic'); var details=gv('fbDetails');
+  var follow=(document.getElementById('fbFollow')&&document.getElementById('fbFollow').checked)?'Yes':'No';
+  var lines=[
+    'Feedback Submission','',
+    'Name: '+(name||'-'),
+    'Email: '+(email||'-'),
+    'Role: '+(role||'-'),
+    'District/School: '+(district||'-'),
+    'Topic: '+(topic||'-'),
+    'Feedback:',
+    (details||'-'),
+    '',
+    'Okay to follow-up by email? '+follow
+  ];
+  var body=encodeURIComponent(lines.join('
+'));
+  var a=document.createElement('a'); a.href='mailto:'+to+'?subject='+encodeURIComponent(subj)+'&body='+body; a.style.display='none';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  return false;
+}
+</script>
 </body>
 </html>
 <script>
