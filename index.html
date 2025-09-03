@@ -576,45 +576,4 @@
 </script>
 
 
-<script>
-// Feedback modal open + mailto submission
-(function(){
-  const fbBtn = document.getElementById('openFeedback');
-  const fbModal = document.getElementById('modal-feedback');
-  if (fbBtn && fbModal) {
-    fbBtn.addEventListener('click', function(e){ e.preventDefault(); fbModal.classList.add('open'); fbModal.setAttribute('aria-hidden','false'); });
-  }
-  const form = document.getElementById('feedbackForm');
-  if (form) {
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      const to = 'occpcteprograms.msde@maryland.gov';
-      const subj = 'CTE Crosswalks Feedback';
-      const name = document.getElementById('fbName').value.trim();
-      const email = document.getElementById('fbEmail').value.trim();
-      const role = document.getElementById('fbRole').value.trim();
-      const district = document.getElementById('fbDistrict').value.trim();
-      const topic = document.getElementById('fbTopic').value.trim();
-      const details = document.getElementById('fbDetails').value.trim();
-      const follow = document.getElementById('fbFollow').checked ? 'Yes' : 'No';
-      const lines = [
-        'Feedback Submission',
-        '',
-        'Name: ' + (name || '-'),
-        'Email: ' + (email || '-'),
-        'Role: ' + (role || '-'),
-        'District/School: ' + (district || '-'),
-        'Topic: ' + (topic || '-'),
-        'Feedback:',
-        details || '-',
-        '',
-        'Okay to follow-up by email? ' + follow
-      ];
-      const body = encodeURIComponent(lines.join('
-'));
-      const mailto = 'mailto:' + to + '?subject=' + encodeURIComponent(subj) + '&body=' + body;
-      window.location.href = mailto;
-    });
-  }
-})();
-</script>
+
