@@ -103,6 +103,14 @@
             font-size: 14px;
             border-radius: 6px;
         }
+        /* Feedback floating button and modal */
+        #feedbackFab { position: fixed; right: calc(20px + env(safe-area-inset-right)); bottom: calc(20px + env(safe-area-inset-bottom)); background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border:none; border-radius:999px; padding:12px 16px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.25); cursor:pointer; z-index: 1200; }
+        #feedbackText { width:100%; min-height:120px; border:1px solid #e2e8f0; border-radius:8px; padding:10px; font-family: inherit; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1300; }
+        .modal.open { display: flex; }
+        .modal-content { background: #fff; border-radius: 12px; max-width: 720px; width: 100%; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border-left: 4px solid #BD0934; }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .modal-close { border:none; background:transparent; font-size:1.5rem; cursor:pointer; color:#231F20; }
 
         /* Responsive controls to prevent overlap */
         @media (max-width: 960px) {
@@ -509,6 +517,34 @@
                 }
             });
             updateIndicators();
+        })();
+    </script>
+    <button id="feedbackFab" aria-label="Open feedback">Feedback</button>
+    <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="feedbackTitle" style="color:#231F20;">Send Feedback</h2>
+                <button class="modal-close" data-close aria-label="Close">×</button>
+            </div>
+            <p style="color:#334155;margin:0 0 8px;">Tell us what’s working and what to improve.</p>
+            <textarea id="feedbackText" placeholder="Your feedback..."></textarea>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+                <button id="copyFeedback" style="background:#0ea5e9;">Copy</button>
+                <button id="emailFeedback">Email</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function(){
+            const fab = document.getElementById('feedbackFab');
+            const modal = document.getElementById('modal-feedback');
+            function open(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
+            function close(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+            fab.addEventListener('click', open);
+            modal.addEventListener('click', (e)=>{ if (e.target===modal || e.target.hasAttribute('data-close')) close(); });
+            document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ close(); }});
+            document.getElementById('copyFeedback').addEventListener('click', async ()=>{ const txt=document.getElementById('feedbackText').value.trim(); try{ await navigator.clipboard.writeText(txt); alert('Copied to clipboard.'); }catch{} });
+            document.getElementById('emailFeedback').addEventListener('click', ()=>{ const txt=encodeURIComponent(document.getElementById('feedbackText').value.trim()); const subj=encodeURIComponent('CTE Crosswalks Feedback'); window.location.href=`mailto:occpcteprograms.msde@maryland.gov?subject=${subj}&body=${txt}`; });
         })();
     </script>
 </body>
