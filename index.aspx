@@ -511,12 +511,47 @@
                     <h2 id="feedbackTitle" style="color:#231F20;">Send Feedback</h2>
                     <button class="modal-close" data-close aria-label="Close">×</button>
                 </div>
-                <p style="color:#334155;margin:0 0 8px;">Tell us what’s working and what to improve.</p>
-                <textarea id="feedbackText" placeholder="Your feedback..."></textarea>
-                <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
-                    <button id="copyFeedback" class="cluster-link" style="background:#0ea5e9;">Copy</button>
-                    <button id="emailFeedback" class="cluster-link">Email</button>
-                </div>
+        <p style="color:#334155;margin:0 0 8px;">Tell us what’s working and what to improve.</p>
+        <div class="fb-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;">
+            <div>
+                <label style="display:block;color:#334155;font-size:0.95rem;">Name</label>
+                <input id="fbName" type="text" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;">
+            </div>
+            <div>
+                <label style="display:block;color:#334155;font-size:0.95rem;">Email</label>
+                <input id="fbEmail" type="email" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;">
+            </div>
+            <div>
+                <label style="display:block;color:#334155;font-size:0.95rem;">Role</label>
+                <select id="fbRole" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;">
+                    <option value="">— Select —</option>
+                    <option>Student/Parent/Guardian</option>
+                    <option>Counselor</option>
+                    <option>Teacher</option>
+                    <option>Administrator</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div>
+                <label style="display:block;color:#334155;font-size:0.95rem;">Category</label>
+                <select id="fbCategory" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;">
+                    <option>General</option>
+                    <option>Bug</option>
+                    <option>Content Update</option>
+                    <option>Feature Request</option>
+                    <option>Question</option>
+                    <option>Other</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top:10px;">
+            <label style="display:block;color:#334155;font-size:0.95rem;">Message</label>
+            <textarea id="fbMessage" placeholder="Your feedback..." style="width:100%;min-height:120px;border:1px solid #e2e8f0;border-radius:8px;padding:10px;"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+            <button id="copyFeedback" class="cluster-link" style="background:#0ea5e9;">Copy</button>
+            <button id="emailFeedback" class="cluster-link">Email</button>
+        </div>
             </div>
         </div>
 
@@ -568,19 +603,29 @@
         if (fab) {
             fab.addEventListener('click', () => openModal('feedback'));
         }
+        function buildFeedbackText(){
+            const name = (document.getElementById('fbName')?.value||'').trim();
+            const email = (document.getElementById('fbEmail')?.value||'').trim();
+            const role = (document.getElementById('fbRole')?.value||'').trim();
+            const cat = (document.getElementById('fbCategory')?.value||'').trim();
+            const msg = (document.getElementById('fbMessage')?.value||'').trim();
+            const page = `${document.title} (${location.href})`;
+            return `Name: ${name}\nEmail: ${email}\nRole: ${role}\nCategory: ${cat}\nPage: ${page}\n\nMessage:\n${msg}`.trim();
+        }
         const copyBtn = document.getElementById('copyFeedback');
         if (copyBtn) {
             copyBtn.addEventListener('click', async () => {
-                const txt = document.getElementById('feedbackText').value.trim();
+                const txt = buildFeedbackText();
                 try { await navigator.clipboard.writeText(txt); alert('Copied to clipboard.'); } catch {}
             });
         }
         const emailBtn = document.getElementById('emailFeedback');
         if (emailBtn) {
             emailBtn.addEventListener('click', () => {
-                const txt = encodeURIComponent(document.getElementById('feedbackText').value.trim());
-                const subj = encodeURIComponent('CTE Crosswalks Feedback');
-                window.location.href = `mailto:occpcteprograms.msde@maryland.gov?subject=${subj}&body=${txt}`;
+                const cat = (document.getElementById('fbCategory')?.value||'General').trim();
+                const subj = encodeURIComponent(`CTE Crosswalks Feedback - ${cat}`);
+                const body = encodeURIComponent(buildFeedbackText());
+                window.location.href = `mailto:occpcteprograms.msde@maryland.gov?subject=${subj}&body=${body}`;
             });
         }
     })();
