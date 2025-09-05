@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Portfolio</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Montserrat','Calibri','Segoe UI',sans-serif; margin:0; background: linear-gradient(135deg,#BD0934 0%, #FFC838 100%); min-height:100vh; padding:20px; }
+        .container { max-width: 1200px; margin:0 auto; background: rgba(255,255,255,0.97); border-radius: 20px; padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        h1 { text-align:center; margin:0 0 6px; font-size:2.2rem; background: linear-gradient(135deg,#BD0934,#FFC838); -webkit-background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
+        p.lead { text-align:center; color:#231F20; margin: 0 0 16px; }
+        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
+        .quick-jump a:hover { opacity:.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+        .grid { display:grid; grid-template-columns: 320px 1fr; gap: 16px; }
+        @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
+        .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+        .card h2 { margin: 0 0 10px; color:#231F20; font-size:1.2rem; }
+        .row { display:flex; flex-wrap:wrap; gap:10px; }
+        .col { flex: 1 1 220px; }
+        label { display:block; color:#334155; font-size:0.95rem; margin: 6px 0; }
+        input[type="text"], input[type="email"], input[type="url"], input[type="date"], textarea { width:100%; padding:8px 10px; border:1px solid #e2e8f0; border-radius:8px; font-family: inherit; }
+        textarea { min-height: 90px; }
+        .controls { display:flex; flex-wrap:wrap; gap:10px; }
+        button, .btn { padding:10px 14px; border:none; border-radius:10px; background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
+        .btn-outline { background:#fff; color:#111827; border:1px solid #e2e8f0; }
+        .btn-secondary { background:#0ea5e9; }
+        .pill { display:inline-flex; align-items:center; gap:6px; background:#f1f5f9; border:1px solid #e2e8f0; color:#0f172a; padding:6px 10px; border-radius:999px; margin: 4px 4px 0 0; font-size: 0.85rem; }
+        .pill button { background:transparent; border:none; cursor:pointer; color:#334155; font-weight:700; }
+        .section { margin-top: 10px; }
+        .item { border:1px dashed #e2e8f0; border-radius:10px; padding:10px; margin-top:8px; }
+        .muted { color:#64748b; font-size:0.9rem; }
+        .right { display:flex; gap:8px; justify-content:flex-end; }
+        .photo { width: 116px; height:116px; border-radius:50%; border:2px solid #e2e8f0; object-fit:cover; background:#f8fafc; }
+        .toolbar { display:flex; flex-wrap:wrap; gap:10px; justify-content: space-between; align-items:center; margin: 8px 0 14px; }
+        .toolbar .right { justify-content:flex-end; }
+        .preview .edit-only { display:none !important; }
+        /* Print-friendly resume/portfolio */
+        @media print { .top-nav, .toolbar { display:none !important; } body { background: #fff; } .container { box-shadow:none; padding:0; } .card{ box-shadow:none; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <!-- Prevent accidental file drops navigating away -->
+    <script>(function(){function block(e){e.preventDefault();e.stopPropagation();}window.addEventListener('dragover',block,{capture:true});window.addEventListener('drop',block,{capture:true});document.addEventListener('dragover',block,{capture:true});document.addEventListener('drop',block,{capture:true});})();</script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; img-src 'self' data: blob: https:;">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="quick-jump">
+            <a href="index.html">Home</a>
+            <a href="assessments.html">Student Journey</a>
+            <a href="portfolio.html" class="active">Portfolio</a>
+            <a href="resume.html">Resume</a>
+            <a href="dt-crosswalk-table.html">Digital Technology</a>
+            <a href="003_ed_crosswalk-table.html">Education</a>
+            <a href="enr-crosswalk-table.html">ENR</a>
+            <a href="pss_crosswalk.html">PSS</a>
+        </div>
+    </nav>
+    <div class="container" id="root">
+        <h1>Digital Portfolio</h1>
+        <p class="lead">Showcase your skills, projects, credentials, and experiences. Save locally and export to share.</p>
+
+        <div class="toolbar">
+            <div class="controls">
+                <button id="saveBtn">Save</button>
+                <button id="loadBtn" class="btn-secondary">Load</button>
+                <button id="importBtn" class="btn-outline">Import JSON</button>
+                <button id="exportBtn" class="btn-outline">Export JSON</button>
+            </div>
+            <div class="controls">
+                <button id="fromAssessments" class="btn-secondary">Pull from Assessments</button>
+                <button id="togglePreview" class="btn-outline">Preview</button>
+                <button id="exportHtml" class="btn-outline">Export Single HTML</button>
+                <button id="printBtn" title="Print to PDF">Print</button>
+            </div>
+        </div>
+
+        <div class="grid" id="grid">
+            <div class="card" id="profileCard">
+                <h2>Profile</h2>
+                <div class="row">
+                    <div>
+                        <img id="profilePhoto" class="photo" alt="Profile photo">
+                        <div class="edit-only" style="margin-top:8px;">
+                            <input id="photoInput" type="file" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label>Name</label>
+                        <input id="name" type="text" placeholder="Your name">
+                        <label>Headline</label>
+                        <input id="headline" type="text" placeholder="e.g., Student Developer • Cyber & Data">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label>Email</label>
+                        <input id="email" type="email" placeholder="you@example.com">
+                    </div>
+                    <div class="col">
+                        <label>Phone</label>
+                        <input id="phone" type="text" placeholder="(###) ###-####">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label>Location</label>
+                        <input id="location" type="text" placeholder="City, ST">
+                    </div>
+                    <div class="col">
+                        <label>Website/LinkedIn</label>
+                        <input id="website" type="url" placeholder="https://...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>About</h2>
+                <textarea id="about" placeholder="Short bio, interests, and goals."></textarea>
+            </div>
+
+            <div class="card">
+                <h2>Skills</h2>
+                <div class="row edit-only">
+                    <div class="col"><input id="skillInput" type="text" placeholder="Type a skill and press Enter"></div>
+                    <div><button id="addSkill">Add</button></div>
+                </div>
+                <div id="skillsWrap"></div>
+            </div>
+
+            <div class="card">
+                <h2>Projects</h2>
+                <div id="projects"></div>
+                <div class="edit-only right"><button id="addProject" class="btn-secondary">Add Project</button></div>
+            </div>
+
+            <div class="card">
+                <h2>Experience</h2>
+                <div id="experience"></div>
+                <div class="edit-only right"><button id="addExperience" class="btn-secondary">Add Experience</button></div>
+            </div>
+
+            <div class="card">
+                <h2>Education</h2>
+                <div id="education"></div>
+                <div class="edit-only right"><button id="addEducation" class="btn-secondary">Add Education</button></div>
+            </div>
+
+            <div class="card">
+                <h2>Certifications & Awards</h2>
+                <div id="certs"></div>
+                <div class="edit-only right"><button id="addCert" class="btn-secondary">Add Item</button></div>
+            </div>
+
+            <div class="card">
+                <h2>Activities & Service</h2>
+                <div id="activities"></div>
+                <div class="edit-only right"><button id="addActivity" class="btn-secondary">Add Activity</button></div>
+            </div>
+
+            <div class="card" id="plan" style="scroll-margin-top:80px;">
+                <h2>6-Year Plan</h2>
+                <p class="muted">Keep your courses, credentials, internships, and dual enrollment in one place. This plan is shared with Assessments.</p>
+                <div class="controls" style="margin-bottom:8px;">
+                    <button id="planAddYear">Add Year</button>
+                    <button id="planReset" class="btn-outline">Reset to 6 years</button>
+                    <button id="planCopy" class="btn-outline">Copy Plan</button>
+                    <a class="btn-outline" href="assessments.html">Open in Journey</a>
+                </div>
+                <div id="planGrid" class="section" style="display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px;"></div>
+            </div>
+
+            <div class="card" id="resumeSnap">
+                <h2>Resume Snapshot</h2>
+                <div class="row">
+                    <div class="col">
+                        <label>Target Role (optional)</label>
+                        <input id="snapTargetRole" type="text" placeholder="e.g., Junior Cybersecurity Analyst">
+                        <p class="muted">This tailors your headline in the preview. Use the full builder for templates.</p>
+                        <div class="controls" style="margin-top:8px;">
+                            <a class="btn-secondary" href="resume.html">Open Full Resume Builder</a>
+                            <button id="snapPrint" class="btn-outline">Print (PDF)</button>
+                        </div>
+                    </div>
+                    <div class="col" style="min-width:320px;">
+                        <div id="snapResume" class="resume" style="border-left:4px solid #BD0934;">
+                            <div class="name" id="snName"></div>
+                            <div class="headline" id="snHeadline"></div>
+                            <div class="contact" id="snContact"></div>
+                            <div class="section"><h3>Skills</h3><div id="snSkills"></div></div>
+                            <div class="section"><h3>Projects</h3><div id="snProjects"></div></div>
+                            <div class="section"><h3>Experience</h3><div id="snExperience"></div></div>
+                            <div class="section"><h3>Education</h3><div id="snEducation"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LS_KEY = 'portfolioV1';
+
+        const state = {
+            profile: { name:'', headline:'', email:'', phone:'', location:'', website:'', photo:'' },
+            about: '',
+            skills: [],
+            projects: [],
+            experience: [],
+            education: [],
+            certs: [],
+            activities: []
+        };
+        const LS_KEY_PLAN = 'studentPlanV1';
+        const LS_RESUME = 'resumeV1';
+
+        // Utilities
+        const $ = sel => document.querySelector(sel);
+        function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); alert('Saved to browser'); }
+        function load(){ try{ const d = JSON.parse(localStorage.getItem(LS_KEY)||'{}'); Object.assign(state, d||{}); renderAll(); alert('Loaded.'); }catch(e){ alert('Nothing saved yet.'); } }
+        function exportJson(){ const b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='portfolio.json'; document.body.appendChild(a); a.click(); a.remove(); }
+        function importJson(){ const txt = prompt('Paste portfolio JSON'); if(!txt) return; try{ const d=JSON.parse(txt); Object.assign(state,d); renderAll(); alert('Imported.'); }catch{ alert('Invalid JSON'); } }
+        function printPage(){ window.print(); }
+        function exportSingleHtml(){ const html = document.documentElement.cloneNode(true); // remove edit-only
+            html.querySelectorAll('.edit-only').forEach(el=>el.remove());
+            html.querySelectorAll('#togglePreview').forEach(btn=>btn.remove());
+            const blob = new Blob(['<!DOCTYPE html>\n'+html.outerHTML], {type:'text/html'});
+            const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='portfolio.html'; document.body.appendChild(a); a.click(); a.remove(); }
+
+        // Rendering helpers
+        function setVal(id, path){ const el = $('#'+id); if(!el) return; el.value = path.reduce((o,k)=>o&&o[k], state)||''; el.addEventListener('input',()=>{ let o=state; for(let i=0;i<path.length-1;i++){ o=o[path[i]]; } o[path[path.length-1]]=el.value; }); }
+        function renderSkills(){ const wrap = $('#skillsWrap'); wrap.innerHTML=''; state.skills.forEach((s,i)=>{ const sp=document.createElement('span'); sp.className='pill'; sp.textContent=s; const x=document.createElement('button'); x.textContent='×'; x.onclick=()=>{ state.skills.splice(i,1); renderSkills(); }; sp.appendChild(x); wrap.appendChild(sp); }); }
+        function addSkill(s){ s=s.trim(); if(!s) return; if(!state.skills.includes(s)) state.skills.push(s); renderSkills(); $('#skillInput').value=''; }
+
+        function projectItem(p, idx){ const div=document.createElement('div'); div.className='item';
+            const t=document.createElement('input'); t.type='text'; t.placeholder='Title'; t.value=p.title||''; t.oninput=()=>p.title=t.value; div.appendChild(t);
+            const d=document.createElement('textarea'); d.placeholder='Description'; d.value=p.desc||''; d.oninput=()=>p.desc=d.value; div.appendChild(d);
+            const l=document.createElement('input'); l.type='url'; l.placeholder='Link'; l.value=p.link||''; l.oninput=()=>p.link=l.value; div.appendChild(l);
+            const del=document.createElement('button'); del.textContent='Remove'; del.className='btn-outline'; del.onclick=()=>{ state.projects.splice(idx,1); renderList('projects', state.projects, projectItem); }; div.appendChild(del);
+            return div; }
+        function experienceItem(e, idx){ const div=document.createElement('div'); div.className='item';
+            const r=input('Role', e.role, v=>e.role=v); const o=input('Organization', e.org, v=>e.org=v);
+            const loc=input('Location', e.location, v=>e.location=v);
+            const dates=document.createElement('div'); dates.className='row';
+            const s=document.createElement('input'); s.type='text'; s.placeholder='Start (e.g., Aug 2023)'; s.value=e.start||''; s.oninput=()=>e.start=s.value; dates.appendChild(s);
+            const n=document.createElement('input'); n.type='text'; n.placeholder='End (or Present)'; n.value=e.end||''; n.oninput=()=>e.end=n.value; dates.appendChild(n);
+            const bullets=document.createElement('div'); const ta=document.createElement('textarea'); ta.placeholder='Bullets (one per line)'; ta.value=(e.bullets||[]).join('\n'); ta.oninput=()=>e.bullets=ta.value.split('\n').map(x=>x.trim()).filter(Boolean); bullets.appendChild(ta);
+            const del=button('Remove',()=>{ state.experience.splice(idx,1); renderList('experience', state.experience, experienceItem); }); del.className='btn-outline';
+            [r,o,loc,dates,bullets,del].forEach(x=>div.appendChild(x)); return div; }
+        function educationItem(ed, idx){ const div=document.createElement('div'); div.className='item';
+            const s=input('School', ed.school, v=>ed.school=v); const d=input('Degree/Program', ed.degree, v=>ed.degree=v);
+            const dates=document.createElement('div'); dates.className='row';
+            const st=document.createElement('input'); st.type='text'; st.placeholder='Start'; st.value=ed.start||''; st.oninput=()=>ed.start=st.value; dates.appendChild(st);
+            const en=document.createElement('input'); en.type='text'; en.placeholder='End'; en.value=ed.end||''; en.oninput=()=>ed.end=en.value; dates.appendChild(en);
+            const det=document.createElement('textarea'); det.placeholder='Honors, coursework, activities'; det.value=ed.details||''; det.oninput=()=>ed.details=det.value;
+            const del=button('Remove',()=>{ state.education.splice(idx,1); renderList('education', state.education, educationItem); }); del.className='btn-outline';
+            [s,d,dates,det,del].forEach(x=>div.appendChild(x)); return div; }
+        function certItem(c, idx){ const div=document.createElement('div'); div.className='item';
+            const n=input('Name', c.name, v=>c.name=v); const is=input('Issuer', c.issuer, v=>c.issuer=v); const da=input('Date', c.date, v=>c.date=v);
+            const del=button('Remove',()=>{ state.certs.splice(idx,1); renderList('certs', state.certs, certItem); }); del.className='btn-outline';
+            ;[n,is,da,del].forEach(x=>div.appendChild(x)); return div; }
+        function activityItem(a, idx){ const div=document.createElement('div'); div.className='item';
+            const n=input('Name', a.name, v=>a.name=v); const r=input('Role', a.role, v=>a.role=v); const d=document.createElement('textarea'); d.placeholder='Details'; d.value=a.details||''; d.oninput=()=>a.details=d.value;
+            const del=button('Remove',()=>{ state.activities.splice(idx,1); renderList('activities', state.activities, activityItem); }); del.className='btn-outline';
+            ;[n,r,d,del].forEach(x=>div.appendChild(x)); return div; }
+        function renderList(id, arr, renderer){ const root = document.getElementById(id); root.innerHTML=''; arr.forEach((item, idx)=> root.appendChild(renderer(item, idx))); }
+        function input(ph, val, on){ const i=document.createElement('input'); i.type='text'; i.placeholder=ph; i.value=val||''; i.oninput=()=>on(i.value); return i; }
+        function button(text, on){ const b=document.createElement('button'); b.textContent=text; b.onclick=on; return b; }
+
+        function renderAll(){
+            // Profile
+            setVal('name',['profile','name']); setVal('headline',['profile','headline']); setVal('email',['profile','email']); setVal('phone',['profile','phone']); setVal('location',['profile','location']); setVal('website',['profile','website']);
+            $('#about').value = state.about||''; $('#about').oninput = ()=> state.about = $('#about').value;
+            renderSkills(); renderList('projects', state.projects, projectItem); renderList('experience', state.experience, experienceItem); renderList('education', state.education, educationItem); renderList('certs', state.certs, certItem); renderList('activities', state.activities, activityItem);
+            const img=$('#profilePhoto'); img.src = state.profile.photo || '';
+            renderPlan();
+            renderResumeSnapshot();
+        }
+
+        function togglePreview(){ document.getElementById('root').classList.toggle('preview'); }
+
+        // Pull from Assessments
+        function pullFromAssessments(){ try{
+            const a = JSON.parse(localStorage.getItem('studentAssessmentsV1')||'{}');
+            const skillMap = [];
+            const top = (a.riasec&&a.riasec.top)||'';
+            if(top.includes('I')) skillMap.push('Research','Data Analysis','Python','Lab Skills');
+            if(top.includes('R')) skillMap.push('Hands-on','Mechanical','Field Work');
+            if(top.includes('A')) skillMap.push('Design','Writing','Creative Thinking');
+            if(top.includes('S')) skillMap.push('Teaching','Mentoring','Communication');
+            if(top.includes('E')) skillMap.push('Leadership','Sales','Entrepreneurship');
+            if(top.includes('C')) skillMap.push('Organization','Excel','Bookkeeping');
+            const colors=[a.colorPrimary,a.colorSecondary].join(' ');
+            if(colors.includes('Green')) skillMap.push('Critical Thinking','Problem Solving');
+            if(colors.includes('Gold')) skillMap.push('Planning','Reliability');
+            if(colors.includes('Blue')) skillMap.push('Collaboration','Empathy');
+            if(colors.includes('Orange')) skillMap.push('Adaptability','Making/Building');
+            skillMap.filter(Boolean).forEach(s=>{ if(!state.skills.includes(s)) state.skills.push(s); });
+            renderSkills(); alert('Added suggested skills from assessments.');
+        }catch(e){ alert('No assessments found.'); } }
+
+        // Events
+        document.getElementById('saveBtn').addEventListener('click', save);
+        document.getElementById('loadBtn').addEventListener('click', load);
+        document.getElementById('exportBtn').addEventListener('click', exportJson);
+        document.getElementById('importBtn').addEventListener('click', importJson);
+        document.getElementById('togglePreview').addEventListener('click', togglePreview);
+        document.getElementById('printBtn').addEventListener('click', printPage);
+        document.getElementById('exportHtml').addEventListener('click', exportSingleHtml);
+        document.getElementById('fromAssessments').addEventListener('click', pullFromAssessments);
+        document.getElementById('addSkill').addEventListener('click', ()=> addSkill(document.getElementById('skillInput').value));
+        document.getElementById('skillInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addSkill(e.target.value); }});
+        document.getElementById('addProject').addEventListener('click', ()=>{ state.projects.push({title:'',desc:'',link:''}); renderList('projects', state.projects, projectItem); });
+        document.getElementById('addExperience').addEventListener('click', ()=>{ state.experience.push({role:'',org:'',location:'',start:'',end:'',bullets:[]}); renderList('experience', state.experience, experienceItem); });
+        document.getElementById('addEducation').addEventListener('click', ()=>{ state.education.push({school:'',degree:'',start:'',end:'',details:''}); renderList('education', state.education, educationItem); });
+        document.getElementById('addCert').addEventListener('click', ()=>{ state.certs.push({name:'',issuer:'',date:''}); renderList('certs', state.certs, certItem); });
+        document.getElementById('addActivity').addEventListener('click', ()=>{ state.activities.push({name:'',role:'',details:''}); renderList('activities', state.activities, activityItem); });
+        document.getElementById('photoInput').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ state.profile.photo=r.result; renderAll(); }; r.readAsDataURL(f); });
+        document.getElementById('planAddYear').addEventListener('click', planAddYear);
+        document.getElementById('planReset').addEventListener('click', ()=>{ planSaveModel(planDefault()); renderPlan(); });
+        document.getElementById('planCopy').addEventListener('click', ()=>{ const txt = planText(planGetModel()); if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>alert('Plan copied')); } else { prompt('Copy plan:', txt); } });
+        document.getElementById('snapPrint').addEventListener('click', ()=> window.print());
+        document.getElementById('snapTargetRole').addEventListener('input', (e)=>{ try{ const d=JSON.parse(localStorage.getItem(LS_RESUME)||'{}'); d.targetRole=e.target.value; localStorage.setItem(LS_RESUME, JSON.stringify(d)); renderResumeSnapshot(); }catch{} });
+
+        // Init
+        window.addEventListener('DOMContentLoaded', ()=>{ try{ const d=JSON.parse(localStorage.getItem(LS_KEY)||'{}'); Object.assign(state,d||{});}catch{} 
+            try { const inc = JSON.parse(localStorage.getItem('portfolioIncomingSkills')||'[]'); if(Array.isArray(inc) && inc.length){ inc.forEach(s=>{ if(!state.skills.includes(s)) state.skills.push(s); }); localStorage.removeItem('portfolioIncomingSkills'); } } catch {}
+            renderAll(); 
+            // hydrate target role from resume storage
+            try{ const r=JSON.parse(localStorage.getItem(LS_RESUME)||'{}'); if(r.targetRole) document.getElementById('snapTargetRole').value=r.targetRole; }catch{}
+        });
+
+        // ---------- Plan management (shared with Assessments) ----------
+        function planDefault(){ return Array.from({length:6}, (_,i)=>({ year:i+1, items: [] })); }
+        function planEnsure(){ try{ const m=JSON.parse(localStorage.getItem(LS_KEY_PLAN)||'[]'); if(Array.isArray(m) && m.length) return m; }catch{} return planDefault(); }
+        function planSaveModel(m){ localStorage.setItem(LS_KEY_PLAN, JSON.stringify(m)); }
+        function planGetModel(){ try{ return JSON.parse(localStorage.getItem(LS_KEY_PLAN)||'[]'); }catch{ return planDefault(); } }
+        function planAddYear(){ const m=planEnsure(); m.push({ year: m.length+1, items: []}); planSaveModel(m); renderPlan(); }
+        function planAddItem(idx, text){ if(!text.trim()) return; const m=planEnsure(); m[idx].items.push(text.trim()); planSaveModel(m); renderPlan(); }
+        function planText(m){ const lines=['6-Year Plan']; (m||[]).forEach(y=>{ lines.push(`Year ${y.year}`); if(y.items&&y.items.length){ y.items.forEach(it=> lines.push(`- ${it}`)); } else { lines.push('-'); } }); return lines.join('\n'); }
+        function renderPlan(){ const root=document.getElementById('planGrid'); if(!root) return; root.innerHTML=''; const m=planEnsure(); m.forEach((y, idx)=>{
+            const box=document.createElement('div'); box.className='year'; box.style.border='1px solid #e5e7eb'; box.style.borderRadius='12px'; box.style.padding='10px'; box.style.background='#fff';
+            const h=document.createElement('h4'); h.textContent = `Year ${y.year}`; box.appendChild(h);
+            const ul=document.createElement('ul'); (y.items||[]).forEach((t,j)=>{ const li=document.createElement('li'); li.textContent=t; const b=document.createElement('button'); b.textContent='Remove'; b.className='btn-outline'; b.style.marginLeft='8px'; b.onclick=()=>{ const m=planEnsure(); m[idx].items.splice(j,1); planSaveModel(m); renderPlan(); }; li.appendChild(b); ul.appendChild(li); }); box.appendChild(ul);
+            const row=document.createElement('div'); row.className='row';
+            const input=document.createElement('input'); input.type='text'; input.placeholder='Add item (course, credential, internship, etc.)'; input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ planAddItem(idx, input.value); input.value=''; }});
+            const add=document.createElement('button'); add.textContent='Add'; add.onclick=()=>{ planAddItem(idx, input.value); input.value=''; };
+            const col1=document.createElement('div'); col1.className='col'; col1.appendChild(input); const col2=document.createElement('div'); col2.className='col'; col2.appendChild(add);
+            row.appendChild(col1); row.appendChild(col2); box.appendChild(row);
+            root.appendChild(box);
+        }); }
+
+        // ---------- Resume snapshot ----------
+        function renderResumeSnapshot(){
+            const name = state.profile.name||'';
+            const headlineBase = state.profile.headline||'';
+            let target=''; try{ target=(JSON.parse(localStorage.getItem(LS_RESUME)||'{}').targetRole)||''; }catch{}
+            document.getElementById('snName').textContent = name;
+            document.getElementById('snHeadline').textContent = target ? `${target} • ${headlineBase}`.replace(/\s+•\s+$/,'') : headlineBase;
+            document.getElementById('snContact').textContent = [state.profile.email, state.profile.phone, state.profile.location, state.profile.website].filter(Boolean).join(' · ');
+            const skills=document.getElementById('snSkills'); skills.innerHTML=''; (state.skills||[]).slice(0,18).forEach(s=>{ const span=document.createElement('span'); span.className='pill'; span.textContent=s; skills.appendChild(span); });
+            const pro=document.getElementById('snProjects'); pro.innerHTML=''; (state.projects||[]).slice(0,3).forEach(p=>{ const d=document.createElement('div'); d.className='item'; const t=document.createElement('div'); t.innerHTML=`<strong>${p.title||''}</strong> ${p.link?`— <a href="${p.link}">${p.link}</a>`:''}`; d.appendChild(t); if(p.desc){ const x=document.createElement('div'); x.textContent=p.desc; d.appendChild(x);} pro.appendChild(d); });
+            const exp=document.getElementById('snExperience'); exp.innerHTML=''; (state.experience||[]).slice(0,3).forEach(e=>{ const d=document.createElement('div'); d.className='item'; const r=document.createElement('div'); r.className='row'; r.innerHTML=`<strong class="grow">${e.role||''} — ${e.org||''}</strong><span>${[e.location,e.start,e.end].filter(Boolean).join(' • ')}</span>`; d.appendChild(r); if(e.bullets && e.bullets.length){ const ul=document.createElement('ul'); e.bullets.slice(0,3).forEach(b=>{ const li=document.createElement('li'); li.textContent=b; ul.appendChild(li); }); d.appendChild(ul);} exp.appendChild(d); });
+            const edu=document.getElementById('snEducation'); edu.innerHTML=''; (state.education||[]).slice(0,2).forEach(ed=>{ const d=document.createElement('div'); d.className='item'; const t=document.createElement('div'); t.innerHTML=`<strong>${ed.degree||''}</strong> — ${ed.school||''}`; d.appendChild(t); const m=[ed.start,ed.end].filter(Boolean).join(' – '); if(m){ const s=document.createElement('div'); s.textContent=m; d.appendChild(s);} edu.appendChild(d); });
+        }
+    </script>
+    <button id="feedbackFab" aria-label="Open feedback" style="position: fixed; right: 20px; bottom: 20px; background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border:none; border-radius:999px; padding:12px 16px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.25); cursor:pointer; z-index: 350;">Feedback</button>
+    <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle" style="position:fixed; inset:0; background: rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; padding:20px; z-index: 400;">
+        <div class="modal-content" style="background:#fff; border-radius:12px; max-width:720px; width:100%; padding:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); border-left:4px solid #BD0934;">
+            <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h2 id="feedbackTitle" style="color:#231F20;">Send Feedback</h2>
+                <button class="modal-close" data-close aria-label="Close" style="border:none; background:transparent; font-size:1.5rem; cursor:pointer; color:#231F20;">×</button>
+            </div>
+            <p style="color:#334155;margin:0 0 8px;">Ideas to improve portfolio/resume UX?</p>
+            <textarea id="feedbackText" placeholder="Your feedback..." style="width:100%; min-height:120px; border:1px solid #e2e8f0; border-radius:8px; padding:10px; font-family: inherit;"></textarea>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+                <button id="copyFeedback" class="btn-secondary">Copy</button>
+                <button id="emailFeedback" class="btn">Email</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function(){
+            const fab = document.getElementById('feedbackFab');
+            const modal = document.getElementById('modal-feedback');
+            function open(){ modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); }
+            function close(){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
+            fab.addEventListener('click', open);
+            modal.addEventListener('click', (e)=>{ if (e.target===modal || e.target.hasAttribute('data-close')) close(); });
+            document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ close(); }});
+            document.getElementById('copyFeedback').addEventListener('click', async ()=>{ const txt=document.getElementById('feedbackText').value.trim(); try{ await navigator.clipboard.writeText(txt); alert('Copied to clipboard.'); }catch{} });
+            document.getElementById('emailFeedback').addEventListener('click', ()=>{ const txt=encodeURIComponent(document.getElementById('feedbackText').value.trim()); const subj=encodeURIComponent('CTE Tools Feedback (Portfolio)'); window.location.href=`mailto:occpcteprograms.msde@maryland.gov?subject=${subj}&body=${txt}`; });
+        })();
+    </script>
+</body>
+</html>

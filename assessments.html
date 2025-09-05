@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Assessments & 6-Year Plan</title>
+    <title>Student Journey & 6-Year Plan</title>
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Montserrat','Calibri','Segoe UI',sans-serif; margin:0; background: linear-gradient(135deg,#BD0934 0%, #FFC838 100%); min-height:100vh; padding:20px; }
@@ -15,6 +15,7 @@
         .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
         .quick-jump a:hover { opacity:.9; }
         .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+        :root{ --accent1:#BD0934; --accent2:#FFC838; --ink:#111827; --muted:#64748b; }
         .grid { display:grid; grid-template-columns:1fr; gap:16px; }
         .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
         .card h2 { margin: 0 0 8px; color:#231F20; font-size:1.2rem; }
@@ -28,7 +29,7 @@
         .btn-outline { background:#fff; color:#111827; border:1px solid #e2e8f0; }
         .row { display:flex; flex-wrap:wrap; gap: 12px; }
         .col { flex:1 1 280px; }
-        .pill { display:inline-block; background:#f1f5f9; border:1px solid #e2e8f0; color:#0f172a; padding:6px 10px; border-radius:999px; margin: 4px 4px 0 0; font-size: 0.85rem; }
+        .pill { display:inline-block; background:#f9fafb; border:1px solid #e5e7eb; color:var(--ink); padding:6px 10px; border-radius:999px; margin: 4px 4px 0 0; font-size: 0.9rem; }
         .list { margin: 6px 0 0 16px; color:#334155; }
         textarea { width:100%; min-height: 100px; padding:10px; border:1px solid #e2e8f0; border-radius:10px; font-family: inherit; }
         input[type="text"] { width:100%; padding:8px 10px; border:1px solid #e2e8f0; border-radius:8px; }
@@ -38,10 +39,13 @@
         .year h4 { margin: 2px 0 8px; color:#111827; }
         .year ul { margin: 0 0 0 18px; min-height: 28px; }
         .muted { color:#64748b; font-size: 0.9rem; }
-        .hint { color:#0f172a; font-size:0.95rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px; }
+        .hint { color:var(--ink); font-size:0.95rem; background:linear-gradient(180deg,#ffffff,#f8fafc); border:1px solid #e5e7eb; border-radius:10px; padding:10px; }
         .spaced { margin-top: 8px; }
         .right { display:flex; gap:8px; justify-content:flex-end; }
         .danger { background:#ef4444; }
+        /* Teen-friendly chips */
+        .chip { display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:999px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; }
+        .chip:hover { box-shadow:0 2px 10px rgba(0,0,0,0.06); transform: translateY(-1px); }
         /* Feedback floating button and modal */
         #feedbackFab { position: fixed; right: calc(20px + env(safe-area-inset-right)); bottom: calc(20px + env(safe-area-inset-bottom)); background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border:none; border-radius:999px; padding:12px 16px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.25); cursor:pointer; z-index: 1200; }
         #feedbackText { width:100%; min-height:120px; border:1px solid #e2e8f0; border-radius:8px; padding:10px; font-family: inherit; }
@@ -50,6 +54,11 @@
         .modal-content { background: #fff; border-radius: 12px; max-width: 720px; width: 100%; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border-left: 4px solid #BD0934; }
         .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
         .modal-close { border:none; background:transparent; font-size:1.5rem; cursor:pointer; color:#231F20; }
+        /* Collapsible sections */
+        details.card { padding: 0; }
+        details.card > summary { list-style: none; cursor: pointer; padding: 16px; font-weight: 700; color:#111827; }
+        details.card > summary::-webkit-details-marker { display:none; }
+        .card-inner { padding: 0 16px 16px 16px; }
     </style>
     <!-- Prevent accidental file drops navigating away -->
     <script>(function(){function block(e){e.preventDefault();e.stopPropagation();}window.addEventListener('dragover',block,{capture:true});window.addEventListener('drop',block,{capture:true});document.addEventListener('dragover',block,{capture:true});document.addEventListener('drop',block,{capture:true});})();</script>
@@ -62,17 +71,77 @@
             <a href="index.html">Home</a>
             <a href="dt-crosswalk-table.html">Digital Technology</a>
             <a href="enr-crosswalk-table.html">ENR</a>
-            <a href="assessments.html" class="active">Assessments</a>
+            <a href="assessments.html" class="active">Student Journey</a>
         </div>
     </nav>
     <div class="container">
-        <h1>Student Assessments</h1>
-        <p class="lead">Quick inventory to suggest clusters and start a 6-year plan. Data stays in your browser.</p>
+        <h1>Student Journey</h1>
+        <p class="lead">Explore interests → get cluster suggestions → build your 6‑year plan → create your portfolio/resume. Everything saves in your browser.</p>
+
+        <div class="card" style="margin-bottom:12px;">
+            <h2 style="margin-bottom:6px;">Guided Journey</h2>
+            <p class="muted">Answer short prompts to get tailored cluster suggestions and a shareable results link.</p>
+            <div class="controls">
+                <button id="startWizard">Start Guided Journey</button>
+                <button id="resumeWizard" class="btn-secondary">Resume</button>
+                <button id="resetWizard" class="btn-outline">Reset</button>
+                <span class="pill" id="wizardStatus" aria-live="polite"></span>
+            </div>
+            <div class="row spaced" aria-label="Region and radius settings">
+                <div class="col">
+                    <label for="regionSelect">Region</label>
+                    <input id="regionSelect" type="text" placeholder="e.g., District of Columbia, DC">
+                </div>
+                <div class="col">
+                    <label for="radiusInput">Radius (miles)</label>
+                    <input id="radiusInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 25">
+                </div>
+                <div class="col" style="align-self:flex-end;">
+                    <div class="controls">
+                        <button id="saveRegion" class="btn-outline">Save Region</button>
+                        <span class="muted" id="regionSavedMsg"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="grid">
+            <div class="card" id="studentProfile">
+                <h2>Student Profile</h2>
+                <div class="row">
+                    <div class="col">
+                        <label for="spFirst">First Name</label>
+                        <input id="spFirst" type="text" placeholder="First name">
+                    </div>
+                    <div class="col">
+                        <label for="spGrade">Grade</label>
+                        <select id="spGrade">
+                            <option value="">— Select —</option>
+                            <option>6</option><option>7</option><option>8</option>
+                            <option>9</option><option>10</option><option>11</option><option>12</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="spSchool">School</label>
+                        <input id="spSchool" type="text" placeholder="Your school (optional)">
+                    </div>
+                    <div class="col">
+                        <label for="spZip">ZIP Code</label>
+                        <input id="spZip" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ZIP">
+                    </div>
+                </div>
+                <div class="controls spaced">
+                    <button id="spSave">Save Profile</button>
+                    <span class="muted" id="spSavedMsg"></span>
+                </div>
+            </div>
             <div class="card">
                 <h2>RIASEC Interests</h2>
-                <div class="section">
+                <details class="card" style="border:none; box-shadow:none;">
+                    <summary>Advanced Interests (optional)</summary>
+                    <div class="card-inner">
                     <fieldset id="r-realistic">
                         <legend>R — Realistic</legend>
                         <label><input type="checkbox" value="1"> I like working with tools, machines, outdoors</label>
@@ -121,82 +190,97 @@
                         <label><input type="checkbox" value="1"> I’m careful with accuracy and records</label>
                         <label><input type="checkbox" value="1"> I like tracking metrics and progress</label>
                     </fieldset>
-                </div>
-                <div class="controls spaced">
-                    <button id="calcRIASEC">Calculate RIASEC</button>
-                    <span id="riasecOut" class="pill" title="Top codes"></span>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>True Colors</h2>
-                <div class="row">
-                    <div class="col">
-                        <label>Primary Color</label>
-                        <select id="colorPrimary">
-                            <option value="">— Select —</option>
-                            <option>Gold (organized, dependable)</option>
-                            <option>Blue (empathetic, cooperative)</option>
-                            <option>Green (analytical, curious)</option>
-                            <option>Orange (energetic, hands-on)</option>
-                        </select>
+                    <div class="controls spaced">
+                        <button id="calcRIASEC">Calculate RIASEC</button>
+                        <span id="riasecOut" class="pill" title="Top codes"></span>
                     </div>
-                    <div class="col">
-                        <label>Secondary Color</label>
-                        <select id="colorSecondary">
-                            <option value="">— Select —</option>
-                            <option>Gold (organized, dependable)</option>
-                            <option>Blue (empathetic, cooperative)</option>
-                            <option>Green (analytical, curious)</option>
-                            <option>Orange (energetic, hands-on)</option>
-                        </select>
                     </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Team Roles</h2>
-                <div class="row">
-                    <div class="col">
-                        <label>Preferred Role</label>
-                        <select id="teamRole">
-                            <option value="">— Select —</option>
-                            <option>Leader/Coordinator</option>
-                            <option>Analyst/Researcher</option>
-                            <option>Builder/Technician</option>
-                            <option>Communicator/Educator</option>
-                        </select>
-                        <p class="muted">Pick the role you feel most aligned with when working in a group.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Save, Import/Export</h2>
-                <div class="controls">
-                    <button id="saveAll">Save to browser</button>
-                    <button id="loadAll" class="btn-secondary">Load saved</button>
-                    <button id="clearAll" class="danger">Clear saved</button>
-                    <button id="exportAll" class="btn-outline">Export JSON</button>
-                </div>
+                </details>
                 <div class="spaced">
-                    <label>Import JSON</label>
-                    <textarea id="importText" placeholder='Paste previously exported JSON here to import'></textarea>
-                    <div class="right"><button id="importBtn" class="btn-secondary">Import</button></div>
+                    <div class="muted" style="margin-bottom:6px;">Quick Picks</div>
+                    <div class="row">
+                        <button class="chip" data-pick="tech">Tech Curious</button>
+                        <button class="chip" data-pick="helper">Helper/Educator</button>
+                        <button class="chip" data-pick="builder">Builder/Hands‑on</button>
+                        <button class="chip" data-pick="creator">Creative Content</button>
+                    </div>
                 </div>
             </div>
+
+            <details class="card">
+                <summary>More Interests (optional)</summary>
+                <div class="card-inner">
+                    <div class="row">
+                        <div class="col">
+                            <label>Primary Color</label>
+                            <select id="colorPrimary">
+                                <option value="">— Select —</option>
+                                <option>Gold (organized, dependable)</option>
+                                <option>Blue (empathetic, cooperative)</option>
+                                <option>Green (analytical, curious)</option>
+                                <option>Orange (energetic, hands-on)</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>Secondary Color</label>
+                            <select id="colorSecondary">
+                                <option value="">— Select —</option>
+                                <option>Gold (organized, dependable)</option>
+                                <option>Blue (empathetic, cooperative)</option>
+                                <option>Green (analytical, curious)</option>
+                                <option>Orange (energetic, hands-on)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:8px;">
+                        <div class="col">
+                            <label>Preferred Team Role</label>
+                            <select id="teamRole">
+                                <option value="">— Select —</option>
+                                <option>Leader/Coordinator</option>
+                                <option>Analyst/Researcher</option>
+                                <option>Builder/Technician</option>
+                                <option>Communicator/Educator</option>
+                            </select>
+                            <p class="muted">Pick the role you feel most aligned with when working in a group.</p>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="card">
+                <summary>Data Controls</summary>
+                <div class="card-inner">
+                    <div class="controls">
+                        <button id="saveAll">Save to browser</button>
+                        <button id="loadAll" class="btn-secondary">Load saved</button>
+                        <button id="clearAll" class="danger">Clear saved</button>
+                        <button id="exportAll" class="btn-outline">Export JSON</button>
+                    </div>
+                    <div class="spaced">
+                        <label>Import JSON</label>
+                        <textarea id="importText" placeholder='Paste previously exported JSON here to import'></textarea>
+                        <div class="right"><button id="importBtn" class="btn-secondary">Import</button></div>
+                    </div>
+                </div>
+            </details>
 
             <div class="card">
                 <h2>Suggested Clusters</h2>
                 <div id="suggestions" class="hint">Run RIASEC or set colors/role to see suggestions.</div>
+                <div class="controls spaced">
+                    <button id="toPortfolio" class="btn-secondary">Send skills to Portfolio</button>
+                    <a href="portfolio.html" class="btn-outline">Open Portfolio</a>
+                </div>
             </div>
 
             <div class="card">
-                <h2>6-Year Plan (draft)</h2>
-                <p class="muted">Use these slots to capture a rough path (courses, micro-credentials, internships, dual enrollment, etc.). Saved locally.</p>
+                <h2>6-Year Plan</h2>
+                <p class="muted">Capture courses, micro‑credentials, internships, dual enrollment, etc. For full editing and resume export, manage your plan in <a href="portfolio.html#plan">Portfolio</a>.</p>
                 <div class="controls spaced">
                     <button id="addYear">Add Year</button>
                     <button id="resetPlan" class="btn-outline">Reset to 6 years</button>
+                    <button id="copyPlan" class="btn-outline">Copy Plan</button>
                 </div>
                 <div id="plan" class="plan-grid spaced"></div>
             </div>
@@ -206,6 +290,9 @@
     <script>
         const LS_KEY_ASMT = 'studentAssessmentsV1';
         const LS_KEY_PLAN = 'studentPlanV1';
+        const LS_KEY_WIZ = 'studentAssessWizardV1';
+        const LS_KEY_REGION = 'regionSettingsV1';
+        const LS_KEY_PROFILE = 'studentProfileV1';
 
         function getChecksSum(fsId){
             const fs = document.getElementById(fsId); if(!fs) return 0;
@@ -280,39 +367,301 @@
             }
         }
 
-        // Suggestions mapping
+        // Student Profile save/load
+        function saveProfile(){
+            const p = {
+                first: (document.getElementById('spFirst')||{}).value||'',
+                grade: (document.getElementById('spGrade')||{}).value||'',
+                school: (document.getElementById('spSchool')||{}).value||'',
+                zip: (document.getElementById('spZip')||{}).value||''
+            };
+            localStorage.setItem(LS_KEY_PROFILE, JSON.stringify(p));
+            const el=document.getElementById('spSavedMsg'); if(el){ el.textContent='Saved'; setTimeout(()=> el.textContent='', 1200); }
+        }
+        function loadProfile(){
+            try{
+                const p = JSON.parse(localStorage.getItem(LS_KEY_PROFILE)||'{}');
+                if(p.first) (document.getElementById('spFirst')||{}).value=p.first;
+                if(p.grade) (document.getElementById('spGrade')||{}).value=p.grade;
+                if(p.school) (document.getElementById('spSchool')||{}).value=p.school;
+                if(p.zip) (document.getElementById('spZip')||{}).value=p.zip;
+            }catch{}
+        }
+
+        // Quick pick helpers to pre-check traits
+        function applyQuickPick(kind){
+            const groups = {
+                tech: ['r-investigative','r-conventional'],
+                helper: ['r-social','r-artistic'],
+                builder: ['r-realistic','r-conventional'],
+                creator: ['r-artistic','r-enterprising']
+            };
+            const ids = groups[kind]||[];
+            ids.forEach(id=>{
+                const fs=document.getElementById(id); if(!fs) return;
+                const cbs = fs.querySelectorAll('input[type=checkbox]');
+                cbs.forEach((cb, i)=> cb.checked = i < 3); // light prefill
+            });
+            calcRIASEC(); renderSuggestions();
+        }
+
+        // Suggestions mapping with reasons
         function renderSuggestions(){
             const s = document.getElementById('suggestions');
             const a = collectAssessments();
             const codes = (a.riasec.top||'').split('');
-            const recs = new Map();
-            // Lightweight heuristic based on top code(s)
-            if (codes.includes('I') || a.colorPrimary.includes('Green')) {
-                recs.set('Digital Technology', 'dt-crosswalk-table.html');
+            const items = [];
+            const reasons = [];
+            const has = c => codes.includes(c);
+            const hasColor = k => (a.colorPrimary+a.colorSecondary).includes(k);
+            // Digital Technology: I/C or analytic roles
+            if (has('I') || has('C') || hasColor('Green') || a.teamRole.includes('Analyst')) {
+                items.push({ name:'Digital Technology', href:'dt-crosswalk-table.html' });
+                reasons.push('Investigative/Analytical traits → data/IT pathways');
             }
-            if (codes.includes('R') || a.colorPrimary.includes('Orange')) {
-                recs.set('ENR Cluster', 'enr-crosswalk-table.html');
+            // ENR: R/Orange hands-on
+            if (has('R') || hasColor('Orange') || a.teamRole.includes('Technician')) {
+                items.push({ name:'ENR Cluster', href:'enr-crosswalk-table.html' });
+                reasons.push('Realistic/Hands-on traits → engineering & natural resources');
             }
-            if (codes.includes('C')) {
-                recs.set('Digital Technology (Data/IT)', 'dt-crosswalk-table.html');
+            // Education: S/Blue, communicator roles
+            if (has('S') || a.teamRole.includes('Educator') || hasColor('Blue')) {
+                items.push({ name:'Education & Training', href:'003_ed_crosswalk-table.html' });
+                reasons.push('Social/Helping orientation → teaching & child development');
             }
-            if (codes.includes('S') || a.teamRole.includes('Educator')) {
-                // Placeholder for Education cluster (not present)
-                recs.set('Education (coming soon)', '#');
+            // Public Safety: E/S leadership + service, hands-on
+            if (has('E') || has('S') || has('R')) {
+                items.push({ name:'Public Safety & Security', href:'pss_crosswalk.html' });
+                reasons.push('Enterprising/Social/Realistic → EMS, Fire, Law & JROTC');
             }
-            if (!recs.size) {
+            if (!items.length) {
                 s.innerHTML = 'No strong match yet — try selecting interests or colors.';
-            } else {
-                s.innerHTML = '';
-                recs.forEach((href, name) => {
-                    const aEl = document.createElement('a');
-                    aEl.textContent = name;
-                    aEl.href = href;
-                    aEl.className = 'pill';
-                    if (href === '#') aEl.style.opacity = '0.6';
-                    s.appendChild(aEl);
-                });
+                return;
             }
+            const wrap=document.createElement('div');
+            const pills=document.createElement('div');
+            items.forEach(it=>{ const aEl=document.createElement('a'); aEl.textContent=it.name; aEl.href=it.href; aEl.className='pill'; pills.appendChild(aEl); });
+            wrap.appendChild(pills);
+            const why=document.createElement('div'); why.className='muted'; why.style.marginTop='6px'; why.textContent = 'Why: ' + reasons.join(' • ');
+            wrap.appendChild(why);
+            // Career explore link (external)
+            try {
+                const region = (JSON.parse(localStorage.getItem('regionSettingsV1')||'{}').region||'').trim();
+                const radius = (JSON.parse(localStorage.getItem('regionSettingsV1')||'{}').radius||'').trim();
+                if (region) {
+                    const base = 'https://careercoachdc.lightcastcc.com/assessment/';
+                    const url = `${base}?region=${encodeURIComponent(region)}${radius?`&radius=${encodeURIComponent(radius)}`:''}`;
+                    const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener'; a.className='btn-outline'; a.textContent='Explore Careers (CareerCoach)'; a.style.marginTop='8px';
+                    wrap.appendChild(a);
+                }
+            } catch {}
+            s.innerHTML=''; s.appendChild(wrap);
+        }
+
+        // ---------------- Guided Assessment (wizard) ----------------
+        const WIZ_QUESTIONS = [
+            { id:'R1', t:'I enjoy fixing or building things with my hands.', c:'R' },
+            { id:'R2', t:'I prefer practical tasks over theoretical ones.', c:'R' },
+            { id:'R3', t:'I like using tools, equipment, or machines.', c:'R' },
+            { id:'I1', t:'I enjoy analyzing data to find patterns.', c:'I' },
+            { id:'I2', t:'I like understanding how complex systems work.', c:'I' },
+            { id:'I3', t:'I enjoy experimenting and testing ideas.', c:'I' },
+            { id:'A1', t:'I like creating designs, art, or media.', c:'A' },
+            { id:'A2', t:'I prefer open-ended, creative work.', c:'A' },
+            { id:'A3', t:'I enjoy storytelling or content creation.', c:'A' },
+            { id:'S1', t:'I like helping, teaching, or mentoring.', c:'S' },
+            { id:'S2', t:'I enjoy collaborating and supporting others.', c:'S' },
+            { id:'S3', t:'Making a positive impact motivates me.', c:'S' },
+            { id:'E1', t:'I enjoy leading initiatives or persuading others.', c:'E' },
+            { id:'E2', t:'Entrepreneurship or business excites me.', c:'E' },
+            { id:'E3', t:'I like organizing people to achieve goals.', c:'E' },
+            { id:'C1', t:'I prefer structure, process, and clear steps.', c:'C' },
+            { id:'C2', t:'I like tracking details and records.', c:'C' },
+            { id:'C3', t:'I enjoy working with spreadsheets or data entry.', c:'C' }
+        ];
+
+        function getWizardState(){
+            try { return JSON.parse(localStorage.getItem(LS_KEY_WIZ)||'{}'); } catch { return {}; }
+        }
+        function setWizardState(s){ localStorage.setItem(LS_KEY_WIZ, JSON.stringify(s)); refreshWizardStatus(); }
+        function clearWizard(){ localStorage.removeItem(LS_KEY_WIZ); refreshWizardStatus(); }
+        function refreshWizardStatus(){
+            const s = getWizardState();
+            const answered = Object.keys(s.answers||{}).length || 0;
+            const total = WIZ_QUESTIONS.length;
+            const el = document.getElementById('wizardStatus');
+            if (el) el.textContent = answered ? `${answered}/${total} answered` : 'Not started';
+        }
+
+        function ensureWizardUI(){
+            if (document.getElementById('wizardModal')) return;
+            const modal = document.createElement('div');
+            modal.className = 'modal open';
+            modal.id = 'wizardModal';
+            modal.setAttribute('role','dialog');
+            modal.setAttribute('aria-modal','true');
+            modal.innerHTML = `
+                <div class=\"modal-content\" style=\"max-width:840px;\">
+                    <div class=\"modal-header\">
+                        <h2 style=\"color:#231F20;\">Guided Journey</h2>
+                        <button class=\"modal-close\" data-close aria-label=\"Close\">×</button>
+                    </div>
+                    <div id=\"wizProgress\" class=\"muted\" style=\"margin-bottom:8px;\">Progress</div>
+                    <div id=\"wizBody\"></div>
+                    <div style=\"display:flex;gap:10px;justify-content:space-between;margin-top:12px;\">
+                        <div class=\"muted\" id=\"wizHint\">Use 1-5 scale: 1=Strongly Disagree … 5=Strongly Agree</div>
+                        <div>
+                            <button id=\"wizPrev\" class=\"btn-outline\">Back</button>
+                            <button id=\"wizNext\" class=\"btn-secondary\">Next</button>
+                            <button id=\"wizFinish\" class=\"btn\" style=\"display:none;\">See Results</button>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e)=>{ if(e.target===modal || e.target.hasAttribute('data-close')){ modal.remove(); }});
+        }
+
+        function renderWizard(){
+            ensureWizardUI();
+            const state = getWizardState();
+            if (!state.idx && state.idx!==0) state.idx = 0;
+            if (!state.answers) state.answers = {};
+            setWizardState(state);
+            const idx = state.idx;
+            const total = WIZ_QUESTIONS.length;
+            const { id, t } = WIZ_QUESTIONS[idx];
+            const modal = document.getElementById('wizardModal');
+            const body = modal.querySelector('#wizBody');
+            const progress = modal.querySelector('#wizProgress');
+            progress.textContent = `Question ${idx+1} of ${total}`;
+            body.innerHTML = '';
+            const q = document.createElement('div');
+            q.innerHTML = `<div style=\"font-weight:700;color:#111827;margin-bottom:8px;\">${t}</div>`;
+            const scale = document.createElement('div');
+            scale.style.display='grid'; scale.style.gridTemplateColumns='repeat(5,1fr)'; scale.style.gap='6px';
+            for (let i=1;i<=5;i++){
+                const b = document.createElement('button');
+                b.className = 'btn-outline';
+                b.textContent = String(i);
+                if ((state.answers[id]||0)===i){ b.className='btn-secondary'; }
+                b.onclick = ()=>{ const s = getWizardState(); s.answers[id]=i; setWizardState(s); renderWizard(); };
+                scale.appendChild(b);
+            }
+            body.appendChild(q); body.appendChild(scale);
+            const prev = modal.querySelector('#wizPrev');
+            const next = modal.querySelector('#wizNext');
+            const fin = modal.querySelector('#wizFinish');
+            prev.disabled = idx===0; prev.onclick=()=>{ const s=getWizardState(); s.idx=Math.max(0, s.idx-1); setWizardState(s); renderWizard(); };
+            const onNext = ()=>{ const s=getWizardState(); s.idx=Math.min(total-1, s.idx+1); setWizardState(s); renderWizard(); };
+            next.onclick = onNext; next.style.display = idx<total-1?'inline-block':'none';
+            fin.style.display = idx===total-1?'inline-block':'none';
+            fin.onclick = ()=>{ showWizardResults(); };
+        }
+
+        function computeWizardRIASEC(){
+            const s = getWizardState();
+            const scores = { R:0, I:0, A:0, S:0, E:0, C:0 };
+            for (const q of WIZ_QUESTIONS){ const v = Number((s.answers||{})[q.id]||0); scores[q.c]+=v; }
+            const ordered = Object.entries(scores).sort((a,b)=> b[1]-a[1]);
+            const top = ordered.slice(0,3).map(x=>x[0]).join('');
+            return { scores, top };
+        }
+
+        function encodeShare(obj){ try{ return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); }catch{ return ''; } }
+        function decodeShare(s){ try{ return JSON.parse(decodeURIComponent(escape(atob(s)))); }catch{ return null; } }
+
+        function showWizardResults(){
+            ensureWizardUI();
+            const modal = document.getElementById('wizardModal');
+            const body = modal.querySelector('#wizBody');
+            const res = computeWizardRIASEC();
+            // reflect into main simple assessment area for consistency
+            document.getElementById('riasecOut').textContent = res.top ? `Top: ${res.top}` : '';
+            // persist to assessments store as well
+            saveAssessments();
+            renderSuggestions();
+            const share = encodeShare({ v:1, answers: getWizardState().answers, top: res.top, region: getRegionSettings() });
+            body.innerHTML = '';
+            const h = document.createElement('div'); h.innerHTML = `<div style=\"font-weight:700;color:#111827;margin-bottom:8px;\">Your Results</div>`; body.appendChild(h);
+            const tag = document.createElement('div'); tag.className='pill'; tag.textContent = `Top RIASEC: ${res.top}`; body.appendChild(tag);
+            const list = document.createElement('ul'); list.className='list';
+            const desc = {
+                R:'Realistic — hands-on, practical, tools and outdoor work',
+                I:'Investigative — analytical, curious, systems and data',
+                A:'Artistic — creative, design, expression',
+                S:'Social — helping, teaching, community',
+                E:'Enterprising — business, leadership, persuasion',
+                C:'Conventional — organized, detail, process'
+            };
+            Object.entries(res.scores).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+                const li=document.createElement('li'); li.textContent = `${k}: ${v} — ${desc[k]}`; list.appendChild(li);
+            });
+            body.appendChild(list);
+            const shareRow = document.createElement('div'); shareRow.style.marginTop='10px'; shareRow.style.display='flex'; shareRow.style.gap='8px';
+            const copyBtn = document.createElement('button'); copyBtn.className='btn-secondary'; copyBtn.textContent='Copy Share Link';
+            copyBtn.onclick = async ()=>{ const url = `${location.origin}${location.pathname}?share=${share}`; try{ await navigator.clipboard.writeText(url); alert('Share link copied.'); }catch{ prompt('Copy link:', url); } };
+            const openBtn = document.createElement('button'); openBtn.className='btn-outline'; openBtn.textContent='Open Results Link';
+            openBtn.onclick = ()=>{ const url = `${location.origin}${location.pathname}?share=${share}`; window.open(url,'_blank'); };
+            shareRow.appendChild(copyBtn); shareRow.appendChild(openBtn); body.appendChild(shareRow);
+        }
+
+        function loadShareIfPresent(){
+            const params = new URLSearchParams(location.search);
+            const s = params.get('share');
+            if (!s) return;
+            const data = decodeShare(s);
+            if (!data) return;
+            // restore wizard answers
+            setWizardState({ idx: 0, answers: data.answers||{} });
+            // reflect results
+            document.getElementById('riasecOut').textContent = data.top ? `Top: ${data.top}` : '';
+            renderSuggestions();
+        }
+
+        // Wire wizard buttons
+        function startWizard(){ setWizardState(getWizardState()); ensureWizardUI(); renderWizard(); }
+        function resumeWizard(){ ensureWizardUI(); renderWizard(); }
+        function resetWizard(){ clearWizard(); alert('Wizard reset.'); }
+
+        document.getElementById('startWizard')?.addEventListener('click', startWizard);
+        document.getElementById('resumeWizard')?.addEventListener('click', resumeWizard);
+        document.getElementById('resetWizard')?.addEventListener('click', resetWizard);
+
+        // ---------------- Region settings ----------------
+        function getRegionSettings(){ try{ return JSON.parse(localStorage.getItem(LS_KEY_REGION)||'{}'); }catch{return{};} }
+        function saveRegionSettings(obj){ localStorage.setItem(LS_KEY_REGION, JSON.stringify(obj||{})); }
+        function loadRegionUI(){
+            const s = getRegionSettings();
+            const rSel = document.getElementById('regionSelect');
+            const rRad = document.getElementById('radiusInput');
+            if (rSel) rSel.value = s.region||'';
+            if (rRad) rRad.value = s.radius||'';
+        }
+        function saveRegionUI(){
+            const region = (document.getElementById('regionSelect')||{}).value?.trim?.() || '';
+            const radius = (document.getElementById('radiusInput')||{}).value?.trim?.() || '';
+            saveRegionSettings({ region, radius });
+            const msg = document.getElementById('regionSavedMsg'); if (msg){ msg.textContent = 'Saved'; setTimeout(()=> msg.textContent='', 1400); }
+        }
+        document.getElementById('saveRegion')?.addEventListener('click', saveRegionUI);
+
+        function sendToPortfolio(){
+            const a = collectAssessments();
+            const skills = [];
+            const top = (a.riasec&&a.riasec.top)||'';
+            if(top.includes('I')) skills.push('Research','Data Analysis','Python','SQL');
+            if(top.includes('R')) skills.push('Mechanical','Hands-on','Field Work');
+            if(top.includes('A')) skills.push('Design','Writing','Creative Thinking');
+            if(top.includes('S')) skills.push('Teaching','Mentoring','Communication');
+            if(top.includes('E')) skills.push('Leadership','Sales','Entrepreneurship');
+            if(top.includes('C')) skills.push('Organization','Excel','Attention to Detail');
+            const colors=[a.colorPrimary,a.colorSecondary].join(' ');
+            if(colors.includes('Green')) skills.push('Critical Thinking','Problem Solving');
+            if(colors.includes('Gold')) skills.push('Planning','Reliability');
+            if(colors.includes('Blue')) skills.push('Collaboration','Empathy');
+            if(colors.includes('Orange')) skills.push('Adaptability','Making/Building');
+            try{ localStorage.setItem('portfolioIncomingSkills', JSON.stringify(Array.from(new Set(skills)))); }catch{}
+            window.location.href = 'portfolio.html';
         }
 
         // 6-Year Plan
@@ -344,18 +693,49 @@
         function addYear(){ const m = ensurePlan(); m.push({ year: m.length+1, items: []}); savePlanModel(m); renderPlan(); }
         function resetPlan(){ savePlanModel(defaultPlan()); renderPlan(); }
 
+        function planToText(m){
+            try{
+                const lines = ['6-Year Plan'];
+                (m||[]).forEach(y=>{
+                    lines.push(`Year ${y.year}`);
+                    (y.items||[]).forEach(it=> lines.push(`- ${it}`));
+                    if (!y.items || !y.items.length) lines.push('-');
+                });
+                return lines.join('\n');
+            }catch{ return '6-Year Plan'; }
+        }
+
         // Wire controls
         document.getElementById('calcRIASEC').addEventListener('click', ()=>{ calcRIASEC(); renderSuggestions(); });
+        // Quick pick chips
+        document.querySelectorAll('.chip[data-pick]').forEach(el=> el.addEventListener('click', ()=> applyQuickPick(el.getAttribute('data-pick'))));
         document.getElementById('saveAll').addEventListener('click', ()=>{ saveAssessments(); savePlanModel(getPlanModel()); alert('Saved to browser.'); });
         document.getElementById('loadAll').addEventListener('click', ()=>{ loadAssessments(); renderPlan(); });
         document.getElementById('clearAll').addEventListener('click', ()=>{ localStorage.removeItem(LS_KEY_ASMT); localStorage.removeItem(LS_KEY_PLAN); document.getElementById('riasecOut').textContent=''; renderSuggestions(); renderPlan(); alert('Cleared saved data.'); });
         document.getElementById('exportAll').addEventListener('click', exportAll);
+        document.getElementById('spSave').addEventListener('click', saveProfile);
         document.getElementById('importBtn').addEventListener('click', importAll);
         document.getElementById('addYear').addEventListener('click', addYear);
         document.getElementById('resetPlan').addEventListener('click', resetPlan);
+        document.getElementById('copyPlan').addEventListener('click', ()=>{
+            const txt = planToText(getPlanModel());
+            if (navigator.clipboard) navigator.clipboard.writeText(txt).then(()=> alert('Plan copied')).catch(()=> prompt('Copy plan:', txt));
+            else prompt('Copy plan:', txt);
+        });
+        document.getElementById('toPortfolio').addEventListener('click', sendToPortfolio);
 
         // Init
-        window.addEventListener('DOMContentLoaded', ()=>{ loadAssessments(); renderPlan(); renderSuggestions(); });
+        window.addEventListener('DOMContentLoaded', ()=>{
+            loadAssessments();
+            renderPlan();
+            renderSuggestions();
+            refreshWizardStatus();
+            loadRegionUI();
+            loadProfile();
+            loadShareIfPresent();
+            const qs = new URLSearchParams(location.search);
+            if (qs.get('start') === '1') startWizard();
+        });
     </script>
     <button id="feedbackFab" aria-label="Open feedback">Feedback</button>
     <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">

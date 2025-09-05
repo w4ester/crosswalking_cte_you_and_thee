@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Montserrat','Calibri','Segoe UI',sans-serif; margin:0; background: linear-gradient(135deg,#BD0934 0%, #FFC838 100%); min-height:100vh; padding:20px; }
+        .container { max-width: 1100px; margin:0 auto; background: rgba(255,255,255,0.97); border-radius: 20px; padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        h1 { text-align:center; margin:0 0 6px; font-size:2.2rem; background: linear-gradient(135deg,#BD0934,#FFC838); -webkit-background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
+        p.lead { text-align:center; color:#231F20; margin: 0 0 16px; }
+        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
+        .quick-jump a:hover { opacity:.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+        .grid { display:grid; grid-template-columns: 320px 1fr; gap: 16px; }
+        @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
+        .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+        .card h2 { margin: 0 0 10px; color:#231F20; font-size:1.2rem; }
+        label { display:block; color:#334155; font-size:0.95rem; margin: 6px 0; }
+        input[type="text"], input[type="email"], input[type="url"], textarea { width:100%; padding:8px 10px; border:1px solid #e2e8f0; border-radius:8px; font-family: inherit; }
+        textarea { min-height: 80px; }
+        .controls { display:flex; flex-wrap:wrap; gap:10px; }
+        button, .btn { padding:10px 14px; border:none; border-radius:10px; background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
+        .btn-outline { background:#fff; color:#111827; border:1px solid #e2e8f0; }
+        .btn-secondary { background:#0ea5e9; }
+        .muted { color:#64748b; font-size:0.9rem; }
+        .resume { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:22px; }
+        .resume .name { font-size: 1.8rem; font-weight: 800; color:#111827; }
+        .resume .headline { color:#374151; margin-top: 2px; }
+        .resume .contact { color:#4b5563; font-size: 0.95rem; margin-top: 8px; }
+        .resume .section { margin-top: 14px; }
+        .resume .section h3 { margin: 0 0 6px; color:#111827; font-size:1.05rem; border-bottom: 2px solid #f3f4f6; padding-bottom: 4px; }
+        .resume ul { margin: 6px 0 0 18px; }
+        .item { margin-top: 6px; }
+        .row { display:flex; flex-wrap:wrap; gap: 8px; align-items: baseline; }
+        .row .grow { flex: 1 1 auto; }
+        .pill { display:inline-block; background:#f1f5f9; border:1px solid #e2e8f0; color:#0f172a; padding:6px 10px; border-radius:999px; margin: 4px 4px 0 0; font-size: 0.85rem; }
+        /* Templates */
+        .tpl-classic .resume .section h3 { border: none; color:#111827; }
+        .tpl-modern .resume { border-left: 4px solid #BD0934; }
+        .tpl-compact .resume { font-size: 0.95rem; }
+        
+        @media print { .top-nav, .card.controls-card { display:none !important; } body{ background:#fff; } .container{ box-shadow:none; padding:0; } }
+    </style>
+    <!-- Prevent accidental file drops navigating away -->
+    <script>(function(){function block(e){e.preventDefault();e.stopPropagation();}window.addEventListener('dragover',block,{capture:true});window.addEventListener('drop',block,{capture:true});document.addEventListener('dragover',block,{capture:true});document.addEventListener('drop',block,{capture:true});})();</script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; img-src 'self' data: blob: https:;">
+</head>
+<body class="tpl-modern" id="body">
+    <nav class="top-nav">
+        <div class="quick-jump">
+            <a href="index.html">Home</a>
+            <a href="assessments.html">Student Journey</a>
+            <a href="portfolio.html">Portfolio</a>
+            <a href="resume.html" class="active">Resume</a>
+            <a href="dt-crosswalk-table.html">Digital Technology</a>
+            <a href="003_ed_crosswalk-table.html">Education</a>
+            <a href="enr-crosswalk-table.html">ENR</a>
+            <a href="pss_crosswalk.html">PSS</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Resume Builder</h1>
+        <p class="lead">Generate an ATS-friendly resume from your portfolio and tailor it quickly. Export to PDF via print.</p>
+
+        <div class="grid">
+            <div class="card controls-card">
+                <h2>Controls</h2>
+                <div class="controls" style="margin-bottom:8px;">
+                    <button id="fromPortfolio" class="btn-secondary">Load from Portfolio</button>
+                    <button id="saveBtn">Save</button>
+                    <button id="loadBtn" class="btn-outline">Load Saved</button>
+                </div>
+                <div class="controls" style="margin-bottom:8px;">
+                    <button id="exportJson" class="btn-outline">Export JSON</button>
+                    <button id="importJson" class="btn-outline">Import JSON</button>
+                    <button id="printBtn">Print (PDF)</button>
+                </div>
+                <h2>Template</h2>
+                <div class="controls">
+                    <button data-tpl="tpl-modern" class="btn-secondary">Modern</button>
+                    <button data-tpl="tpl-classic" class="btn-outline">Classic</button>
+                    <button data-tpl="tpl-compact" class="btn-outline">Compact</button>
+                </div>
+                <div class="section" style="margin-top:12px;">
+                    <label>Target Role (optional)</label>
+                    <input id="targetRole" type="text" placeholder="e.g., Junior Data Analyst">
+                    <p class="muted">Use this to tailor headline and ordering.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div id="resume" class="resume">
+                    <div class="name" id="rName"></div>
+                    <div class="headline" id="rHeadline"></div>
+                    <div class="contact" id="rContact"></div>
+
+                    <div class="section" id="rSummarySec">
+                        <h3>Summary</h3>
+                        <div id="rSummary"></div>
+                    </div>
+
+                    <div class="section" id="rSkillsSec">
+                        <h3>Skills</h3>
+                        <div id="rSkills"></div>
+                    </div>
+
+                    <div class="section" id="rExperienceSec">
+                        <h3>Experience</h3>
+                        <div id="rExperience"></div>
+                    </div>
+
+                    <div class="section" id="rProjectsSec">
+                        <h3>Projects</h3>
+                        <div id="rProjects"></div>
+                    </div>
+
+                    <div class="section" id="rEducationSec">
+                        <h3>Education</h3>
+                        <div id="rEducation"></div>
+                    </div>
+
+                    <div class="section" id="rCertsSec">
+                        <h3>Certifications</h3>
+                        <div id="rCerts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LS_RES = 'resumeV1';
+        const LS_PORT = 'portfolioV1';
+        const state = {
+            name: '', headline: '', email:'', phone:'', location:'', website:'',
+            summary: '', skills: [], experience: [], projects: [], education: [], certs: [], targetRole: ''
+        };
+
+        const $ = s=>document.querySelector(s);
+        function save(){ localStorage.setItem(LS_RES, JSON.stringify(state)); alert('Saved'); }
+        function load(){ try{ const d=JSON.parse(localStorage.getItem(LS_RES)||'{}'); Object.assign(state,d||{}); render(); alert('Loaded'); }catch{} }
+        function exportJson(){ const b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='resume.json'; document.body.appendChild(a); a.click(); a.remove(); }
+        function importJson(){ const txt=prompt('Paste resume JSON'); if(!txt) return; try{ Object.assign(state, JSON.parse(txt)); render(); alert('Imported'); }catch{ alert('Invalid JSON'); } }
+        function printPdf(){ window.print(); }
+
+        function loadFromPortfolio(){ try{
+            const p = JSON.parse(localStorage.getItem(LS_PORT)||'{}');
+            state.name = (p.profile&&p.profile.name)||state.name;
+            state.headline = (p.profile&&p.profile.headline)||state.headline;
+            state.email = (p.profile&&p.profile.email)||state.email;
+            state.phone = (p.profile&&p.profile.phone)||state.phone;
+            state.location = (p.profile&&p.profile.location)||state.location;
+            state.website = (p.profile&&p.profile.website)||state.website;
+            state.summary = p.about || state.summary;
+            state.skills = Array.isArray(p.skills) ? p.skills.slice(0,24) : state.skills;
+            state.projects = Array.isArray(p.projects) ? p.projects : state.projects;
+            state.experience = Array.isArray(p.experience) ? p.experience : state.experience;
+            state.education = Array.isArray(p.education) ? p.education : state.education;
+            state.certs = Array.isArray(p.certs) ? p.certs : state.certs;
+            render(); alert('Loaded from portfolio');
+        }catch{ alert('No portfolio found'); } }
+
+        function setText(id, val){ const el=$(id); el.textContent = val||''; }
+        function render(){
+            $('#targetRole').value = state.targetRole||'';
+            setText('#rName', state.name);
+            setText('#rHeadline', state.targetRole ? `${state.targetRole} • ${state.headline||''}`.replace(/\s+•\s+$/,'') : (state.headline||''));
+            $('#rContact').textContent = [state.email, state.phone, state.location, state.website].filter(Boolean).join(' · ');
+            $('#rSummary').textContent = state.summary || '';
+            const skills = $('#rSkills'); skills.innerHTML=''; (state.skills||[]).forEach(s=>{ const span=document.createElement('span'); span.className='pill'; span.textContent=s; skills.appendChild(span); });
+            const exp = $('#rExperience'); exp.innerHTML=''; (state.experience||[]).forEach(e=>{
+                const div=document.createElement('div'); div.className='item';
+                const row=document.createElement('div'); row.className='row';
+                row.innerHTML = `<strong class="grow">${e.role||''} — ${e.org||''}</strong><span>${[e.location,e.start,e.end].filter(Boolean).join(' • ')}</span>`;
+                div.appendChild(row);
+                if(e.bullets && e.bullets.length){ const ul=document.createElement('ul'); e.bullets.forEach(b=>{ const li=document.createElement('li'); li.textContent=b; ul.appendChild(li); }); div.appendChild(ul); }
+                exp.appendChild(div);
+            });
+            const pro = $('#rProjects'); pro.innerHTML=''; (state.projects||[]).forEach(p=>{
+                const div=document.createElement('div'); div.className='item';
+                const t=document.createElement('div'); t.innerHTML = `<strong>${p.title||''}</strong> ${p.link?`— <a href="${p.link}">${p.link}</a>`:''}`; div.appendChild(t);
+                if(p.desc){ const d=document.createElement('div'); d.textContent=p.desc; div.appendChild(d); }
+                pro.appendChild(div);
+            });
+            const edu = $('#rEducation'); edu.innerHTML=''; (state.education||[]).forEach(ed=>{
+                const div=document.createElement('div'); div.className='item';
+                const t=document.createElement('div'); t.innerHTML = `<strong>${ed.degree||''}</strong> — ${ed.school||''}`; div.appendChild(t);
+                const m=[ed.start, ed.end].filter(Boolean).join(' – '); if(m){ const s=document.createElement('div'); s.textContent=m; div.appendChild(s); }
+                if(ed.details){ const d=document.createElement('div'); d.textContent=ed.details; div.appendChild(d); }
+                edu.appendChild(div);
+            });
+            const ce = $('#rCerts'); ce.innerHTML=''; (state.certs||[]).forEach(c=>{
+                const div=document.createElement('div'); div.className='item';
+                div.textContent = [c.name, c.issuer, c.date].filter(Boolean).join(' — ');
+                ce.appendChild(div);
+            });
+        }
+
+        // Simple editing via prompts (keep builder lightweight here)
+        function quickEdit(){
+            state.name = prompt('Name', state.name||'')||state.name;
+            state.headline = prompt('Headline', state.headline||'')||state.headline;
+            state.email = prompt('Email', state.email||'')||state.email;
+            state.phone = prompt('Phone', state.phone||'')||state.phone;
+            state.location = prompt('Location', state.location||'')||state.location;
+            state.website = prompt('Website', state.website||'')||state.website;
+            state.summary = prompt('Summary', state.summary||'')||state.summary;
+            render();
+        }
+
+        // Wire
+        document.getElementById('fromPortfolio').addEventListener('click', loadFromPortfolio);
+        document.getElementById('saveBtn').addEventListener('click', save);
+        document.getElementById('loadBtn').addEventListener('click', load);
+        document.getElementById('exportJson').addEventListener('click', exportJson);
+        document.getElementById('importJson').addEventListener('click', importJson);
+        document.getElementById('printBtn').addEventListener('click', printPdf);
+        document.getElementById('targetRole').addEventListener('input', (e)=>{ state.targetRole=e.target.value; render(); });
+        document.querySelectorAll('[data-tpl]').forEach(btn=> btn.addEventListener('click', ()=>{ document.getElementById('body').className = btn.getAttribute('data-tpl'); }));
+
+        window.addEventListener('DOMContentLoaded', ()=>{ try{ const d=JSON.parse(localStorage.getItem(LS_RES)||'{}'); Object.assign(state,d||{});}catch{} render(); });
+    </script>
+</body>
+</html>
