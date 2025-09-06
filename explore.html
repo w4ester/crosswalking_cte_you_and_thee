@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Careers & Training</title>
+    <link rel="stylesheet" href="assets/common.css">
+    <style>
+        *{ box-sizing:border-box; }
+        body{ font-family:'Montserrat','Calibri','Segoe UI',sans-serif; margin:0; background: linear-gradient(135deg,#BD0934 0%, #FFC838 100%); min-height:100vh; padding:20px; }
+        .container{ max-width:1200px; margin:0 auto; background:#fff; border-radius:20px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+        h1{ text-align:center; margin:0 0 10px; font-size:2rem; background: linear-gradient(135deg,#BD0934,#FFC838); -webkit-background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
+        p.lead{ text-align:center; color:#231F20; margin:0 0 16px; }
+
+        .top-nav { display:flex; justify-content:center; align-items:center; gap:10px; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .menu-toggle { display:none; border:1px solid #e2e8f0; background:#fff; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer; }
+        .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
+        .quick-jump a:hover { opacity:.9; }
+        .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+        @media (max-width: 900px){ .top-nav{ justify-content:space-between; } .menu-toggle{ display:inline-block; } .quick-jump{ display:none; border-radius:12px; gap:8px; padding:10px; flex-direction:column; align-items:flex-start; } .quick-jump.open{ display:flex; } .quick-jump a{ border-radius:8px; } }
+
+        .controls{ display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; align-items:end; }
+        @media (max-width: 900px){ .controls{ grid-template-columns: 1fr; } }
+        .field{ display:flex; flex-direction:column; gap:6px; }
+        input[type="text"], select{ width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; }
+        .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+        .chip{ display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:999px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; }
+        .chip.active{ background:#111827; color:#fff; border-color:#111827; }
+        .tabs{ display:flex; gap:8px; margin-top:12px; }
+        .tab{ padding:8px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; cursor:pointer; }
+        .tab.active{ background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border-color:transparent; }
+        .results{ margin-top:12px; display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:12px; }
+        .card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:6px; }
+        .card h3{ margin:0; color:#111827; font-size:1.05rem; }
+        .muted{ color:#64748b; font-size:0.95rem; }
+        .actions{ margin-top:auto; display:flex; gap:8px; }
+        .btn{ padding:10px 14px; border-radius:10px; text-decoration:none; color:#fff; background: linear-gradient(135deg,#BD0934,#FFC838); font-weight:700; border:none; cursor:pointer; }
+        .btn-outline{ background:#fff; color:#111827; border:1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-controls="site-menu" aria-expanded="false">Menu</button>
+        <div class="quick-jump" id="site-menu">
+            <a href="index.html">Home</a>
+            <a href="assessments.html">Student Journey</a>
+            <a href="portfolio.html">Portfolio</a>
+            <a href="resume.html">Resume</a>
+            <a href="dt-crosswalk-table.html">Digital Technology</a>
+            <a href="003_ed_crosswalk-table.html">Education</a>
+            <a href="enr-crosswalk-table.html">ENR</a>
+            <a href="pss_crosswalk.html">PSS</a>
+            <a href="explore.html" class="active">Explore</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Explore Careers & Training</h1>
+        <p class="lead">Search occupations, nearby training, apprenticeships, and local help — then add items to your 6‑year plan.</p>
+
+        <div class="controls">
+            <div class="field">
+                <label for="q">Keyword</label>
+                <input id="q" type="text" placeholder="e.g., data, nurse, electrician">
+            </div>
+            <div class="field">
+                <label>RIASEC</label>
+                <div class="chips" id="riasecChips">
+                    <button class="chip" data-code="R">R</button>
+                    <button class="chip" data-code="I">I</button>
+                    <button class="chip" data-code="A">A</button>
+                    <button class="chip" data-code="S">S</button>
+                    <button class="chip" data-code="E">E</button>
+                    <button class="chip" data-code="C">C</button>
+                </div>
+            </div>
+            <div class="field">
+                <label for="jobZone">Job Zone</label>
+                <select id="jobZone">
+                    <option value="">Any</option>
+                    <option value="1">1 — Little or no preparation</option>
+                    <option value="2">2 — Some preparation</option>
+                    <option value="3">3 — Medium preparation</option>
+                    <option value="4">4 — Considerable preparation</option>
+                    <option value="5">5 — Extensive preparation</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="controls" style="margin-top:8px;">
+            <div class="field">
+                <label>Region (from Journey)</label>
+                <input id="region" type="text" readonly>
+            </div>
+            <div class="field">
+                <label>Radius (miles)</label>
+                <input id="radius" type="text" readonly>
+            </div>
+            <div class="field">
+                <label>ZIP (from Profile)</label>
+                <input id="zip" type="text" readonly>
+            </div>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <button class="tab active" data-tab="occupations">Occupations</button>
+            <button class="tab" data-tab="training">Training</button>
+            <button class="tab" data-tab="apprenticeships">Apprenticeships</button>
+            <button class="tab" data-tab="local">Local Help</button>
+        </div>
+
+        <div id="results" class="results" aria-live="polite"></div>
+    </div>
+
+    <button id="feedbackFab" class="fab-pill" aria-label="Open feedback">Feedback</button>
+    <script>
+        // Mobile menu
+        (function(){ const t=document.getElementById('menuToggle'); const m=document.getElementById('site-menu'); if(t&&m){ t.addEventListener('click', ()=>{ const o=m.classList.toggle('open'); t.setAttribute('aria-expanded', o?'true':'false'); }); } })();
+
+        const API_BASE = (localStorage.getItem('apiBase') || '/api').replace(/\/$/, '');
+
+        function getFilters(){
+            const q = document.getElementById('q').value.trim();
+            const ri = Array.from(document.querySelectorAll('#riasecChips .chip.active')).map(c=>c.getAttribute('data-code')).join('');
+            const jobZone = document.getElementById('jobZone').value;
+            const region = document.getElementById('region').value.trim();
+            const radius = document.getElementById('radius').value.trim();
+            const zip = document.getElementById('zip').value.trim();
+            return { q, ri, jobZone, region, radius, zip };
+        }
+
+        async function fetchJSON(url){
+            try{ const res = await fetch(url, { headers: { 'Accept':'application/json' } }); if(!res.ok) throw new Error('Bad status'); return await res.json(); } catch(e){ return null; }
+        }
+
+        async function searchOccupations(){
+            const { q, ri, jobZone, region, radius } = getFilters();
+            const url = `${API_BASE}/v1/occupations/search?q=${encodeURIComponent(q)}&riasec=${encodeURIComponent(ri)}&job_zone=${encodeURIComponent(jobZone)}&region=${encodeURIComponent(region)}&radius=${encodeURIComponent(radius)}`;
+            const data = await fetchJSON(url);
+            if(data && Array.isArray(data.items)) return data.items;
+            // Fallback demo data
+            return [
+                { soc:'15-1252.00', title:'Software Developers', summary:'Develop and maintain software applications.', riasec:'IC', job_zone:4, source:'demo' },
+                { soc:'29-1141.00', title:'Registered Nurses', summary:'Provide and coordinate patient care.', riasec:'SIE', job_zone:4, source:'demo' }
+            ];
+        }
+
+        async function searchTraining(){
+            const { q, zip, radius } = getFilters();
+            const url = `${API_BASE}/v1/training?keyword=${encodeURIComponent(q)}&zipcode=${encodeURIComponent(zip)}&radius=${encodeURIComponent(radius)}`;
+            const data = await fetchJSON(url);
+            if(data && Array.isArray(data.items)) return data.items;
+            return [ { name:'Intro to Data Analytics', provider:'Community College', location:{city:'Local',state:'MD',zip}, url:'#', type:'Certificate' } ];
+        }
+
+        async function searchApprenticeships(){
+            const { q, zip } = getFilters();
+            const url = `${API_BASE}/v1/apprenticeships?keyword=${encodeURIComponent(q)}&location=${encodeURIComponent(zip)}`;
+            const data = await fetchJSON(url);
+            if(data && Array.isArray(data.items)) return data.items;
+            return [ { name:'IT Support Apprentice', provider:'Employer ABC', location:{city:'Nearby',state:'MD',zip}, url:'#', type:'Apprenticeship' } ];
+        }
+
+        async function searchLocal(){
+            const { zip } = getFilters();
+            const url = `${API_BASE}/v1/local-help/ajc?zip=${encodeURIComponent(zip)}`;
+            const data = await fetchJSON(url);
+            if(data && Array.isArray(data.items)) return data.items;
+            return [ { name:'American Job Center', location:{city:'Local',state:'MD',zip}, url:'https://www.careeronestop.org/LocalHelp/AmericanJobCenters/american-job-centers.aspx' } ];
+        }
+
+        function ensurePlan(){ try{ const m=JSON.parse(localStorage.getItem('studentPlanV1')||'[]'); if(Array.isArray(m) && m.length) return m; }catch{} return Array.from({length:6},(_,i)=>({year:i+1,items:[]})); }
+        function savePlan(m){ localStorage.setItem('studentPlanV1', JSON.stringify(m)); }
+        function addToPlan(text){ const m=ensurePlan(); m[0].items.push(text); savePlan(m); alert('Added to Year 1 of your plan'); }
+
+        function render(items, kind){
+            const root = document.getElementById('results'); root.innerHTML='';
+            items.forEach(it =>{
+                const card=document.createElement('div'); card.className='card';
+                const h=document.createElement('h3'); h.textContent = it.title || it.name || it.soc || 'Result'; card.appendChild(h);
+                const sub=document.createElement('div'); sub.className='muted';
+                if(kind==='occupations') sub.textContent = it.summary || '';
+                if(kind==='training') sub.textContent = `${it.provider||''} • ${(it.location&&[it.location.city,it.location.state].filter(Boolean).join(', '))||''}`;
+                if(kind==='apprenticeships') sub.textContent = `${it.provider||''} • ${(it.location&&[it.location.city,it.location.state].filter(Boolean).join(', '))||''}`;
+                if(kind==='local') sub.textContent = (it.location&&[it.location.city,it.location.state,it.location.zip].filter(Boolean).join(', '))||'';
+                card.appendChild(sub);
+                const actions=document.createElement('div'); actions.className='actions';
+                const plan=document.createElement('button'); plan.className='btn'; plan.textContent='Add to Plan'; plan.onclick=()=> addToPlan(h.textContent);
+                const open=document.createElement('a'); open.className='btn-outline'; open.textContent='Open Source'; open.href=it.url||'#'; open.target='_blank'; open.rel='noopener';
+                actions.appendChild(plan); actions.appendChild(open); card.appendChild(actions);
+                root.appendChild(card);
+            });
+        }
+
+        async function run(kind){
+            if(kind==='occupations') render(await searchOccupations(), kind);
+            if(kind==='training') render(await searchTraining(), kind);
+            if(kind==='apprenticeships') render(await searchApprenticeships(), kind);
+            if(kind==='local') render(await searchLocal(), kind);
+        }
+
+        // Wire
+        document.getElementById('riasecChips').addEventListener('click', (e)=>{ const b=e.target.closest('.chip'); if(!b) return; b.classList.toggle('active'); });
+        document.querySelectorAll('.tab').forEach(t=> t.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); run(t.getAttribute('data-tab')); }));
+        document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter'){ const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); }});
+
+        // Prefill region/zip from Journey
+        (function(){ try{ const r=JSON.parse(localStorage.getItem('regionSettingsV1')||'{}'); document.getElementById('region').value=r.region||''; document.getElementById('radius').value=r.radius||''; }catch{} try{ const p=JSON.parse(localStorage.getItem('studentProfileV1')||'{}'); document.getElementById('zip').value=p.zip||''; }catch{} })();
+        // Initial load
+        run('occupations');
+    </script>
+</body>
+</html>
+
