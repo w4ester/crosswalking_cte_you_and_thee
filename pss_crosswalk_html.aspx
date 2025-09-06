@@ -254,7 +254,7 @@
             color: #231F20;
         }
         /* Feedback floating button and modal */
-        #feedbackFab { position: fixed; right: calc(20px + env(safe-area-inset-right)); bottom: calc(20px + env(safe-area-inset-bottom)); background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border:none; border-radius:999px; padding:12px 16px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.25); cursor:pointer; z-index: 2001; }
+        .fab-pill { position: fixed; right: calc(20px + env(safe-area-inset-right)); bottom: calc(20px + env(safe-area-inset-bottom)); background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border:none; border-radius:999px; padding:12px 16px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.25); cursor:pointer; z-index: 2001; }
         #feedbackText { width:100%; min-height:120px; border:1px solid #e2e8f0; border-radius:8px; padding:10px; font-family: inherit; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 2002; }
         .modal.open { display: flex; }
@@ -1445,7 +1445,7 @@
             document.getElementById('searchInput').addEventListener('input', applyFilters);
         });
     </script>
-    <button id="feedbackFab" aria-label="Open feedback">Feedback</button>
+    <button id="feedbackFab" class="fab-pill" aria-label="Open feedback">Feedback</button>
     <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">
         <div class="modal-content">
             <div class="modal-header">

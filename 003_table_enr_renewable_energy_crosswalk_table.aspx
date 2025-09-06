@@ -487,7 +487,7 @@
             }
         });
     </script>
-    <button id="feedbackFab" aria-label="Open feedback">Feedback</button>
+    <button id="feedbackFab" class="fab-pill" aria-label="Open feedback">Feedback</button>
     <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">
         <div class="modal-content">
             <div class="modal-header">
