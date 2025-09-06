@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+dist/
+.pnpm-store/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Editors/OS
+.vscode/
+.idea/
+.env
+.env.*
+.cache/
+
+# Build artifacts
+*.tmp
+*.swp
+

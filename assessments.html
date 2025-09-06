@@ -72,6 +72,7 @@
     <script>(function(){function block(e){e.preventDefault();e.stopPropagation();}window.addEventListener('dragover',block,{capture:true});window.addEventListener('drop',block,{capture:true});document.addEventListener('dragover',block,{capture:true});document.addEventListener('drop',block,{capture:true});})();</script>
     <meta name="description" content="Student interest inventory (RIASEC, True Colors, Team Roles) with local save and 6-year plan scaffold.">
     <style media="print">.top-nav{display:none}</style>
+    <link rel="stylesheet" href="assets/common.css">
 </head>
 <body>
     <nav class="top-nav">
@@ -746,6 +747,7 @@
         });
     </script>
     <button id="feedbackFab" class="fab-pill" aria-label="Open feedback">Feedback</button>
+    <button id="chatFab" class="fab-pill chat" aria-label="Open chat">Chat</button>
     <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">
         <div class="modal-content">
             <div class="modal-header">
@@ -758,6 +760,17 @@
                 <button id="copyFeedback" class="btn-secondary">Copy</button>
                 <button id="emailFeedback" class="btn">Email</button>
             </div>
+        </div>
+    </div>
+    <!-- Chat modal (placeholder for page-specific chat) -->
+    <div class="modal" id="modal-chat" aria-hidden="true" role="dialog" aria-labelledby="chatTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="chatTitle" style="color:#231F20;">Chat (coming soon)</h2>
+                <button class="modal-close" data-close aria-label="Close">×</button>
+            </div>
+            <p style="color:#334155;margin:0 0 8px;">We’re preparing an AI chat assistant focused on clusters and CCR guidance.</p>
+            <p class="muted">This page will use a page-specific knowledge context. UI and streaming chat will be wired in the AI branch.</p>
         </div>
     </div>
     <script>
@@ -777,6 +790,13 @@
             function close(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
             fab.addEventListener('click', open);
             modal.addEventListener('click', (e)=>{ if (e.target===modal || e.target.hasAttribute('data-close')) close(); });
+            // Chat
+            const chatFab = document.getElementById('chatFab');
+            const chatModal = document.getElementById('modal-chat');
+            function openChat(){ chatModal.classList.add('open'); chatModal.setAttribute('aria-hidden','false'); }
+            function closeChat(){ chatModal.classList.remove('open'); chatModal.setAttribute('aria-hidden','true'); }
+            chatFab.addEventListener('click', openChat);
+            chatModal.addEventListener('click', (e)=>{ if (e.target===chatModal || e.target.hasAttribute('data-close')) closeChat(); });
             document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ close(); }});
             document.getElementById('copyFeedback').addEventListener('click', async ()=>{ const txt=document.getElementById('feedbackText').value.trim(); try{ await navigator.clipboard.writeText(txt); alert('Copied to clipboard.'); }catch{} });
             document.getElementById('emailFeedback').addEventListener('click', ()=>{ const txt=encodeURIComponent(document.getElementById('feedbackText').value.trim()); const subj=encodeURIComponent('CTE Crosswalks Feedback (Assessments)'); window.location.href=`mailto:occpcteprograms.msde@maryland.gov?subject=${subj}&body=${txt}`; });
