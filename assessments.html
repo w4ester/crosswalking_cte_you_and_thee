@@ -386,6 +386,7 @@
             };
             localStorage.setItem(LS_KEY_PROFILE, JSON.stringify(p));
             const el=document.getElementById('spSavedMsg'); if(el){ el.textContent='Saved'; setTimeout(()=> el.textContent='', 1200); }
+            try{ renderFamilyResources(); }catch{}
         }
         function loadProfile(){
             try{
@@ -465,6 +466,34 @@
                 }
             } catch {}
             s.innerHTML=''; s.appendChild(wrap);
+        }
+
+        // Family resources rendering
+        function renderFamilyResources(){
+            const root = document.getElementById('familyResources'); if(!root) return;
+            root.innerHTML='';
+            const region = (getRegionSettings().region||'').trim();
+            const radiusVal = (getRegionSettings().radius||'').trim();
+            const radius = radiusVal ? `${radiusVal} miles` : '';
+            let zip=''; try{ const p=JSON.parse(localStorage.getItem(LS_KEY_PROFILE)||'{}'); zip = (p.zip||'').trim(); }catch{}
+            const links = [];
+            if (region){
+                const baseCC = 'https://careercoachdc.lightcastcc.com/browse-careers/';
+                const url = `${baseCC}?region=${encodeURIComponent(region)}${radius?`&radius=${encodeURIComponent(radius)}`:''}`;
+                links.push({ title:'Explore Careers near you (CareerCoach)', href:url });
+            }
+            if (zip){
+                links.push({ title:'American Job Center near you', href:`https://www.careeronestop.org/LocalHelp/AmericanJobCenters/american-job-centers.aspx?location=${encodeURIComponent(zip)}` });
+                links.push({ title:'Youth Programs (CareerOneStop)', href:`https://www.careeronestop.org/LocalHelp/Youth/Find-Programs.aspx?location=${encodeURIComponent(zip)}` });
+                links.push({ title:'Apprenticeship Finder', href:`https://www.apprenticeship.gov/apprenticeship-job-finder?location=${encodeURIComponent(zip)}` });
+                links.push({ title:'Training Finder (CareerOneStop)', href:`https://www.careeronestop.org/FindTraining/Find-Training.aspx?zipcode=${encodeURIComponent(zip)}` });
+            }
+            links.push({ title:'Explore Careers (CareerOneStop)', href:'https://www.careeronestop.org/ExploreCareers/ExploreCareers.aspx' });
+            links.push({ title:'O*NET Online (occupations, skills, tasks)', href:'https://www.onetonline.org/' });
+            links.push({ title:'Maryland Apprenticeship & Training', href:'https://www.labor.maryland.gov/employment/appr/' });
+            const frag = document.createDocumentFragment();
+            links.forEach(l => { const a=document.createElement('a'); a.href=l.href; a.target='_blank'; a.rel='noopener'; a.className='btn-outline'; a.textContent=l.title; frag.appendChild(a); });
+            root.appendChild(frag);
         }
 
         // ---------------- Guided Assessment (wizard) ----------------
@@ -651,6 +680,7 @@
             const radius = (document.getElementById('radiusInput')||{}).value?.trim?.() || '';
             saveRegionSettings({ region, radius });
             const msg = document.getElementById('regionSavedMsg'); if (msg){ msg.textContent = 'Saved'; setTimeout(()=> msg.textContent='', 1400); }
+            try{ renderFamilyResources(); }catch{}
         }
         document.getElementById('saveRegion')?.addEventListener('click', saveRegionUI);
 
@@ -740,6 +770,7 @@
             renderSuggestions();
             refreshWizardStatus();
             loadRegionUI();
+            renderFamilyResources();
             loadProfile();
             loadShareIfPresent();
             const qs = new URLSearchParams(location.search);
