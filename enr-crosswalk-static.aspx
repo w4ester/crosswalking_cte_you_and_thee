@@ -208,11 +208,19 @@
         }
 
         /* Top cluster nav */
-        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; }
+        .top-nav { display:flex; justify-content:center; align-items:center; gap:10px; position: sticky; top: 0; z-index: 300; }
+        .menu-toggle { display:none; border:1px solid #e2e8f0; background:#fff; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer; }
         .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); margin: 10px auto; }
         .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
         .quick-jump a:hover { opacity:.9; }
         .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+        @media (max-width: 900px){
+            .top-nav{ justify-content:space-between; }
+            .menu-toggle{ display:inline-block; }
+            .quick-jump{ display:none; border-radius:12px; gap:8px; padding:10px; flex-direction:column; align-items:flex-start; }
+            .quick-jump.open{ display:flex; }
+            .quick-jump a{ border-radius:8px; }
+        }
 
         .warning-note {
             background: #fff5f5;
@@ -295,7 +303,8 @@
 </head>
 <body>
     <nav class="top-nav">
-        <div class="quick-jump">
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-controls="site-menu" aria-expanded="false">Menu</button>
+        <div class="quick-jump" id="site-menu">
             <a href="index.aspx">Home</a>
             <a href="dt-crosswalk-table.aspx">Digital Technology</a>
             <a href="003_ed_crosswalk-table.aspx">Education</a>
@@ -643,3 +652,4 @@
     </script>
 </body>
 </html>
+<script>(function(){ const t=document.getElementById('menuToggle'); const m=document.getElementById('site-menu'); if(t&&m){ t.addEventListener('click', ()=>{ const o=m.classList.toggle('open'); t.setAttribute('aria-expanded', o?'true':'false'); }); } })();</script>

@@ -10,7 +10,8 @@
         .container { max-width: 1100px; margin:0 auto; background: rgba(255,255,255,0.97); border-radius: 20px; padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         h1 { text-align:center; margin:0 0 6px; font-size:2.2rem; background: linear-gradient(135deg,#BD0934,#FFC838); -webkit-background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
         p.lead { text-align:center; color:#231F20; margin: 0 0 22px; }
-        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .top-nav { display:flex; justify-content:center; align-items:center; gap:10px; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .menu-toggle { display:none; border:1px solid #e2e8f0; background:#fff; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer; }
         .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
         .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
         .quick-jump a:hover { opacity:.9; }
@@ -59,6 +60,13 @@
         details.card > summary { list-style: none; cursor: pointer; padding: 16px; font-weight: 700; color:#111827; }
         details.card > summary::-webkit-details-marker { display:none; }
         .card-inner { padding: 0 16px 16px 16px; }
+        @media (max-width: 900px){
+            .top-nav{ justify-content:space-between; }
+            .menu-toggle{ display:inline-block; }
+            .quick-jump{ display:none; border-radius:12px; gap:8px; padding:10px; flex-direction:column; align-items:flex-start; }
+            .quick-jump.open{ display:flex; }
+            .quick-jump a{ border-radius:8px; }
+        }
     </style>
     <!-- Prevent accidental file drops navigating away -->
     <script>(function(){function block(e){e.preventDefault();e.stopPropagation();}window.addEventListener('dragover',block,{capture:true});window.addEventListener('drop',block,{capture:true});document.addEventListener('dragover',block,{capture:true});document.addEventListener('drop',block,{capture:true});})();</script>
@@ -67,7 +75,8 @@
 </head>
 <body>
     <nav class="top-nav">
-        <div class="quick-jump">
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-controls="site-menu" aria-expanded="false">Menu</button>
+        <div class="quick-jump" id="site-menu">
             <a href="index.html">Home</a>
             <a href="dt-crosswalk-table.html">Digital Technology</a>
             <a href="enr-crosswalk-table.html">ENR</a>
@@ -753,6 +762,15 @@
     </div>
     <script>
         (function(){
+            // Mobile menu toggle
+            const toggle = document.getElementById('menuToggle');
+            const menu = document.getElementById('site-menu');
+            if (toggle && menu){
+                toggle.addEventListener('click', ()=>{
+                    const open = menu.classList.toggle('open');
+                    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+            }
             const fab = document.getElementById('feedbackFab');
             const modal = document.getElementById('modal-feedback');
             function open(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }

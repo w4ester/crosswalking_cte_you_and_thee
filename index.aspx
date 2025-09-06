@@ -117,14 +117,8 @@
         .cluster-link:hover svg {
             transform: translateX(3px);
         }
-        .top-nav {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 12px;
-            position: sticky;
-            top: 0;
-            z-index: 200;
-        }
+        .top-nav { display:flex; justify-content:center; align-items:center; gap:10px; position: sticky; top: 0; z-index: 200; margin-bottom:12px; }
+        .menu-toggle { display:none; border:1px solid #e2e8f0; background:#fff; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer; }
 
         /* Quick-jump nav */
         .quick-jump {
@@ -263,6 +257,13 @@
         .modal-header { display:flex; justify-content: space-between; align-items:center; margin-bottom: 10px; }
         .modal-close { border:none; background:transparent; font-size: 1.5rem; cursor:pointer; color:#231F20; }
 
+        @media (max-width: 900px){
+            .top-nav{ justify-content:space-between; }
+            .menu-toggle{ display:inline-block; }
+            .quick-jump{ display:none; border-radius:12px; gap:8px; padding:10px; flex-direction:column; align-items:flex-start; }
+            .quick-jump.open{ display:flex; }
+            .quick-jump a{ border-radius:8px; }
+        }
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -286,7 +287,8 @@
 </head>
 <body>
     <nav class="top-nav">
-        <div class="quick-jump">
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-controls="site-menu" aria-expanded="false">Menu</button>
+        <div class="quick-jump" id="site-menu">
             <a href="index.aspx" class="active">Home</a>
             <a href="dt-crosswalk-table.aspx">Digital Technology</a>
             <a href="003_ed_crosswalk-table.aspx">Education</a>
@@ -565,6 +567,9 @@
 </html>
 <script>
     (function(){
+        const toggle = document.getElementById('menuToggle');
+        const menu = document.getElementById('site-menu');
+        if (toggle && menu){ toggle.addEventListener('click', ()=>{ const open = menu.classList.toggle('open'); toggle.setAttribute('aria-expanded', open?'true':'false'); }); }
         const openers = document.querySelectorAll('[data-modal]');
         const modals = {
             students: document.getElementById('modal-students'),
