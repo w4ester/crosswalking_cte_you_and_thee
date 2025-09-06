@@ -34,9 +34,17 @@
         .card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:6px; }
         .card h3{ margin:0; color:#111827; font-size:1.05rem; }
         .muted{ color:#64748b; font-size:0.95rem; }
+        .tags{ display:flex; gap:6px; flex-wrap:wrap; }
+        .tag{ display:inline-block; padding:4px 8px; border-radius:999px; border:1px solid #e5e7eb; font-size:0.8rem; color:#111827; background:#f9fafb; }
         .actions{ margin-top:auto; display:flex; gap:8px; }
         .btn{ padding:10px 14px; border-radius:10px; text-decoration:none; color:#fff; background: linear-gradient(135deg,#BD0934,#FFC838); font-weight:700; border:none; cursor:pointer; }
         .btn-outline{ background:#fff; color:#111827; border:1px solid #e2e8f0; }
+        .toolbar{ display:flex; gap:8px; align-items:center; margin-top:8px; }
+        details.adv { margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; }
+        details.adv > summary{ padding:8px 10px; cursor:pointer; font-weight:700; }
+        details.adv > div{ padding: 8px 10px; display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+        .loading{ text-align:center; color:#64748b; padding:10px; }
+        .compare-bar{ position: sticky; bottom: 10px; display:none; justify-content:space-between; align-items:center; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:8px 10px; box-shadow:0 6px 18px rgba(0,0,0,0.08); margin-top:10px; }
     </style>
 </head>
 <body>
@@ -108,8 +116,24 @@
             <button class="tab" data-tab="apprenticeships">Apprenticeships</button>
             <button class="tab" data-tab="local">Local Help</button>
         </div>
+        <div class="toolbar">
+            <button id="searchBtn" class="btn">Search</button>
+            <button id="resetBtn" class="btn-outline">Reset Filters</button>
+            <div class="muted">Region/ZIP come from Student Journey</div>
+        </div>
+        <details class="adv">
+            <summary>Advanced filters</summary>
+            <div>
+                <div class="field"><label for="wageMin">Min Wage ($/hr)</label><input id="wageMin" type="text" inputmode="decimal" placeholder="e.g., 20"></div>
+                <div class="field"><label for="edu">Min Job Zone</label>
+                    <select id="edu"><option value="">Any</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+                </div>
+            </div>
+        </details>
 
+        <div id="loading" class="loading" style="display:none;">Loading…</div>
         <div id="results" class="results" aria-live="polite"></div>
+        <div id="compareBar" class="compare-bar"><div><strong>Compare:</strong> <span id="compareCount">0</span>/2 selected</div><div class="actions"><button id="compareBtn" class="btn-outline">Open Compare</button><button id="clearCompare" class="btn-outline">Clear</button></div></div>
     </div>
 
     <button id="feedbackFab" class="fab-pill" aria-label="Open feedback">Feedback</button>
@@ -129,6 +153,7 @@
             return { q, ri, jobZone, region, radius, zip };
         }
 
+        function showLoading(on){ document.getElementById('loading').style.display = on?'block':'none'; }
         async function fetchJSON(url){
             try{ const res = await fetch(url, { headers: { 'Accept':'application/json' } }); if(!res.ok) throw new Error('Bad status'); return await res.json(); } catch(e){ return null; }
         }
@@ -171,7 +196,12 @@
 
         function ensurePlan(){ try{ const m=JSON.parse(localStorage.getItem('studentPlanV1')||'[]'); if(Array.isArray(m) && m.length) return m; }catch{} return Array.from({length:6},(_,i)=>({year:i+1,items:[]})); }
         function savePlan(m){ localStorage.setItem('studentPlanV1', JSON.stringify(m)); }
-        function addToPlan(text){ const m=ensurePlan(); m[0].items.push(text); savePlan(m); alert('Added to Year 1 of your plan'); }
+        function addToPlan(text){ const m=ensurePlan(); let year = Number(prompt('Add to which year? (1-6)', '1'))||1; year=Math.max(1,Math.min(6,year)); const idx=year-1; m[idx].items.push(text); savePlan(m); alert(`Added to Year ${year} of your plan`); }
+
+        const compareSel = new Set();
+        function toggleCompare(key){ if(compareSel.has(key)) compareSel.delete(key); else if(compareSel.size<2) compareSel.add(key); updateCompareBar(); }
+        function updateCompareBar(){ const bar=document.getElementById('compareBar'); const n=compareSel.size; document.getElementById('compareCount').textContent=String(n); bar.style.display = n>0 ? 'flex' : 'none'; }
+        async function openCompare(){ if(compareSel.size!==2){ alert('Select 2 occupations to compare.'); return; } const [a,b]=Array.from(compareSel); const ad=await getOccupationDetail(a); const bd=await getOccupationDetail(b); showCompareModal(ad, bd); }
 
         function render(items, kind){
             const root = document.getElementById('results'); root.innerHTML='';
@@ -184,7 +214,18 @@
                 if(kind==='apprenticeships') sub.textContent = `${it.provider||''} • ${(it.location&&[it.location.city,it.location.state].filter(Boolean).join(', '))||''}`;
                 if(kind==='local') sub.textContent = (it.location&&[it.location.city,it.location.state,it.location.zip].filter(Boolean).join(', '))||'';
                 card.appendChild(sub);
+                if(kind==='occupations'){
+                    const tags=document.createElement('div'); tags.className='tags';
+                    if (it.riasec) tags.appendChild(tag(`RIASEC: ${it.riasec}`));
+                    if (it.job_zone) tags.appendChild(tag(`Job Zone: ${it.job_zone}`));
+                    card.appendChild(tags);
+                }
                 const actions=document.createElement('div'); actions.className='actions';
+                if(kind==='occupations'){
+                    const details=document.createElement('button'); details.className='btn-outline'; details.textContent='Details'; details.onclick=()=> openDetails(it);
+                    const compare=document.createElement('button'); compare.className='btn-outline'; compare.textContent = 'Compare'; compare.onclick=()=> toggleCompare(it.soc||it.title||h.textContent);
+                    actions.appendChild(details); actions.appendChild(compare);
+                }
                 const plan=document.createElement('button'); plan.className='btn'; plan.textContent='Add to Plan'; plan.onclick=()=> addToPlan(h.textContent);
                 const open=document.createElement('a'); open.className='btn-outline'; open.textContent='Open Source'; open.href=it.url||'#'; open.target='_blank'; open.rel='noopener';
                 actions.appendChild(plan); actions.appendChild(open); card.appendChild(actions);
@@ -193,22 +234,92 @@
         }
 
         async function run(kind){
+            showLoading(true);
             if(kind==='occupations') render(await searchOccupations(), kind);
             if(kind==='training') render(await searchTraining(), kind);
             if(kind==='apprenticeships') render(await searchApprenticeships(), kind);
             if(kind==='local') render(await searchLocal(), kind);
+            showLoading(false);
         }
 
         // Wire
         document.getElementById('riasecChips').addEventListener('click', (e)=>{ const b=e.target.closest('.chip'); if(!b) return; b.classList.toggle('active'); });
         document.querySelectorAll('.tab').forEach(t=> t.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); run(t.getAttribute('data-tab')); }));
         document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter'){ const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); }});
+        document.getElementById('searchBtn').addEventListener('click', ()=>{ const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); });
+        document.getElementById('resetBtn').addEventListener('click', ()=>{ document.getElementById('q').value=''; document.querySelectorAll('#riasecChips .chip').forEach(c=>c.classList.remove('active')); document.getElementById('jobZone').value=''; document.getElementById('wageMin').value=''; document.getElementById('edu').value=''; const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); });
+        document.getElementById('compareBtn').addEventListener('click', openCompare);
+        document.getElementById('clearCompare').addEventListener('click', ()=>{ compareSel.clear(); updateCompareBar(); });
 
         // Prefill region/zip from Journey
         (function(){ try{ const r=JSON.parse(localStorage.getItem('regionSettingsV1')||'{}'); document.getElementById('region').value=r.region||''; document.getElementById('radius').value=r.radius||''; }catch{} try{ const p=JSON.parse(localStorage.getItem('studentProfileV1')||'{}'); document.getElementById('zip').value=p.zip||''; }catch{} })();
         // Initial load
         run('occupations');
+
+        // Helpers
+        function tag(text){ const s=document.createElement('span'); s.className='tag'; s.textContent=text; return s; }
+
+        async function getOccupationDetail(key){
+            // key is soc or title
+            const soc = (String(key).match(/\d{2}-\d{4}\.\d{2}/) || [])[0] || '';
+            if (soc){
+                const url = `${API_BASE}/v1/occupations/${encodeURIComponent(soc)}`;
+                const data = await fetchJSON(url);
+                if (data) return data;
+            }
+            // Fallback demo details
+            if ((key||'').includes('15-1252') || (key||'').includes('Software')) return { soc:'15-1252.00', title:'Software Developers', description:'Develop and maintain software applications and systems.', riasec:'IC', job_zone:4, tasks:['Design, develop, and test software','Collaborate with cross-functional teams'], skills:{Programming:'High',ProblemSolving:'High'} };
+            if ((key||'').includes('29-1141') || (key||'').includes('Nurse')) return { soc:'29-1141.00', title:'Registered Nurses', description:'Provide and coordinate patient care; educate patients.', riasec:'SIE', job_zone:4, tasks:['Assess patient health problems','Develop and implement nursing care plans'], skills:{PatientCare:'High',Communication:'High'} };
+            return { title:String(key), description:'Details not available in demo.' };
+        }
+
+        function openDetails(it){
+            showDetailModal({ title: it.title||it.name||it.soc, summary: it.summary||'', riasec: it.riasec||'', job_zone: it.job_zone||'', soc: it.soc||'' });
+        }
+    </script>
+
+    <!-- Detail Modal -->
+    <div class="modal" id="modal-detail" aria-hidden="true" role="dialog" aria-labelledby="detailTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detailTitle" style="color:#231F20;">Occupation Details</h2>
+                <button class="modal-close" data-close aria-label="Close">×</button>
+            </div>
+            <div id="detailBody" class="muted">Loading…</div>
+        </div>
+    </div>
+
+    <!-- Compare Modal -->
+    <div class="modal" id="modal-compare" aria-hidden="true" role="dialog" aria-labelledby="compareTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="compareTitle" style="color:#231F20;">Compare Occupations</h2>
+                <button class="modal-close" data-close aria-label="Close">×</button>
+            </div>
+            <div id="compareBody" class="muted">Loading…</div>
+        </div>
+    </div>
+
+    <script>
+        // Modal helpers for details/compare
+        (function(){
+            const dModal=document.getElementById('modal-detail');
+            const cModal=document.getElementById('modal-compare');
+            function close(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); }
+            dModal.addEventListener('click', (e)=>{ if(e.target===dModal || e.target.hasAttribute('data-close')) close(dModal); });
+            cModal.addEventListener('click', (e)=>{ if(e.target===cModal || e.target.hasAttribute('data-close')) close(cModal); });
+            window.showDetailModal = async function(meta){ dModal.classList.add('open'); dModal.setAttribute('aria-hidden','false'); const body=document.getElementById('detailBody'); body.textContent='Loading…'; const det=await getOccupationDetail(meta.soc||meta.title); const html = `
+                <div><strong>${det.title||meta.title}</strong> ${det.soc?`<span class="tag">${det.soc}</span>`:''}</div>
+                <div class="muted" style="margin:6px 0;">${det.description||meta.summary||''}</div>
+                <div class="tags">${det.riasec?`<span class="tag">RIASEC: ${det.riasec}</span>`:''}${det.job_zone?`<span class="tag">Job Zone: ${det.job_zone}</span>`:''}</div>
+                ${Array.isArray(det.tasks)?`<div style="margin-top:8px;"><strong>Common tasks</strong><ul style="margin-left:18px;">${det.tasks.slice(0,5).map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}
+            `; body.innerHTML = html; };
+            window.showCompareModal = function(a,b){ cModal.classList.add('open'); cModal.setAttribute('aria-hidden','false'); const body=document.getElementById('compareBody'); body.innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div><strong>${a.title||''}</strong>${a.soc?` <span class='tag'>${a.soc}</span>`:''}<div class='muted'>${a.description||''}</div><div class='tags'>${a.riasec?`<span class='tag'>RIASEC: ${a.riasec}</span>`:''}${a.job_zone?`<span class='tag'>Job Zone: ${a.job_zone}</span>`:''}</div></div>
+                    <div><strong>${b.title||''}</strong>${b.soc?` <span class='tag'>${b.soc}</span>`:''}<div class='muted'>${b.description||''}</div><div class='tags'>${b.riasec?`<span class='tag'>RIASEC: ${b.riasec}</span>`:''}${b.job_zone?`<span class='tag'>Job Zone: ${b.job_zone}</span>`:''}</div></div>
+                </div>`; };
+        })();
     </script>
 </body>
 </html>
-
