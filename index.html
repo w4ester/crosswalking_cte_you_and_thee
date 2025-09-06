@@ -10,7 +10,8 @@
         .container { max-width: 1200px; margin: 0 auto; background: rgba(255,255,255,0.97); border-radius: 20px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         h1 { text-align:center; margin: 0 0 8px; font-size: 2.2rem; background: linear-gradient(135deg,#BD0934,#FFC838); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; color: transparent; }
         p.lead { text-align:center; color:#231F20; margin: 0 0 24px; }
-        .top-nav { display:flex; justify-content:center; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .top-nav { display:flex; justify-content:center; align-items:center; gap:10px; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+        .menu-toggle { display:none; border:1px solid #e2e8f0; background:#fff; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer; }
         .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
         .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
         .quick-jump a:hover { opacity:.9; }
@@ -19,7 +20,8 @@
         .card { background:#fff; border:1px solid #e2e8f0; border-radius: 14px; padding: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); display:flex; flex-direction:column; gap:8px; }
         .card h3 { margin: 0; color:#231F20; }
         .card p { margin: 0; color:#334155; font-size: 0.95rem; }
-        .card a.btn { align-self:flex-start; margin-top: 8px; padding:10px 14px; border-radius:10px; text-decoration:none; color:#fff; background: linear-gradient(135deg,#BD0934,#FFC838); font-weight:700; }
+        .card .actions { margin-top:auto; display:flex; gap:10px; align-items:center; }
+        .card a.btn { display:inline-block; padding:10px 14px; border-radius:10px; text-decoration:none; color:#fff; background: linear-gradient(135deg,#BD0934,#FFC838); font-weight:700; }
         .meta { margin-top: 22px; color:#475569; font-size: 0.9rem; }
         .info-section { background:#E2E3E4; border-radius:12px; padding:18px; margin-top: 20px; border-left:4px solid #BD0934; }
         .info-section h2 { color:#231F20; margin: 0 0 10px; font-size:1.3rem; }
@@ -33,6 +35,13 @@
         /* Feedback floating button */
         #feedbackFab { position: fixed; right: calc(20px + env(safe-area-inset-right)); bottom: calc(20px + env(safe-area-inset-bottom)); background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border:none; border-radius:999px; padding:12px 16px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.25); cursor:pointer; z-index: 350; }
         #feedbackText { width:100%; min-height:120px; border:1px solid #e2e8f0; border-radius:8px; padding:10px; font-family: inherit; }
+        @media (max-width: 900px){
+            .top-nav{ justify-content:space-between; }
+            .menu-toggle{ display:inline-block; }
+            .quick-jump{ display:none; border-radius:12px; gap:8px; padding:10px; flex-direction:column; align-items:flex-start; }
+            .quick-jump.open{ display:flex; }
+            .quick-jump a{ border-radius:8px; }
+        }
         @media (max-width: 640px){ .container{ padding: 20px; } }
     </style>
     <!-- Prevent accidental file drops navigating away -->
@@ -48,7 +57,8 @@
 </head>
 <body>
     <nav class="top-nav">
-        <div class="quick-jump">
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-controls="site-menu" aria-expanded="false">Menu</button>
+        <div class="quick-jump" id="site-menu">
             <a href="index.html" class="active">Home</a>
             <a href="dt-crosswalk-table.html">Digital Technology</a>
             <a href="003_ed_crosswalk-table.html">Education</a>
@@ -66,39 +76,37 @@
             <div class="card">
                 <h3>Student Journey</h3>
                 <p>Explore interests, get cluster suggestions, and begin your 6‑year plan.</p>
-                <div class="controls">
-                    <a class="btn" href="assessments.html?start=1">Start Guided Journey</a>
-                </div>
+                <div class="actions"><a class="btn" href="assessments.html?start=1">Start Guided Journey</a></div>
             </div>
             <div class="card">
                 <h3>Digital Technology</h3>
                 <p>Programs and credentials across programming, cybersecurity, data/ML, and networking.</p>
-                <a class="btn" href="dt-crosswalk-table.html">Open DT Crosswalk</a>
+                <div class="actions"><a class="btn" href="dt-crosswalk-table.html">Open DT Crosswalk</a></div>
             </div>
             <div class="card">
                 <h3>Education</h3>
                 <p>Teacher Academy and Early Childhood alignments; degrees, certificates, and credentials.</p>
-                <a class="btn" href="003_ed_crosswalk-table.html">Open ED Crosswalk</a>
+                <div class="actions"><a class="btn" href="003_ed_crosswalk-table.html">Open ED Crosswalk</a></div>
             </div>
             <div class="card">
                 <h3>ENR Cluster</h3>
                 <p>Unified ENR crosswalk with General and Renewable tracks; filter and export.</p>
-                <a class="btn" href="enr-crosswalk-table.html">Open ENR Crosswalk</a>
+                <div class="actions"><a class="btn" href="enr-crosswalk-table.html">Open ENR Crosswalk</a></div>
             </div>
             <div class="card">
                 <h3>PSS Cluster</h3>
                 <p>Public Safety & Security programs and credentials; EMT, CJ/Law, Fire, JROTC.</p>
-                <a class="btn" href="pss_crosswalk.html">Open PSS Crosswalk</a>
+                <div class="actions"><a class="btn" href="pss_crosswalk.html">Open PSS Crosswalk</a></div>
             </div>
             <div class="card">
                 <h3>Digital Portfolio</h3>
                 <p>Portfolio + 6-Year Plan + Resume snapshot in one place.</p>
-                <a class="btn" href="portfolio.html#plan">Open Portfolio & Plan</a>
+                <div class="actions"><a class="btn" href="portfolio.html#plan">Open Portfolio & Plan</a></div>
             </div>
             <div class="card">
                 <h3>Resume Builder</h3>
                 <p>Create an ATS-friendly resume from your portfolio data. Export to PDF/HTML.</p>
-                <a class="btn" href="resume.html">Create Resume</a>
+                <div class="actions"><a class="btn" href="resume.html">Create Resume</a></div>
             </div>
         </div>
         
@@ -108,17 +116,17 @@
                 <div class="card">
                     <h3>Students &amp; Parents/Guardians</h3>
                     <p>Quick tips to explore programs, plan courses, and discuss options.</p>
-                    <a href="#" class="btn" data-modal="students">How to Use</a>
+                    <div class="actions"><a href="#" class="btn" data-modal="students">How to Use</a></div>
                 </div>
                 <div class="card">
                     <h3>Counselors</h3>
                     <p>Filtering, exports, and alignment tips for advising conversations.</p>
-                    <a href="#" class="btn" data-modal="counselors">How to Use</a>
+                    <div class="actions"><a href="#" class="btn" data-modal="counselors">How to Use</a></div>
                 </div>
                 <div class="card">
                     <h3>Teachers</h3>
                     <p>Connect lessons to pathways, certifications, and cross-cluster links.</p>
-                    <a href="#" class="btn" data-modal="teachers">How to Use</a>
+                    <div class="actions"><a href="#" class="btn" data-modal="teachers">How to Use</a></div>
                 </div>
             </div>
         </div>
@@ -254,6 +262,15 @@
     <script>
         // Audience modal wiring
         (function(){
+            // Mobile menu
+            const toggle = document.getElementById('menuToggle');
+            const menu = document.getElementById('site-menu');
+            if (toggle && menu){
+                toggle.addEventListener('click', ()=>{
+                    const open = menu.classList.toggle('open');
+                    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+            }
             const openers = document.querySelectorAll('[data-modal]');
             const modals = {
                 students: document.getElementById('modal-students'),
