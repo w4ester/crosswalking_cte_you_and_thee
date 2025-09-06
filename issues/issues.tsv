@@ -1,0 +1,33 @@
+Title	Labels	Milestone	Body
+SJ-1: Replace intro with concise flow + breadcrumb	area:journey,priority:P2,type:feature	M1: Student Journey Cleanup	Shorten the top copy to 1–2 sentences and add a 4-step breadcrumb (Profile → Interests → Suggestions → Plan). Ensure it’s visible above-the-fold on mobile and desktop.
+SJ-2: Primary CTA focus on Start Guided Journey	area:journey,priority:P1,type:feature	M1: Student Journey Cleanup	Make “Start Guided Journey” the single primary action at the top. Move Resume/Reset to secondary actions. Validate keyboard focus order.
+SJ-3: Student Profile validation + last saved	area:journey,priority:P1,type:feature	M1: Student Journey Cleanup	Validate ZIP (5 digits) and grade (6–12). Store a last-saved timestamp and display it subtly. Keep all data in localStorage only.
+SJ-4: Quick Picks toggle + tooltips	area:journey,priority:P2,type:feature	M1: Student Journey Cleanup	Make quick picks toggleable (on/off). Add short tooltips clarifying what each pick boosts. Retain prefill effect for RIASEC.
+SJ-5: Advanced Interests a11y (collapsible)	area:journey,priority:P1,type:feature	M1: Student Journey Cleanup	Ensure details/summary are accessible: aria-expanded, aria-controls, keyboard toggles. Add a “Show more interests” hint.
+SJ-6: More Interests rename + collapse	area:journey,priority:P2,type:feature	M1: Student Journey Cleanup	Rename to “Optional preferences” and keep collapsed by default. Include True Colors + Team Role here.
+SJ-7: Suggestions UX and actions	area:journey,priority:P1,type:feature	M1: Student Journey Cleanup	Limit visible suggestions to 2–4 with “Why” bullets; add stub “Add to Plan” actions (wire when data arrives). Show CareerCoach button only if Region is saved.
+SJ-8: Plan Preview: inline edit, reorder, print	area:journey,priority:P1,type:feature	M1: Student Journey Cleanup	Allow inline text edits and Up/Down reordering. Add a “Print Plan” button. Preserve “Copy Plan”.
+SJ-9: Portfolio link copy clarity	area:journey,priority:P3,type:docs	M1: Student Journey Cleanup	Update link text to: “Open full Portfolio (Plan + Resume)”.
+SJ-10: Data Controls enhancements	area:journey,priority:P2,type:feature	M1: Student Journey Cleanup	Show “Last saved” time; add validation feedback on bad JSON; add “Export Journey” (profile + interests + suggestions summary + plan) as plain text.
+SJ-11: Share link notice excludes PII	area:journey,priority:P2,type:docs	M1: Student Journey Cleanup	Add a note near the share button that the link includes interests only and not profile details.
+SJ-12: Accessibility sweep	area:journey,priority:P1,type:feature	M1: Student Journey Cleanup	Ensure focus outlines, 16px min text, contrast ratios, skip link to suggestions, tab order through chips and collapsibles.
+SJ-13: Performance cleanup	area:journey,priority:P3,type:chore	M1: Student Journey Cleanup	Remove duplicate anti-drag scripts, defer non-critical JS, consolidate inline styles where possible.
+SJ-14: LocalStorage versioning + migration	area:journey,priority:P2,type:feature	M1: Student Journey Cleanup	Version keys (e.g., studentAssessmentsV2) and write a shim to migrate legacy values safely.
+SJ-15: Privacy notice near Save	area:journey,priority:P2,type:docs	M1: Student Journey Cleanup	Add a one-line privacy note: “Data stays in your browser; no account required.”
+SJ-16: Mobile polish for touch targets	area:journey,priority:P2,type:feature	M1: Student Journey Cleanup	Ensure 44px min target sizes, sticky CTA on small screens, and tap-friendly details/summary.
+SJ-17: Friendly no-suggestions state	area:journey,priority:P3,type:feature	M1: Student Journey Cleanup	If no suggestions, show a friendly prompt with links to Quick Picks and Guided Journey.
+SJ-18: Local analytics counters (optional)	area:journey,priority:P3,type:feature	M1: Student Journey Cleanup	Add local counters (started journey, completed wizard, copied plan) for private, client-only insights.
+AI-DB-1: 0002 users + profiles migration	area:ai-db,priority:P1,type:feature	M2: AI DB & RLS	Add app.users and app.student_profiles with tenant_id, user role, and RLS: tenant isolation; admin bypass. Update README with psql steps.
+AI-DB-2: RLS policies + helper views	area:ai-db,priority:P1,type:feature	M2: AI DB & RLS	Implement RLS policies for users/profiles; add views or SECURITY DEFINER helpers where needed. Tests for admin and non-admin access.
+AI-DB-3: Seeds and dev helpers	area:ai-db,priority:P2,type:chore	M2: AI DB & RLS	Seed a demo tenant and a few users; small helper SQL for setting sessions and clearing data.
+AI-API-1: FastAPI skeleton + session middleware	area:ai-api,priority:P1,type:feature	M3: AI API & Web Shell	Create FastAPI project with middleware to set app.set_session per request; healthcheck endpoint.
+AI-API-2: Profiles, journeys, plans endpoints	area:ai-api,priority:P1,type:feature	M3: AI API & Web Shell	CRUD for profiles/journeys/plans with tenant isolation enforced server-side.
+AI-API-3: Docker compose integration	area:ai-api,priority:P2,type:chore	M3: AI API & Web Shell	Add API service to compose; wire DB URL; basic dev config.
+AI-WEB-1: SvelteKit + Tailwind shell	area:ai-web,priority:P1,type:feature	M3: AI API & Web Shell	Bootstrap SvelteKit + Tailwind; app shell layout and routes.
+AI-WEB-2: JSON-schema driven forms	area:ai-web,priority:P2,type:feature	M3: AI API & Web Shell	Render survey forms from JSON schema; client-side validation.
+AI-WEB-3: Journey wizard + plan editor	area:ai-web,priority:P2,type:feature	M3: AI API & Web Shell	Implement guided journey and plan editor connected to API endpoints.
+AI-RAG-1: pgvector migration + embeddings	area:rag,priority:P1,type:feature	M4: Embeddings & RAG	Add pgvector extension and embeddings tables; choose Nomic embedding model; store chunk metadata.
+AI-RAG-2: ingest + retrieve functions	area:rag,priority:P1,type:feature	M4: Embeddings & RAG	Implement ingest pipeline and retrieval (top‑k + MMR) filtered by cluster/tenant.
+AI-CHAT-1: OpenAI-compatible chat + Ollama adapter	area:rag,priority:P1,type:feature	M5: Chat Gateway & Modelfiles	Expose /v1/chat/completions; route to Ollama; support streaming.
+AI-CHAT-2: Cluster modelfiles + CCR prompt	area:rag,priority:P2,type:feature	M5: Chat Gateway & Modelfiles	Create per-cluster modelfiles with system prompts explaining CCR; add family-facing guardrails.
+AI-WEB-CHAT-1: Chat UI + a11y + mobile	area:ai-web,priority:P2,type:feature	M5: Chat Gateway & Modelfiles	Build chat UI in SvelteKit with keyboard navigation, mobile layout, and message streaming.
