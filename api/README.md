@@ -23,10 +23,26 @@ We’ll host a small FastAPI service that proxies and normalizes external career
 - USAJOBS: https://developer.usajobs.gov/
 - Apprenticeship.gov: public search pages + potential scrape-free endpoints (investigate)
 
-## TODO
-- [ ] Create `api/main.py` FastAPI app with CORS enabled for site origin(s)
-- [ ] Add simple env loader and config for API keys
-- [ ] Implement search/detail with timeouts and defensive error handling
-- [ ] Normalize responses to shapes above; add basic caching later
-- [ ] Document `.env` and sample requests
+## Run locally
 
+1) Create and activate a virtualenv, then install deps:
+
+   pip install -r api/requirements.txt
+
+2) Copy env and set your keys:
+
+   cp api/.env.example .env
+   # Fill in ONET_USER/ONET_PASS and CAREERONESTOP_USERID/CAREERONESTOP_KEY
+
+3) Start the server:
+
+   uvicorn api.server.main:app --reload --port 8000
+
+4) Point the web app at your API (in dev console):
+
+   localStorage.apiBase = 'http://localhost:8000'
+
+## Notes
+- O*NET returns XML by default; parsing and richer normalization are to be added.
+- CareerOneStop endpoints used: Training Finder and AJC Local Help.
+- Add basic caching later for performance.

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Journey — Hub</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <style>
+    *{ box-sizing:border-box; }
+    body{ font-family:'Montserrat','Calibri','Segoe UI',sans-serif; margin:0; background: linear-gradient(135deg,#BD0934 0%, #FFC838 100%); min-height:100vh; padding:20px; }
+    .container{ max-width:1200px; margin:0 auto; background:#fff; border-radius:20px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    h1{ text-align:center; margin:0 0 10px; font-size:2rem; background: linear-gradient(135deg,#BD0934,#FFC838); -webkit-background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
+    p.lead{ text-align:center; color:#231F20; margin:0 0 16px; }
+
+    .top-nav { display:flex; justify-content:center; align-items:center; gap:10px; position: sticky; top: 0; z-index: 300; margin-bottom: 14px; }
+    .menu-toggle { display:none; border:1px solid #e2e8f0; background:#fff; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer; }
+    .quick-jump { display:flex; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+    .quick-jump a { display:inline-block; padding:6px 10px; background:#231F20; color:#fff; text-decoration:none; border-radius:999px; font-size:0.9rem; transition:opacity .2s ease; }
+    .quick-jump a:hover { opacity:.9; }
+    .quick-jump a.active { background: linear-gradient(135deg, #BD0934, #FFC838); }
+    @media (max-width: 900px){ .top-nav{ justify-content:space-between; } .menu-toggle{ display:inline-block; } .quick-jump{ display:none; border-radius:12px; gap:8px; padding:10px; flex-direction:column; align-items:flex-start; } .quick-jump.open{ display:flex; } .quick-jump a{ border-radius:8px; } }
+
+    .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+    .tab { padding:8px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; cursor:pointer; }
+    .tab.active { background: linear-gradient(135deg,#BD0934,#FFC838); color:#fff; border-color:transparent; }
+    .section { display:none; }
+    .section.active { display:block; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
+    .card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:6px; }
+    .card h2{ margin:0; color:#111827; font-size:1.2rem; }
+    .muted{ color:#64748b; font-size:0.95rem; }
+    .actions{ margin-top:auto; display:flex; gap:8px; }
+    .btn{ padding:10px 14px; border-radius:10px; text-decoration:none; color:#fff; background: linear-gradient(135deg,#BD0934,#FFC838); font-weight:700; border:none; cursor:pointer; }
+    .btn-outline{ background:#fff; color:#111827; border:1px solid #e2e8f0; }
+    input[type="text"], select, textarea{ width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; }
+    .row{ display:flex; flex-wrap:wrap; gap:10px; }
+    .col{ flex:1 1 220px; }
+    .plan-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
+    .year{ border:1px solid #e2e8f0; border-radius:12px; padding:10px; background:#fff; }
+    .year h4{ margin:2px 0 8px; }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-controls="site-menu" aria-expanded="false">Menu</button>
+    <div class="quick-jump" id="site-menu">
+      <a href="index.html">Home</a>
+      <a href="journey.html" class="active">Journey</a>
+      <a href="explore.html">Explore</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="resume.html">Resume</a>
+      <a href="assessments.html">Legacy Journey</a>
+    </div>
+  </nav>
+  <div class="container">
+    <h1>Student Journey</h1>
+    <p class="lead">Overview → Interests → Suggestions → Explore → Plan → Portfolio/Resume. Everything saves in your browser.</p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="profile">Profile</button>
+      <button class="tab" data-tab="interests">Interests</button>
+      <button class="tab" data-tab="suggestions">Suggestions</button>
+      <button class="tab" data-tab="explore">Explore</button>
+      <button class="tab" data-tab="plan">6‑Year Plan</button>
+      <button class="tab" data-tab="portfolio">Portfolio/Resume</button>
+      <button class="tab" data-tab="data">Data</button>
+    </div>
+
+    <section id="sec-overview" class="section active">
+      <div class="grid">
+        <div class="card">
+          <h2>Welcome</h2>
+          <p class="muted">Start with a quick interest journey, review suggestions, explore options, then build a 6‑year plan and snapshots you can print.</p>
+          <div class="actions">
+            <a class="btn" href="assessments.html?start=1">Start Guided Journey</a>
+            <a class="btn-outline" href="#" id="resumeJourney">Resume Journey</a>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Last Saved</h2>
+          <div id="lastSaved" class="muted">—</div>
+          <div class="actions"><button class="btn-outline" id="saveAll">Save Now</button></div>
+        </div>
+        <div class="card">
+          <h2>Explore</h2>
+          <p class="muted">Search occupations, training, apprenticeships, and local help — add items to your plan.</p>
+          <div class="actions"><a class="btn" href="explore.html">Open Explore</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-profile" class="section">
+      <div class="card">
+        <h2>Student Profile</h2>
+        <div class="row">
+          <div class="col"><label>First Name</label><input id="spFirst" type="text" placeholder="First name"></div>
+          <div class="col"><label>Grade</label><select id="spGrade"><option value="">— Select —</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>School</label><input id="spSchool" type="text"></div>
+          <div class="col"><label>ZIP</label><input id="spZip" type="text" inputmode="numeric" pattern="[0-9]*"></div>
+        </div>
+        <div class="actions"><button id="spSave" class="btn">Save Profile</button><span id="spSavedMsg" class="muted"></span></div>
+      </div>
+    </section>
+
+    <section id="sec-interests" class="section">
+      <div class="card">
+        <h2>Interests</h2>
+        <div class="row">
+          <div class="col"><div class="muted">Top RIASEC: <span id="riasecTop">—</span></div></div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="assessments.html?start=1">Start/Resume Guided Journey</a>
+          <button id="calcNow" class="btn-outline">Recalculate from Checks</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-suggestions" class="section">
+      <div class="card"><h2>Suggestions</h2><div id="suggestions" class="muted">Run interests to see suggestions.</div></div>
+    </section>
+
+    <section id="sec-explore" class="section">
+      <div class="card"><h2>Explore</h2><p class="muted">For full search and filters, open Explore. We will embed this here in a later step.</p><div class="actions"><a class="btn" href="explore.html">Open Explore</a></div></div>
+    </section>
+
+    <section id="sec-plan" class="section">
+      <div class="card">
+        <h2>6‑Year Plan</h2>
+        <div class="actions"><button id="addYear" class="btn">Add Year</button><button id="resetPlan" class="btn-outline">Reset to 6 years</button><button id="copyPlan" class="btn-outline">Copy Plan</button></div>
+        <div id="plan" class="plan-grid" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <section id="sec-portfolio" class="section">
+      <div class="grid">
+        <div class="card">
+          <h2>Portfolio Snapshot</h2>
+          <div class="muted">Skills (top)</div>
+          <div id="pfSkills" class="tags" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+          <div class="actions"><a class="btn-outline" href="portfolio.html">Open Portfolio</a></div>
+        </div>
+        <div class="card">
+          <h2>Resume Snapshot</h2>
+          <div class="muted" id="rsHeader">—</div>
+          <div id="rsSkills" class="tags" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+          <div class="actions"><a class="btn-outline" href="resume.html">Open Resume</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-data" class="section">
+      <div class="card">
+        <h2>Data Controls</h2>
+        <div class="actions"><button id="exportAll" class="btn-outline">Export Journey JSON</button><button id="importAllBtn" class="btn-outline">Import JSON</button></div>
+        <textarea id="importText" placeholder='Paste JSON here to import' style="margin-top:8px;"></textarea>
+      </div>
+    </section>
+  </div>
+
+  <button id="feedbackFab" class="fab-pill" aria-label="Open feedback">Feedback</button>
+
+  <script>
+    // Mobile menu
+    (function(){ const t=document.getElementById('menuToggle'); const m=document.getElementById('site-menu'); if(t&&m){ t.addEventListener('click', ()=>{ const o=m.classList.toggle('open'); t.setAttribute('aria-expanded', o?'true':'false'); }); } })();
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(btn=> btn.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); const id=btn.getAttribute('data-tab'); document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); document.getElementById('sec-'+id).classList.add('active'); }));
+
+    // LocalStorage keys
+    const LS_KEY_ASMT='studentAssessmentsV1';
+    const LS_KEY_PLAN='studentPlanV1';
+    const LS_KEY_PROFILE='studentProfileV1';
+    const LS_PORT='portfolioV1';
+    const LS_RES='resumeV1';
+
+    function nowStamp(){ return new Date().toLocaleString(); }
+    function touchSaved(){ document.getElementById('lastSaved').textContent = nowStamp(); }
+
+    // Profile save/load
+    function saveProfile(){ const p={ first:spFirst.value.trim(), grade:spGrade.value, school:spSchool.value.trim(), zip:spZip.value.trim() }; localStorage.setItem(LS_KEY_PROFILE, JSON.stringify(p)); document.getElementById('spSavedMsg').textContent='Saved'; setTimeout(()=>document.getElementById('spSavedMsg').textContent='',1200); touchSaved(); }
+    function loadProfile(){ try{ const p=JSON.parse(localStorage.getItem(LS_KEY_PROFILE)||'{}'); if(p.first) spFirst.value=p.first; if(p.grade) spGrade.value=p.grade; if(p.school) spSchool.value=p.school; if(p.zip) spZip.value=p.zip; }catch{} }
+    document.getElementById('spSave').addEventListener('click', saveProfile);
+
+    // Interests summary and suggestions
+    function recalcRIASEC(){ try{ const a=JSON.parse(localStorage.getItem(LS_KEY_ASMT)||'{}'); const top=(a.riasec&&a.riasec.top)||''; document.getElementById('riasecTop').textContent=top||'—'; }catch{} }
+    function renderSuggestions(){ const s=document.getElementById('suggestions'); const a=getAssess(); const codes=(a.riasec.top||'').split(''); const items=[]; const reasons=[]; const has=c=>codes.includes(c); const hasColor=k=>(a.colorPrimary+a.colorSecondary).includes(k);
+      if (has('I') || has('C') || hasColor('Green') || a.teamRole.includes('Analyst')) { items.push({ name:'Digital Technology', href:'dt-crosswalk-table.html' }); reasons.push('Investigative/Analytical traits → data/IT pathways'); }
+      if (has('R') || hasColor('Orange') || a.teamRole.includes('Technician')) { items.push({ name:'ENR Cluster', href:'enr-crosswalk-table.html' }); reasons.push('Hands‑on → engineering & natural resources'); }
+      if (has('S') || a.teamRole.includes('Educator') || hasColor('Blue')) { items.push({ name:'Education & Training', href:'003_ed_crosswalk-table.html' }); reasons.push('Social/Helping → teaching & child development'); }
+      if (has('E') || has('S') || has('R')) { items.push({ name:'Public Safety & Security', href:'pss_crosswalk.html' }); reasons.push('Enterprising/Social/Realistic → EMS, Fire, Law & JROTC'); }
+      if (!items.length){ s.textContent='No strong match yet — try the Guided Journey.'; return; }
+      const wrap=document.createElement('div'); const pills=document.createElement('div'); items.forEach(it=>{ const a=document.createElement('a'); a.href=it.href; a.className='btn-outline'; a.textContent=it.name; pills.appendChild(a); }); wrap.appendChild(pills); const why=document.createElement('div'); why.className='muted'; why.style.marginTop='6px'; why.textContent='Why: '+reasons.join(' • '); wrap.appendChild(why); s.innerHTML=''; s.appendChild(wrap); }
+    function getAssess(){ try{ return JSON.parse(localStorage.getItem(LS_KEY_ASMT)||'{}'); }catch{ return { riasec:{top:''}, colorPrimary:'', colorSecondary:'', teamRole:'' }; } }
+    document.getElementById('calcNow').addEventListener('click', ()=>{ recalcRIASEC(); renderSuggestions(); });
+
+    // Plan rendering
+    function defaultPlan(){ return Array.from({length:6},(_,i)=>({year:i+1,items:[]})); }
+    function getPlan(){ try{ return JSON.parse(localStorage.getItem(LS_KEY_PLAN)||'[]'); }catch{return[]} }
+    function ensurePlan(){ let m=getPlan(); if(!Array.isArray(m)||!m.length){ m=defaultPlan(); localStorage.setItem(LS_KEY_PLAN, JSON.stringify(m)); } return m; }
+    function savePlan(m){ localStorage.setItem(LS_KEY_PLAN, JSON.stringify(m)); touchSaved(); }
+    function renderPlan(){ const root=document.getElementById('plan'); root.innerHTML=''; const m=ensurePlan(); m.forEach((y,idx)=>{ const box=document.createElement('div'); box.className='year'; const h=document.createElement('h4'); h.textContent=`Year ${y.year}`; box.appendChild(h); const ul=document.createElement('ul'); (y.items||[]).forEach((t,j)=>{ const li=document.createElement('li'); li.textContent=t; const del=document.createElement('button'); del.textContent='Remove'; del.className='btn-outline'; del.style.marginLeft='8px'; del.onclick=()=>{ const mm=ensurePlan(); mm[idx].items.splice(j,1); savePlan(mm); renderPlan(); }; li.appendChild(del); ul.appendChild(li); }); box.appendChild(ul); const input=document.createElement('input'); input.type='text'; input.placeholder='Add item...'; input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ const mm=ensurePlan(); mm[idx].items.push(input.value.trim()); savePlan(mm); renderPlan(); input.value=''; }}); const add=document.createElement('button'); add.textContent='Add'; add.onclick=()=>{ const mm=ensurePlan(); if(input.value.trim()){ mm[idx].items.push(input.value.trim()); savePlan(mm); renderPlan(); input.value=''; } }; const row=document.createElement('div'); row.className='row'; const c1=document.createElement('div'); c1.className='col'; c1.appendChild(input); const c2=document.createElement('div'); c2.className='col'; c2.appendChild(add); row.appendChild(c1); row.appendChild(c2); box.appendChild(row); root.appendChild(box); }); }
+    document.getElementById('addYear').addEventListener('click', ()=>{ const m=ensurePlan(); m.push({year:m.length+1, items:[]}); savePlan(m); renderPlan(); });
+    document.getElementById('resetPlan').addEventListener('click', ()=>{ savePlan(defaultPlan()); renderPlan(); });
+    document.getElementById('copyPlan').addEventListener('click', ()=>{ const m=getPlan(); const lines=['6‑Year Plan']; (m||[]).forEach(y=>{ lines.push(`Year ${y.year}`); (y.items||[]).forEach(it=>lines.push(`- ${it}`)); if(!y.items||!y.items.length) lines.push('-'); }); const txt=lines.join('\n'); if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>alert('Plan copied')); else prompt('Copy plan:', txt); });
+
+    // Portfolio/Resume snapshots
+    function renderSnapshots(){ try{ const p=JSON.parse(localStorage.getItem(LS_PORT)||'{}'); const sEl=document.getElementById('pfSkills'); sEl.innerHTML=''; (p.skills||[]).slice(0,12).forEach(k=>{ const span=document.createElement('span'); span.className='tag'; span.textContent=k; sEl.appendChild(span); }); }catch{} try{ const r=JSON.parse(localStorage.getItem(LS_RES)||'{}'); document.getElementById('rsHeader').textContent = (r.name||'') + (r.targetRole?` — ${r.targetRole}`:''); const rs=document.getElementById('rsSkills'); rs.innerHTML=''; (r.skills||[]).slice(0,12).forEach(k=>{ const span=document.createElement('span'); span.className='tag'; span.textContent=k; rs.appendChild(span); }); }catch{} }
+
+    // Data controls
+    function exportAll(){ const blob=new Blob([JSON.stringify({ profile: JSON.parse(localStorage.getItem(LS_KEY_PROFILE)||'{}'), assessments: JSON.parse(localStorage.getItem(LS_KEY_ASMT)||'{}'), plan: JSON.parse(localStorage.getItem(LS_KEY_PLAN)||'[]'), portfolio: JSON.parse(localStorage.getItem(LS_PORT)||'{}'), resume: JSON.parse(localStorage.getItem(LS_RES)||'{}')}, null, 2)], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='student_journey.json'; document.body.appendChild(a); a.click(); a.remove(); }
+    document.getElementById('exportAll').addEventListener('click', exportAll);
+    document.getElementById('importAllBtn').addEventListener('click', ()=>{ try{ const txt=document.getElementById('importText').value.trim(); if(!txt) return alert('Paste JSON first.'); const data=JSON.parse(txt); if(data.profile) localStorage.setItem(LS_KEY_PROFILE, JSON.stringify(data.profile)); if(data.assessments) localStorage.setItem(LS_KEY_ASMT, JSON.stringify(data.assessments)); if(data.plan) localStorage.setItem(LS_KEY_PLAN, JSON.stringify(data.plan)); if(data.portfolio) localStorage.setItem(LS_PORT, JSON.stringify(data.portfolio)); if(data.resume) localStorage.setItem(LS_RES, JSON.stringify(data.resume)); alert('Imported.'); loadProfile(); recalcRIASEC(); renderSuggestions(); renderPlan(); renderSnapshots(); touchSaved(); }catch{ alert('Invalid JSON'); } });
+    document.getElementById('saveAll').addEventListener('click', ()=>{ touchSaved(); alert('Saved to browser.'); });
+    document.getElementById('resumeJourney').addEventListener('click', ()=>{ document.querySelector('.tab[data-tab="interests"]').click(); });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', ()=>{ loadProfile(); recalcRIASEC(); renderSuggestions(); renderPlan(); renderSnapshots(); });
+  </script>
+</body>
+</html>
+

@@ -127,6 +127,7 @@
             <button id="resetBtn" class="btn-outline">Reset Filters</button>
             <div class="muted">Region/ZIP come from Student Journey</div>
         </div>
+        <div id="apiNotice" class="loading" style="display:none;">API not configured. Set localStorage.apiBase to your aggregator URL (example: https://api.example.com).</div>
         <details class="adv">
             <summary>Advanced filters</summary>
             <div>
@@ -188,11 +189,7 @@
             const url = `${API_BASE}/v1/occupations/search?q=${encodeURIComponent(q)}&riasec=${encodeURIComponent(ri)}&job_zone=${encodeURIComponent(jobZone)}&region=${encodeURIComponent(region)}&radius=${encodeURIComponent(radius)}`;
             const data = await fetchJSON(url);
             if(data && Array.isArray(data.items)) return data.items;
-            // Fallback demo data
-            return [
-                { soc:'15-1252.00', title:'Software Developers', summary:'Develop and maintain software applications.', riasec:'IC', job_zone:4, source:'demo' },
-                { soc:'29-1141.00', title:'Registered Nurses', summary:'Provide and coordinate patient care.', riasec:'SIE', job_zone:4, source:'demo' }
-            ];
+            return [];
         }
 
         async function searchTraining(){
@@ -200,7 +197,7 @@
             const url = `${API_BASE}/v1/training?keyword=${encodeURIComponent(q)}&zipcode=${encodeURIComponent(zip)}&radius=${encodeURIComponent(radius)}`;
             const data = await fetchJSON(url);
             if(data && Array.isArray(data.items)) return data.items;
-            return [ { name:'Intro to Data Analytics', provider:'Community College', location:{city:'Local',state:'MD',zip}, url:'#', type:'Certificate' } ];
+            return [];
         }
 
         async function searchApprenticeships(){
@@ -208,7 +205,7 @@
             const url = `${API_BASE}/v1/apprenticeships?keyword=${encodeURIComponent(q)}&location=${encodeURIComponent(zip)}`;
             const data = await fetchJSON(url);
             if(data && Array.isArray(data.items)) return data.items;
-            return [ { name:'IT Support Apprentice', provider:'Employer ABC', location:{city:'Nearby',state:'MD',zip}, url:'#', type:'Apprenticeship' } ];
+            return [];
         }
 
         async function searchLocal(){
@@ -216,7 +213,7 @@
             const url = `${API_BASE}/v1/local-help/ajc?zip=${encodeURIComponent(zip)}`;
             const data = await fetchJSON(url);
             if(data && Array.isArray(data.items)) return data.items;
-            return [ { name:'American Job Center', location:{city:'Local',state:'MD',zip}, url:'https://www.careeronestop.org/LocalHelp/AmericanJobCenters/american-job-centers.aspx' } ];
+            return [];
         }
 
         function ensurePlan(){ try{ const m=JSON.parse(localStorage.getItem('studentPlanV1')||'[]'); if(Array.isArray(m) && m.length) return m; }catch{} return Array.from({length:6},(_,i)=>({year:i+1,items:[]})); }
@@ -262,10 +259,12 @@
 
         async function run(kind){
             showLoading(true);
-            if(kind==='occupations') render(await searchOccupations(), kind);
-            if(kind==='training') render(await searchTraining(), kind);
-            if(kind==='apprenticeships') render(await searchApprenticeships(), kind);
-            if(kind==='local') render(await searchLocal(), kind);
+            const apiNotice=document.getElementById('apiNotice'); apiNotice.style.display='none';
+            const baseSet = !!localStorage.getItem('apiBase');
+            if(kind==='occupations') { const items=await searchOccupations(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
+            if(kind==='training') { const items=await searchTraining(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
+            if(kind==='apprenticeships') { const items=await searchApprenticeships(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
+            if(kind==='local') { const items=await searchLocal(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
             showLoading(false);
         }
 
@@ -298,10 +297,7 @@
                 const data = await fetchJSON(url);
                 if (data) return data;
             }
-            // Fallback demo details
-            if ((key||'').includes('15-1252') || (key||'').includes('Software')) return { soc:'15-1252.00', title:'Software Developers', description:'Develop and maintain software applications and systems.', riasec:'IC', job_zone:4, tasks:['Design, develop, and test software','Collaborate with cross-functional teams'], skills:{Programming:'High',ProblemSolving:'High'} };
-            if ((key||'').includes('29-1141') || (key||'').includes('Nurse')) return { soc:'29-1141.00', title:'Registered Nurses', description:'Provide and coordinate patient care; educate patients.', riasec:'SIE', job_zone:4, tasks:['Assess patient health problems','Develop and implement nursing care plans'], skills:{PatientCare:'High',Communication:'High'} };
-            return { title:String(key), description:'Details not available in demo.' };
+            return { title:String(key), description:'Details not available (API not configured yet).' };
         }
 
         function openDetails(it){
