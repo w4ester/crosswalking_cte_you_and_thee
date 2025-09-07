@@ -45,6 +45,12 @@
         details.adv > div{ padding: 8px 10px; display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
         .loading{ text-align:center; color:#64748b; padding:10px; }
         .compare-bar{ position: sticky; bottom: 10px; display:none; justify-content:space-between; align-items:center; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:8px 10px; box-shadow:0 6px 18px rgba(0,0,0,0.08); margin-top:10px; }
+        /* Modals */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1300; }
+        .modal.open { display: flex; }
+        .modal-content { background: #fff; border-radius: 12px; max-width: 720px; width: 100%; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border-left: 4px solid #BD0934; }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .modal-close { border:none; background:transparent; font-size:1.5rem; cursor:pointer; color:#231F20; }
     </style>
 </head>
 <body>
@@ -133,10 +139,29 @@
 
         <div id="loading" class="loading" style="display:none;">Loading…</div>
         <div id="results" class="results" aria-live="polite"></div>
+        <div id="noResults" class="loading" style="display:none;">No results found. Try adjusting filters or keywords.</div>
         <div id="compareBar" class="compare-bar"><div><strong>Compare:</strong> <span id="compareCount">0</span>/2 selected</div><div class="actions"><button id="compareBtn" class="btn-outline">Open Compare</button><button id="clearCompare" class="btn-outline">Clear</button></div></div>
     </div>
 
     <button id="feedbackFab" class="fab-pill" aria-label="Open feedback">Feedback</button>
+    <div class="modal" id="modal-feedback" aria-hidden="true" role="dialog" aria-labelledby="feedbackTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="feedbackTitle" style="color:#231F20;">Send Feedback</h2>
+                <button class="modal-close" data-close aria-label="Close">×</button>
+            </div>
+            <p style="color:#334155;margin:0 0 8px;">Tell us what’s working and what to improve.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;">
+                <div><label style="display:block;color:#334155;font-size:0.95rem;">Name</label><input id="fbName" type="text" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;"></div>
+                <div><label style="display:block;color:#334155;font-size:0.95rem;">Email</label><input id="fbEmail" type="email" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;"></div>
+            </div>
+            <div style="margin-top:10px;"><label style="display:block;color:#334155;font-size:0.95rem;">Message</label><textarea id="fbMessage" placeholder="Your feedback..." style="width:100%;min-height:120px;border:1px solid #e2e8f0;border-radius:8px;padding:10px;"></textarea></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+                <button id="copyFeedback" class="btn-outline">Copy</button>
+                <button id="emailFeedback" class="btn">Email</button>
+            </div>
+        </div>
+    </div>
     <script>
         // Mobile menu
         (function(){ const t=document.getElementById('menuToggle'); const m=document.getElementById('site-menu'); if(t&&m){ t.addEventListener('click', ()=>{ const o=m.classList.toggle('open'); t.setAttribute('aria-expanded', o?'true':'false'); }); } })();
@@ -205,6 +230,8 @@
 
         function render(items, kind){
             const root = document.getElementById('results'); root.innerHTML='';
+            const empty = document.getElementById('noResults'); empty.style.display='none';
+            if(!items || !items.length){ empty.style.display='block'; return; }
             items.forEach(it =>{
                 const card=document.createElement('div'); card.className='card';
                 const h=document.createElement('h3'); h.textContent = it.title || it.name || it.soc || 'Result'; card.appendChild(h);
@@ -251,8 +278,12 @@
         document.getElementById('compareBtn').addEventListener('click', openCompare);
         document.getElementById('clearCompare').addEventListener('click', ()=>{ compareSel.clear(); updateCompareBar(); });
 
-        // Prefill region/zip from Journey
-        (function(){ try{ const r=JSON.parse(localStorage.getItem('regionSettingsV1')||'{}'); document.getElementById('region').value=r.region||''; document.getElementById('radius').value=r.radius||''; }catch{} try{ const p=JSON.parse(localStorage.getItem('studentProfileV1')||'{}'); document.getElementById('zip').value=p.zip||''; }catch{} })();
+        // Prefill region/zip from Journey and preselect RIASEC chips
+        (function(){
+            try{ const r=JSON.parse(localStorage.getItem('regionSettingsV1')||'{}'); document.getElementById('region').value=r.region||''; document.getElementById('radius').value=r.radius||''; }catch{}
+            try{ const p=JSON.parse(localStorage.getItem('studentProfileV1')||'{}'); document.getElementById('zip').value=p.zip||''; }catch{}
+            try{ const a=JSON.parse(localStorage.getItem('studentAssessmentsV1')||'{}'); const top=(a.riasec&&a.riasec.top)||''; top.split('').forEach(c=>{ const el=document.querySelector(`#riasecChips .chip[data-code="${c}"]`); if(el) el.classList.add('active'); }); }catch{}
+        })();
         // Initial load
         run('occupations');
 
@@ -319,6 +350,20 @@
                     <div><strong>${a.title||''}</strong>${a.soc?` <span class='tag'>${a.soc}</span>`:''}<div class='muted'>${a.description||''}</div><div class='tags'>${a.riasec?`<span class='tag'>RIASEC: ${a.riasec}</span>`:''}${a.job_zone?`<span class='tag'>Job Zone: ${a.job_zone}</span>`:''}</div></div>
                     <div><strong>${b.title||''}</strong>${b.soc?` <span class='tag'>${b.soc}</span>`:''}<div class='muted'>${b.description||''}</div><div class='tags'>${b.riasec?`<span class='tag'>RIASEC: ${b.riasec}</span>`:''}${b.job_zone?`<span class='tag'>Job Zone: ${b.job_zone}</span>`:''}</div></div>
                 </div>`; };
+        })();
+    </script>
+    <script>
+        // Feedback modal wiring
+        (function(){
+            const fab = document.getElementById('feedbackFab');
+            const modal = document.getElementById('modal-feedback');
+            function open(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
+            function close(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+            fab.addEventListener('click', open);
+            modal.addEventListener('click', (e)=>{ if (e.target===modal || e.target.hasAttribute('data-close')) close(); });
+            function buildFeedbackText(){ const name=(document.getElementById('fbName')?.value||'').trim(); const email=(document.getElementById('fbEmail')?.value||'').trim(); const msg=(document.getElementById('fbMessage')?.value||'').trim(); const page=`${document.title} (${location.href})`; return `Name: ${name}\nEmail: ${email}\nPage: ${page}\n\nMessage:\n${msg}`.trim(); }
+            document.getElementById('copyFeedback').addEventListener('click', async ()=>{ const txt=buildFeedbackText(); try{ await navigator.clipboard.writeText(txt); alert('Copied to clipboard.'); }catch{} });
+            document.getElementById('emailFeedback').addEventListener('click', ()=>{ const subj=encodeURIComponent('CTE Tools Feedback (Explore)'); const body=encodeURIComponent(buildFeedbackText()); window.location.href=`mailto:occpcteprograms.msde@maryland.gov?subject=${subj}&body=${body}`; });
         })();
     </script>
 </body>
