@@ -131,7 +131,7 @@
             <div class="muted">Region/ZIP come from Student Journey</div>
         </div>
         <div id="apiNotice" class="loading" style="display:none;">API not configured. Set localStorage.apiBase to your aggregator URL (example: https://api.example.com).</div>
-        <div id="schNotice" class="loading" style="display:none;">Tip: Complete the FAFSA at <a href="https://studentaid.gov/" target="_blank" rel="noopener">studentaid.gov</a> and explore Maryland State Aid at <a href="https://mhec.maryland.gov/Pages/financialaid/index.aspx" target="_blank" rel="noopener">MHEC</a>. You can also <a href="https://studentaid.gov/apply-for-aid/fafsa" target="_blank" rel="noopener">start FAFSA</a> now.</div>
+        <div id="schNotice" class="loading" style="display:none;">Tip: Complete the FAFSA at <a href="https://studentaid.gov/" target="_blank" rel="noopener">studentaid.gov</a> and explore Maryland State Aid at <a href="https://mhec.maryland.gov/pages/default.aspx" target="_blank" rel="noopener">MHEC</a>. You can also <a href="https://studentaid.gov/apply-for-aid/fafsa" target="_blank" rel="noopener">start FAFSA</a> now.</div>
         <details class="adv">
             <summary>Advanced filters</summary>
             <div>
@@ -159,6 +159,7 @@
             <button id="schSavedDelete" class="btn-outline">Delete</button>
             <button id="schSavedExport" class="btn-outline">Export</button>
             <button id="schSavedImport" class="btn-outline">Import</button>
+            <button id="schShareBtn" class="btn-outline">Share Link</button>
         </div>
 
         <div id="loading" class="loading" style="display:none;">Loading…</div>
@@ -263,6 +264,10 @@
             const norm = normalizeScholarships(items);
             return filterSortScholarships(norm, f);
         }
+        // Shareable link helpers (Scholarships)
+        function schBuildLink(){ const f=getFilters(); const params=new URLSearchParams(); params.set('sch','1'); if(f.q) params.set('sch_q', f.q); if(f.state) params.set('sch_state', f.state); if(f.schMinAmt) params.set('sch_min', f.schMinAmt); if(f.schDeadline) params.set('sch_deadline', f.schDeadline); if(f.schSort) params.set('sch_sort', f.schSort); const base=location.origin + location.pathname; return `${base}?${params.toString()}`; }
+        async function schShare(){ try{ await navigator.clipboard.writeText(schBuildLink()); toast('Link copied'); }catch{ prompt('Copy link:', schBuildLink()); } }
+        function schApplyFromURL(){ const u=new URL(location.href); const p=u.searchParams; if(!p.get('sch')) return false; const set=(id,v)=>{ const el=document.getElementById(id); if(el && v!=null) el.value=v; }; set('q', p.get('sch_q')||''); set('schState', p.get('sch_state')||'MD'); set('schMinAmt', p.get('sch_min')||''); set('schDeadline', p.get('sch_deadline')||''); set('schSort', p.get('sch_sort')||'amount_desc'); document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); const tab=document.querySelector('.tab[data-tab="scholarships"]'); if(tab){ tab.classList.add('active'); } run('scholarships'); return true; }
 
         // Saved scholarship searches (shared across pages via localStorage)
         function schSavedList(){ try{ const a=JSON.parse(localStorage.getItem(LS_SCH_SAVED)||'[]'); return Array.isArray(a)?a:[]; }catch{return []} }
@@ -349,7 +354,7 @@
         document.getElementById('resetBtn').addEventListener('click', ()=>{ document.getElementById('q').value=''; document.querySelectorAll('#riasecChips .chip').forEach(c=>c.classList.remove('active')); document.getElementById('jobZone').value=''; document.getElementById('wageMin').value=''; document.getElementById('edu').value=''; const st=document.getElementById('schState'); if(st) st.value='MD'; const ma=document.getElementById('schMinAmt'); if(ma) ma.value=''; const dl=document.getElementById('schDeadline'); if(dl) dl.value=''; const sb=document.getElementById('schSort'); if(sb) sb.value='amount_desc'; const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); });
         document.getElementById('compareBtn').addEventListener('click', openCompare);
         // Saved search events
-        (function(){ const save=document.getElementById('schSaveBtn'); const runBtn=document.getElementById('schSavedRun'); const delBtn=document.getElementById('schSavedDelete'); const sel=document.getElementById('schSaved'); const exp=document.getElementById('schSavedExport'); const imp=document.getElementById('schSavedImport'); if(save) save.addEventListener('click', schSave); if(runBtn) runBtn.addEventListener('click', ()=>{ const id=sel?.value||''; if(id) schApply(id); }); if(delBtn) delBtn.addEventListener('click', ()=>{ const id=sel?.value||''; if(id && confirm('Delete this saved search?')) schDelete(id); }); if(exp) exp.addEventListener('click', schExport); if(imp) imp.addEventListener('click', schImport); schSavedRender(); })();
+        (function(){ const save=document.getElementById('schSaveBtn'); const runBtn=document.getElementById('schSavedRun'); const delBtn=document.getElementById('schSavedDelete'); const sel=document.getElementById('schSaved'); const exp=document.getElementById('schSavedExport'); const imp=document.getElementById('schSavedImport'); const share=document.getElementById('schShareBtn'); if(save) save.addEventListener('click', schSave); if(runBtn) runBtn.addEventListener('click', ()=>{ const id=sel?.value||''; if(id) schApply(id); }); if(delBtn) delBtn.addEventListener('click', ()=>{ const id=sel?.value||''; if(id && confirm('Delete this saved search?')) schDelete(id); }); if(exp) exp.addEventListener('click', schExport); if(imp) imp.addEventListener('click', schImport); if(share) share.addEventListener('click', schShare); schSavedRender(); })();
         document.getElementById('clearCompare').addEventListener('click', ()=>{ compareSel.clear(); updateCompareBar(); });
 
         // Prefill region/zip from Journey and preselect RIASEC chips
