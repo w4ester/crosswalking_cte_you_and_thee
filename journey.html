@@ -220,7 +220,7 @@
             <a class="btn" href="https://studentaid.gov/apply-for-aid/fafsa" target="_blank" rel="noopener">Start FAFSA</a>
             <a class="btn-outline" href="https://studentaid.gov/" target="_blank" rel="noopener">Federal Student Aid</a>
             <a class="btn-outline" href="https://studentaid.gov/understand-aid/types/scholarships" target="_blank" rel="noopener">About Scholarships</a>
-            <a class="btn-outline" href="https://mhec.maryland.gov/Pages/financialaid/index.aspx" target="_blank" rel="noopener">Maryland State Aid (MHEC)</a>
+            <a class="btn-outline" href="https://mhec.maryland.gov/pages/default.aspx" target="_blank" rel="noopener">Maryland State Aid (MHEC)</a>
           </div>
           <div class="row" style="margin-top:6px;">
             <div class="col"><input id="sv_q" type="text" placeholder="Keyword (e.g., nursing, STEM, first-gen)"></div>
@@ -250,6 +250,7 @@
             <div class="col" style="flex:0 1 auto;"><button id="sv_savedDelete" class="btn-outline">Delete</button></div>
             <div class="col" style="flex:0 1 auto;"><button id="sv_export" class="btn-outline">Export</button></div>
             <div class="col" style="flex:0 1 auto;"><button id="sv_import" class="btn-outline">Import</button></div>
+            <div class="col" style="flex:0 1 auto;"><button id="sv_share" class="btn-outline">Share Link</button></div>
           </div>
           <div id="sv_loading" class="muted" style="display:none;margin-top:6px;">Loading…</div>
           <div id="sv_results" class="grid" style="margin-top:8px;"></div>
@@ -384,7 +385,11 @@
     function svDelete(id){ const a=svSavedList().filter(x=>String(x.id)!==String(id)); svSavedSaveList(a); svSavedRender(); }
     function svExport(){ const a=svSavedList(); const payload=a.map(({name, params})=>({name, params})); const txt=JSON.stringify(payload, null, 2); try{ navigator.clipboard.writeText(txt).then(()=>alert('Copied to clipboard')).catch(()=>{ prompt('Copy JSON:', txt); }); }catch{ prompt('Copy JSON:', txt); } }
     function svImport(){ const txt=prompt('Paste scholarship searches JSON'); if(!txt) return; try{ const raw=JSON.parse(txt); const arr=Array.isArray(raw)?raw:(Array.isArray(raw.searches)?raw.searches:(Array.isArray(raw.items)?raw.items:[raw])); const cleaned=arr.map(x=>({ name:String(x.name||'Scholarships'), params:(x.params||{}) })); let list=svSavedList(); let added=0; cleaned.forEach(it=>{ const key=it.name+JSON.stringify(it.params||{}); const exists=list.some(e=> e.name+JSON.stringify(e.params||{})===key ); if(!exists){ list.push({ id: Date.now()+Math.floor(Math.random()*1000), name: it.name, params: it.params, createdAt:new Date().toISOString() }); added++; } }); svSavedSaveList(list); svSavedRender(); alert(added?`Imported ${added}`:'Nothing new'); }catch{ alert('Invalid JSON'); } }
-    (function(){ const save=document.getElementById('sv_save'); if(save) save.addEventListener('click', svSave); const runBtn=document.getElementById('sv_savedRun'); if(runBtn) runBtn.addEventListener('click', ()=>{ const id=(document.getElementById('sv_saved')?.value)||''; if(id) svApply(id); }); const delBtn=document.getElementById('sv_savedDelete'); if(delBtn) delBtn.addEventListener('click', ()=>{ const id=(document.getElementById('sv_saved')?.value)||''; if(id && confirm('Delete this saved search?')) svDelete(id); }); const exp=document.getElementById('sv_export'); if(exp) exp.addEventListener('click', svExport); const imp=document.getElementById('sv_import'); if(imp) imp.addEventListener('click', svImport); svSavedRender(); })();
+    function svBuildLink(){ const f=svFilters(); const params=new URLSearchParams(); params.set('sch','1'); if(f.q) params.set('sch_q', f.q); if(f.state) params.set('sch_state', f.state); if(f.minAmt) params.set('sch_min', f.minAmt); if(f.deadline) params.set('sch_deadline', f.deadline); if(f.sort) params.set('sch_sort', f.sort); const base=location.origin + location.pathname; return `${base}?${params.toString()}`; }
+    function svShare(){ const link=svBuildLink(); try{ navigator.clipboard.writeText(link).then(()=>alert('Link copied')).catch(()=>{ prompt('Copy link:', link); }); }catch{ prompt('Copy link:', link); } }
+    function svApplyFromURL(){ try{ const u=new URL(location.href); const p=u.searchParams; if(!p.get('sch')) return; const set=(id,v)=>{ const el=document.getElementById(id); if(el && v!=null) el.value=v; }; set('sv_q', p.get('sch_q')||''); set('sv_state', p.get('sch_state')||'MD'); set('sv_minAmt', p.get('sch_min')||''); set('sv_deadline', p.get('sch_deadline')||''); set('sv_sort', p.get('sch_sort')||'amount_desc'); svSearch(); }catch{}
+    }
+    (function(){ const save=document.getElementById('sv_save'); if(save) save.addEventListener('click', svSave); const runBtn=document.getElementById('sv_savedRun'); if(runBtn) runBtn.addEventListener('click', ()=>{ const id=(document.getElementById('sv_saved')?.value)||''; if(id) svApply(id); }); const delBtn=document.getElementById('sv_savedDelete'); if(delBtn) delBtn.addEventListener('click', ()=>{ const id=(document.getElementById('sv_saved')?.value)||''; if(id && confirm('Delete this saved search?')) svDelete(id); }); const exp=document.getElementById('sv_export'); if(exp) exp.addEventListener('click', svExport); const imp=document.getElementById('sv_import'); if(imp) imp.addEventListener('click', svImport); const share=document.getElementById('sv_share'); if(share) share.addEventListener('click', svShare); svSavedRender(); svApplyFromURL(); })();
 
   </script>
 </body>
