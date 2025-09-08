@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explore Careers & Training</title>
     <link rel="stylesheet" href="assets/common.css">
+    <script src="assets/explore.js"></script>
     <style>
         *{ box-sizing:border-box; }
         body{ font-family:'Montserrat','Calibri','Segoe UI',sans-serif; margin:0; background: linear-gradient(135deg,#BD0934 0%, #FFC838 100%); min-height:100vh; padding:20px; }
@@ -167,7 +168,7 @@
         // Mobile menu
         (function(){ const t=document.getElementById('menuToggle'); const m=document.getElementById('site-menu'); if(t&&m){ t.addEventListener('click', ()=>{ const o=m.classList.toggle('open'); t.setAttribute('aria-expanded', o?'true':'false'); }); } })();
 
-        const API_BASE = (localStorage.getItem('apiBase') || '/api').replace(/\/$/, '');
+        const API_BASE = ExploreAPI.apiBase();
 
         function getFilters(){
             const q = document.getElementById('q').value.trim();
@@ -184,37 +185,13 @@
             try{ const res = await fetch(url, { headers: { 'Accept':'application/json' } }); if(!res.ok) throw new Error('Bad status'); return await res.json(); } catch(e){ return null; }
         }
 
-        async function searchOccupations(){
-            const { q, ri, jobZone, region, radius } = getFilters();
-            const url = `${API_BASE}/v1/occupations/search?q=${encodeURIComponent(q)}&riasec=${encodeURIComponent(ri)}&job_zone=${encodeURIComponent(jobZone)}&region=${encodeURIComponent(region)}&radius=${encodeURIComponent(radius)}`;
-            const data = await fetchJSON(url);
-            if(data && Array.isArray(data.items)) return data.items;
-            return [];
-        }
+        async function searchOccupations(){ const f=getFilters(); return await ExploreAPI.searchOccupations(f); }
 
-        async function searchTraining(){
-            const { q, zip, radius } = getFilters();
-            const url = `${API_BASE}/v1/training?keyword=${encodeURIComponent(q)}&zipcode=${encodeURIComponent(zip)}&radius=${encodeURIComponent(radius)}`;
-            const data = await fetchJSON(url);
-            if(data && Array.isArray(data.items)) return data.items;
-            return [];
-        }
+        async function searchTraining(){ const f=getFilters(); return await ExploreAPI.searchTraining(f); }
 
-        async function searchApprenticeships(){
-            const { q, zip } = getFilters();
-            const url = `${API_BASE}/v1/apprenticeships?keyword=${encodeURIComponent(q)}&location=${encodeURIComponent(zip)}`;
-            const data = await fetchJSON(url);
-            if(data && Array.isArray(data.items)) return data.items;
-            return [];
-        }
+        async function searchApprenticeships(){ const f=getFilters(); return await ExploreAPI.searchApprenticeships(f); }
 
-        async function searchLocal(){
-            const { zip } = getFilters();
-            const url = `${API_BASE}/v1/local-help/ajc?zip=${encodeURIComponent(zip)}`;
-            const data = await fetchJSON(url);
-            if(data && Array.isArray(data.items)) return data.items;
-            return [];
-        }
+        async function searchLocal(){ const f=getFilters(); return await ExploreAPI.searchLocal(f); }
 
         function ensurePlan(){ try{ const m=JSON.parse(localStorage.getItem('studentPlanV1')||'[]'); if(Array.isArray(m) && m.length) return m; }catch{} return Array.from({length:6},(_,i)=>({year:i+1,items:[]})); }
         function savePlan(m){ localStorage.setItem('studentPlanV1', JSON.stringify(m)); }
@@ -289,16 +266,7 @@
         // Helpers
         function tag(text){ const s=document.createElement('span'); s.className='tag'; s.textContent=text; return s; }
 
-        async function getOccupationDetail(key){
-            // key is soc or title
-            const soc = (String(key).match(/\d{2}-\d{4}\.\d{2}/) || [])[0] || '';
-            if (soc){
-                const url = `${API_BASE}/v1/occupations/${encodeURIComponent(soc)}`;
-                const data = await fetchJSON(url);
-                if (data) return data;
-            }
-            return { title:String(key), description:'Details not available (API not configured yet).' };
-        }
+        async function getOccupationDetail(key){ const soc=(String(key).match(/\d{2}-\d{4}\.\d{2}/)||[])[0]||''; if(!soc) return { title:String(key), description:'' }; return await ExploreAPI.getOccupationDetail(soc)||{ title:String(key), description:'' }; }
 
         function openDetails(it){
             showDetailModal({ title: it.title||it.name||it.soc, summary: it.summary||'', riasec: it.riasec||'', job_zone: it.job_zone||'', soc: it.soc||'' });

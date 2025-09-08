@@ -157,6 +157,30 @@
         <div class="actions"><button id="exportAll" class="btn-outline">Export Journey JSON</button><button id="importAllBtn" class="btn-outline">Import JSON</button></div>
         <textarea id="importText" placeholder='Paste JSON here to import' style="margin-top:8px;"></textarea>
       </div>
+      <div class="card" style="margin-top:10px;">
+        <h2>Settings</h2>
+        <div class="row">
+          <div class="col">
+            <label>Plan Headings</label>
+            <select id="set_planHeadings">
+              <option value="years">Year 1–6</option>
+              <option value="grades">Grades 9–12 + Post‑CCR Year 13/14</option>
+            </select>
+          </div>
+          <div class="col">
+            <label>Default Region</label>
+            <input id="set_defaultRegion" type="text" placeholder="e.g., District of Columbia, DC">
+          </div>
+          <div class="col">
+            <label>Default Radius (miles)</label>
+            <input id="set_defaultRadius" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="25">
+          </div>
+        </div>
+        <div class="actions" style="margin-top:8px;">
+          <button id="set_save" class="btn">Save Settings</button>
+          <span id="set_saved" class="muted"></span>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -175,6 +199,7 @@
     const LS_KEY_PROFILE='studentProfileV1';
     const LS_PORT='portfolioV1';
     const LS_RES='resumeV1';
+    const LS_SET='journeySettingsV1';
 
     function nowStamp(){ return new Date().toLocaleString(); }
     function touchSaved(){ document.getElementById('lastSaved').textContent = nowStamp(); }
@@ -201,7 +226,8 @@
     function getPlan(){ try{ return JSON.parse(localStorage.getItem(LS_KEY_PLAN)||'[]'); }catch{return[]} }
     function ensurePlan(){ let m=getPlan(); if(!Array.isArray(m)||!m.length){ m=defaultPlan(); localStorage.setItem(LS_KEY_PLAN, JSON.stringify(m)); } return m; }
     function savePlan(m){ localStorage.setItem(LS_KEY_PLAN, JSON.stringify(m)); touchSaved(); }
-    function renderPlan(){ const root=document.getElementById('plan'); root.innerHTML=''; const m=ensurePlan(); m.forEach((y,idx)=>{ const box=document.createElement('div'); box.className='year'; const h=document.createElement('h4'); h.textContent=`Year ${y.year}`; box.appendChild(h); const ul=document.createElement('ul'); (y.items||[]).forEach((t,j)=>{ const li=document.createElement('li'); li.textContent=t; const del=document.createElement('button'); del.textContent='Remove'; del.className='btn-outline'; del.style.marginLeft='8px'; del.onclick=()=>{ const mm=ensurePlan(); mm[idx].items.splice(j,1); savePlan(mm); renderPlan(); }; li.appendChild(del); ul.appendChild(li); }); box.appendChild(ul); const input=document.createElement('input'); input.type='text'; input.placeholder='Add item...'; input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ const mm=ensurePlan(); mm[idx].items.push(input.value.trim()); savePlan(mm); renderPlan(); input.value=''; }}); const add=document.createElement('button'); add.textContent='Add'; add.onclick=()=>{ const mm=ensurePlan(); if(input.value.trim()){ mm[idx].items.push(input.value.trim()); savePlan(mm); renderPlan(); input.value=''; } }; const row=document.createElement('div'); row.className='row'; const c1=document.createElement('div'); c1.className='col'; c1.appendChild(input); const c2=document.createElement('div'); c2.className='col'; c2.appendChild(add); row.appendChild(c1); row.appendChild(c2); box.appendChild(row); root.appendChild(box); }); }
+    function planHeadingFor(idx){ const s=loadSettings(); if(s.planHeadings==='grades'){ const labels=['Grade 9','Grade 10','Grade 11','Grade 12','Post‑CCR Year 13','Post‑CCR Year 14']; return labels[idx]||`Year ${idx+1}`; } return `Year ${idx+1}`; }
+    function renderPlan(){ const root=document.getElementById('plan'); root.innerHTML=''; const m=ensurePlan(); m.forEach((y,idx)=>{ const box=document.createElement('div'); box.className='year'; const h=document.createElement('h4'); h.textContent=planHeadingFor(idx); box.appendChild(h); const ul=document.createElement('ul'); (y.items||[]).forEach((t,j)=>{ const li=document.createElement('li'); li.textContent=t; const del=document.createElement('button'); del.textContent='Remove'; del.className='btn-outline'; del.style.marginLeft='8px'; del.onclick=()=>{ const mm=ensurePlan(); mm[idx].items.splice(j,1); savePlan(mm); renderPlan(); }; li.appendChild(del); ul.appendChild(li); }); box.appendChild(ul); const input=document.createElement('input'); input.type='text'; input.placeholder='Add item...'; input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ const mm=ensurePlan(); mm[idx].items.push(input.value.trim()); savePlan(mm); renderPlan(); input.value=''; }}); const add=document.createElement('button'); add.textContent='Add'; add.onclick=()=>{ const mm=ensurePlan(); if(input.value.trim()){ mm[idx].items.push(input.value.trim()); savePlan(mm); renderPlan(); input.value=''; } }; const row=document.createElement('div'); row.className='row'; const c1=document.createElement('div'); c1.className='col'; c1.appendChild(input); const c2=document.createElement('div'); c2.className='col'; c2.appendChild(add); row.appendChild(c1); row.appendChild(c2); box.appendChild(row); root.appendChild(box); }); }
     document.getElementById('addYear').addEventListener('click', ()=>{ const m=ensurePlan(); m.push({year:m.length+1, items:[]}); savePlan(m); renderPlan(); });
     document.getElementById('resetPlan').addEventListener('click', ()=>{ savePlan(defaultPlan()); renderPlan(); });
     document.getElementById('copyPlan').addEventListener('click', ()=>{ const m=getPlan(); const lines=['6‑Year Plan']; (m||[]).forEach(y=>{ lines.push(`Year ${y.year}`); (y.items||[]).forEach(it=>lines.push(`- ${it}`)); if(!y.items||!y.items.length) lines.push('-'); }); const txt=lines.join('\n'); if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>alert('Plan copied')); else prompt('Copy plan:', txt); });
@@ -216,9 +242,16 @@
     document.getElementById('saveAll').addEventListener('click', ()=>{ touchSaved(); alert('Saved to browser.'); });
     document.getElementById('resumeJourney').addEventListener('click', ()=>{ document.querySelector('.tab[data-tab="interests"]').click(); });
 
+    // Settings save/load
+    function loadSettings(){ try{ return JSON.parse(localStorage.getItem(LS_SET)||'{}'); }catch{return {}} }
+    function saveSettings(s){ localStorage.setItem(LS_SET, JSON.stringify(s||{})); }
+    function applySettings(){ const s=loadSettings(); const planSel=document.getElementById('set_planHeadings'); const dReg=document.getElementById('set_defaultRegion'); const dRad=document.getElementById('set_defaultRadius'); if(planSel) planSel.value = s.planHeadings||'years'; if(dReg) dReg.value = s.defaultRegion||''; if(dRad) dRad.value = s.defaultRadius||''; // seed region settings if empty
+      try{ const r=JSON.parse(localStorage.getItem('regionSettingsV1')||'{}'); if((!r.region||!r.region.trim()) && s.defaultRegion){ localStorage.setItem('regionSettingsV1', JSON.stringify({ region:s.defaultRegion, radius:s.defaultRadius||'' })); } }catch{}
+      renderPlan(); }
+    document.getElementById('set_save').addEventListener('click', ()=>{ const s={ planHeadings: (document.getElementById('set_planHeadings')||{}).value||'years', defaultRegion:(document.getElementById('set_defaultRegion')||{}).value||'', defaultRadius:(document.getElementById('set_defaultRadius')||{}).value||'' }; saveSettings(s); applySettings(); const el=document.getElementById('set_saved'); if(el){ el.textContent='Saved'; setTimeout(()=>el.textContent='',1200);} });
+
     // Init
-    window.addEventListener('DOMContentLoaded', ()=>{ loadProfile(); recalcRIASEC(); renderSuggestions(); renderPlan(); renderSnapshots(); });
+    window.addEventListener('DOMContentLoaded', ()=>{ loadProfile(); recalcRIASEC(); renderSuggestions(); applySettings(); renderPlan(); renderSnapshots(); initExploreInline(); });
   </script>
 </body>
 </html>
-
