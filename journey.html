@@ -123,7 +123,52 @@
     </section>
 
     <section id="sec-explore" class="section">
-      <div class="card"><h2>Explore</h2><p class="muted">For full search and filters, open Explore. We will embed this here in a later step.</p><div class="actions"><a class="btn" href="explore.html">Open Explore</a></div></div>
+      <div class="card">
+        <h2>Explore</h2>
+        <p class="muted">Search occupations, training, apprenticeships, and local help — add items to your plan.</p>
+        <div class="row" style="margin-top:8px;">
+          <div class="col"><label>Keyword</label><input id="jx_q" type="text" placeholder="e.g., data, nurse, electrician"></div>
+          <div class="col"><label>Job Zone</label><select id="jx_jobZone"><option value="">Any</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+        </div>
+        <div class="row" style="margin-top:8px; align-items:center;">
+          <div class="col">
+            <div class="muted" style="margin-bottom:6px;">RIASEC</div>
+            <div id="jx_riasec" style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn-outline" data-code="R">R</button>
+              <button class="btn-outline" data-code="I">I</button>
+              <button class="btn-outline" data-code="A">A</button>
+              <button class="btn-outline" data-code="S">S</button>
+              <button class="btn-outline" data-code="E">E</button>
+              <button class="btn-outline" data-code="C">C</button>
+            </div>
+          </div>
+          <div class="col">
+            <div class="muted">Region/Radius/ZIP from Journey</div>
+            <div class="row">
+              <div class="col"><input id="jx_region" type="text" readonly placeholder="Region"></div>
+              <div class="col"><input id="jx_radius" type="text" readonly placeholder="Radius"></div>
+              <div class="col"><input id="jx_zip" type="text" readonly placeholder="ZIP"></div>
+            </div>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:8px;"><button id="jx_search" class="btn">Search</button><button id="jx_reset" class="btn-outline">Reset</button><span id="jx_api" class="muted" style="margin-left:auto;"></span></div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn-outline jx_tab active" data-tab="occupations">Occupations</button>
+          <button class="btn-outline jx_tab" data-tab="training">Training</button>
+          <button class="btn-outline jx_tab" data-tab="apprenticeships">Apprenticeships</button>
+          <button class="btn-outline jx_tab" data-tab="local">Local Help</button>
+        </div>
+        <div id="jx_loading" class="muted" style="display:none;margin-top:6px;">Loading…</div>
+        <div id="jx_results" class="grid" style="margin-top:8px;"></div>
+        <div id="jx_empty" class="muted" style="display:none;">No results. Adjust filters or keyword.</div>
+        <div id="jx_compareBar" class="actions" style="display:none; justify-content:space-between; align-items:center; margin-top:8px;">
+          <div class="muted">Compare: <span id="jx_compareCount">0</span>/2 selected</div>
+          <div>
+            <button id="jx_compareBtn" class="btn-outline">Open Compare</button>
+            <button id="jx_clearCompare" class="btn-outline">Clear</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="sec-plan" class="section">
@@ -185,6 +230,26 @@
   </div>
 
   <button id="feedbackFab" class="fab-pill" aria-label="Open feedback">Feedback</button>
+  <!-- Detail Modal -->
+  <div class="modal" id="jx_modal_detail" aria-hidden="true" role="dialog" aria-labelledby="jx_detailTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="jx_detailTitle" style="color:#231F20;">Occupation Details</h2>
+        <button class="modal-close" data-close aria-label="Close">×</button>
+      </div>
+      <div id="jx_detailBody" class="muted">Loading…</div>
+    </div>
+  </div>
+  <!-- Compare Modal -->
+  <div class="modal" id="jx_modal_compare" aria-hidden="true" role="dialog" aria-labelledby="jx_compareTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="jx_compareTitle" style="color:#231F20;">Compare Occupations</h2>
+        <button class="modal-close" data-close aria-label="Close">×</button>
+      </div>
+      <div id="jx_compareBody" class="muted">Loading…</div>
+    </div>
+  </div>
 
   <script>
     // Mobile menu
@@ -252,6 +317,16 @@
 
     // Init
     window.addEventListener('DOMContentLoaded', ()=>{ loadProfile(); recalcRIASEC(); renderSuggestions(); applySettings(); renderPlan(); renderSnapshots(); initExploreInline(); });
+    
+    // Detail/Compare modals helpers
+    (function(){
+      const d=document.getElementById('jx_modal_detail');
+      const c=document.getElementById('jx_modal_compare');
+      function close(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); }
+      [d,c].forEach(m=> m.addEventListener('click', (e)=>{ if (e.target===m || e.target.hasAttribute('data-close')) close(m); }));
+      window.jxShowDetailModal = function(meta){ d.classList.add('open'); d.setAttribute('aria-hidden','false'); const b=document.getElementById('jx_detailBody'); b.innerHTML = `<div><strong>${meta.title||''}</strong> ${meta.soc?`<span class='tag'>${meta.soc}</span>`:''}</div><div class='muted' style='margin:6px 0;'>${meta.description||''}</div><div class='tags'>${meta.riasec?`<span class='tag'>RIASEC: ${meta.riasec}</span>`:''}${meta.job_zone?`<span class='tag'>Job Zone: ${meta.job_zone}</span>`:''}</div>`; };
+      window.jxShowCompareModal = function(a,b){ c.classList.add('open'); c.setAttribute('aria-hidden','false'); const body=document.getElementById('jx_compareBody'); body.innerHTML = `<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:10px;\"><div><strong>${a.title||''}</strong>${a.soc?` <span class='tag'>${a.soc}</span>`:''}<div class='muted'>${a.description||''}</div><div class='tags'>${a.riasec?`<span class='tag'>RIASEC: ${a.riasec}</span>`:''}${a.job_zone?`<span class='tag'>Job Zone: ${a.job_zone}</span>`:''}</div></div><div><strong>${b.title||''}</strong>${b.soc?` <span class='tag'>${b.soc}</span>`:''}<div class='muted'>${b.description||''}</div><div class='tags'>${b.riasec?`<span class='tag'>RIASEC: ${b.riasec}</span>`:''}${b.job_zone?`<span class='tag'>Job Zone: ${b.job_zone}</span>`:''}</div></div></div>`; };
+    })();
   </script>
 </body>
 </html>
