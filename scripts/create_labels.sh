@@ -26,6 +26,7 @@ labels=(
   "type:docs#0052cc#Docs"
   "priority:P1#d73a4a#High"
   "priority:P2#fbca04#Medium"
+  "priority:P3#c0c0c0#Low"
 )
 
 for l in "${labels[@]}"; do
@@ -37,4 +38,3 @@ for l in "${labels[@]}"; do
 done
 
 echo "Labels ensured for $repo"
-
