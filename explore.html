@@ -45,6 +45,8 @@
         details.adv > div{ padding: 8px 10px; display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
         .loading{ text-align:center; color:#64748b; padding:10px; }
         .compare-bar{ position: sticky; bottom: 10px; display:none; justify-content:space-between; align-items:center; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:8px 10px; box-shadow:0 6px 18px rgba(0,0,0,0.08); margin-top:10px; }
+        /* Toast */
+        #toast{ position: fixed; right: 20px; bottom: 20px; background:#111827; color:#fff; padding:10px 14px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.25); display:none; z-index: 1400; }
         /* Modals */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1300; }
         .modal.open { display: flex; }
@@ -121,6 +123,7 @@
             <button class="tab" data-tab="training">Training</button>
             <button class="tab" data-tab="apprenticeships">Apprenticeships</button>
             <button class="tab" data-tab="local">Local Help</button>
+            <button class="tab" data-tab="scholarships">Scholarships</button>
         </div>
         <div class="toolbar">
             <button id="searchBtn" class="btn">Search</button>
@@ -128,6 +131,7 @@
             <div class="muted">Region/ZIP come from Student Journey</div>
         </div>
         <div id="apiNotice" class="loading" style="display:none;">API not configured. Set localStorage.apiBase to your aggregator URL (example: https://api.example.com).</div>
+        <div id="schNotice" class="loading" style="display:none;">Tip: Complete the FAFSA at <a href="https://studentaid.gov/" target="_blank" rel="noopener">studentaid.gov</a> and explore Maryland State Aid at <a href="https://mhec.maryland.gov/Pages/financialaid/index.aspx" target="_blank" rel="noopener">MHEC</a>. You can also <a href="https://studentaid.gov/apply-for-aid/fafsa" target="_blank" rel="noopener">start FAFSA</a> now.</div>
         <details class="adv">
             <summary>Advanced filters</summary>
             <div>
@@ -135,8 +139,27 @@
                 <div class="field"><label for="edu">Min Job Zone</label>
                     <select id="edu"><option value="">Any</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
                 </div>
+                <div class="field"><label for="schState">State (for scholarships)</label><input id="schState" type="text" placeholder="MD" value="MD"></div>
+                <div class="field"><label for="schMinAmt">Min Amount ($)</label><input id="schMinAmt" type="text" inputmode="decimal" placeholder="e.g., 1000"></div>
+                <div class="field"><label for="schDeadline">Deadline by</label><input id="schDeadline" type="date"></div>
+                <div class="field"><label for="schSort">Sort scholarships by</label>
+                    <select id="schSort">
+                        <option value="relevance">Relevance</option>
+                        <option value="deadline_asc">Deadline (soonest)</option>
+                        <option value="amount_desc" selected>Amount (highest)</option>
+                        <option value="name_asc">Name (A–Z)</option>
+                    </select>
+                </div>
             </div>
         </details>
+        <div id="schSavedBar" class="toolbar" style="display:none;">
+            <button id="schSaveBtn" class="btn-outline">Save Search</button>
+            <select id="schSaved" style="min-width:220px;"></select>
+            <button id="schSavedRun" class="btn">Run Saved</button>
+            <button id="schSavedDelete" class="btn-outline">Delete</button>
+            <button id="schSavedExport" class="btn-outline">Export</button>
+            <button id="schSavedImport" class="btn-outline">Import</button>
+        </div>
 
         <div id="loading" class="loading" style="display:none;">Loading…</div>
         <div id="results" class="results" aria-live="polite"></div>
@@ -168,6 +191,7 @@
         (function(){ const t=document.getElementById('menuToggle'); const m=document.getElementById('site-menu'); if(t&&m){ t.addEventListener('click', ()=>{ const o=m.classList.toggle('open'); t.setAttribute('aria-expanded', o?'true':'false'); }); } })();
 
         const API_BASE = (localStorage.getItem('apiBase') || '/api').replace(/\/$/, '');
+        const LS_SCH_SAVED='scholarshipSearchesV1';
 
         function getFilters(){
             const q = document.getElementById('q').value.trim();
@@ -176,7 +200,11 @@
             const region = document.getElementById('region').value.trim();
             const radius = document.getElementById('radius').value.trim();
             const zip = document.getElementById('zip').value.trim();
-            return { q, ri, jobZone, region, radius, zip };
+            const state = (document.getElementById('schState')?.value||'').trim();
+            const schMinAmt = (document.getElementById('schMinAmt')?.value||'').trim();
+            const schDeadline = (document.getElementById('schDeadline')?.value||'').trim();
+            const schSort = (document.getElementById('schSort')?.value||'amount_desc');
+            return { q, ri, jobZone, region, radius, zip, state, schMinAmt, schDeadline, schSort };
         }
 
         function showLoading(on){ document.getElementById('loading').style.display = on?'block':'none'; }
@@ -216,9 +244,42 @@
             return [];
         }
 
+        function parseAmount(str){ if(!str) return NaN; const nums=String(str).replace(/[,]/g,'').match(/\d+(?:\.\d+)?/g); if(!nums||!nums.length) return NaN; // pick the max in a range
+            return Math.max.apply(null, nums.map(n=>Number(n))); }
+        function parseDate(str){ if(!str) return null; const d=new Date(str); if(!isNaN(d)) return d; // try MM/DD/YYYY
+            const m=String(str).match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/); if(m){ const mm=Number(m[1])-1; const dd=Number(m[2]); const yy=Number(m[3]); const year=yy<100?2000+yy:yy; const dt=new Date(year,mm,dd); if(!isNaN(dt)) return dt; } return null; }
+        function normalizeScholarships(items){ return (items||[]).map(it=>({ ...it, amountNum: parseAmount(it.amount), deadlineDate: parseDate(it.deadline) })); }
+        function filterSortScholarships(items, f){ let out=[...items]; const minAmt=Number(f.schMinAmt||''); if(!isNaN(minAmt)&&f.schMinAmt){ out=out.filter(it=> !isNaN(it.amountNum) && it.amountNum>=minAmt ); }
+            if(f.schDeadline){ const by=parseDate(f.schDeadline); if(by){ out=out.filter(it=> it.deadlineDate && it.deadlineDate<=by ); } }
+            if(f.schSort==='deadline_asc'){ out.sort((a,b)=>{ const ad=a.deadlineDate? a.deadlineDate.getTime(): Infinity; const bd=b.deadlineDate? b.deadlineDate.getTime(): Infinity; return ad-bd; }); }
+            if(f.schSort==='amount_desc'){ out.sort((a,b)=>{ const av=isNaN(a.amountNum)? -Infinity : a.amountNum; const bv=isNaN(b.amountNum)? -Infinity : b.amountNum; return bv-av; }); }
+            if(f.schSort==='name_asc'){ out.sort((a,b)=> String(a.name||'').localeCompare(String(b.name||''))); }
+            return out; }
+        async function searchScholarships(){
+            const f = getFilters();
+            const url = `${API_BASE}/v1/scholarships?keyword=${encodeURIComponent(f.q)}&state=${encodeURIComponent(f.state||'MD')}`;
+            const data = await fetchJSON(url);
+            const items = (data && Array.isArray(data.items)) ? data.items : [];
+            const norm = normalizeScholarships(items);
+            return filterSortScholarships(norm, f);
+        }
+
+        // Saved scholarship searches (shared across pages via localStorage)
+        function schSavedList(){ try{ const a=JSON.parse(localStorage.getItem(LS_SCH_SAVED)||'[]'); return Array.isArray(a)?a:[]; }catch{return []} }
+        function schSavedSaveList(a){ localStorage.setItem(LS_SCH_SAVED, JSON.stringify(a)); }
+        function schSavedRender(){ const sel=document.getElementById('schSaved'); if(!sel) return; const a=schSavedList(); sel.innerHTML=''; if(!a.length){ const opt=document.createElement('option'); opt.value=''; opt.textContent='No saved searches'; sel.appendChild(opt); return; } a.forEach(it=>{ const opt=document.createElement('option'); opt.value=String(it.id); opt.textContent=it.name; sel.appendChild(opt); }); }
+        function schCurrentParams(){ const { q, state, schMinAmt, schDeadline, schSort } = getFilters(); return { q, state, minAmt: schMinAmt, deadline: schDeadline, sort: schSort }; }
+        function schSave(){ const params=schCurrentParams(); const def=[params.q||'Any', params.state||'MD'].filter(Boolean).join(' • '); const name=prompt('Name this scholarship search', `Scholarships: ${def}`); if(!name) return; const a=schSavedList(); const id=Date.now(); a.push({ id, name, params, createdAt: new Date().toISOString() }); schSavedSaveList(a); schSavedRender(); toast('Saved search'); }
+        function schApply(id){ const a=schSavedList(); const it=a.find(x=>String(x.id)===String(id)); if(!it) return; const p=it.params||{}; const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v||''; }; set('q', p.q||''); set('schState', p.state||'MD'); set('schMinAmt', p.minAmt||''); set('schDeadline', p.deadline||''); set('schSort', p.sort||'amount_desc'); // switch to Scholarships tab
+            document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); const tab=document.querySelector('.tab[data-tab="scholarships"]'); if(tab){ tab.classList.add('active'); } run('scholarships'); }
+        function schDelete(id){ const a=schSavedList().filter(x=>String(x.id)!==String(id)); schSavedSaveList(a); schSavedRender(); toast('Deleted'); }
+        async function schExport(){ const a=schSavedList(); const payload=a.map(({name, params})=>({name, params})); const txt=JSON.stringify(payload, null, 2); try{ await navigator.clipboard.writeText(txt); toast('Copied JSON to clipboard'); }catch{ prompt('Copy JSON:', txt); } }
+        function schImport(){ const txt=prompt('Paste scholarship searches JSON'); if(!txt) return; try{ const raw=JSON.parse(txt); const arr=Array.isArray(raw)?raw:(Array.isArray(raw.searches)?raw.searches:(Array.isArray(raw.items)?raw.items:[raw])); const cleaned=arr.map(x=>({ name:String(x.name||'Scholarships'), params:(x.params||{}) })); let list=schSavedList(); let added=0; cleaned.forEach(it=>{ const key=it.name+JSON.stringify(it.params||{}); const exists=list.some(e=> e.name+JSON.stringify(e.params||{})===key ); if(!exists){ list.push({ id: Date.now()+Math.floor(Math.random()*1000), name: it.name, params: it.params, createdAt:new Date().toISOString() }); added++; } }); schSavedSaveList(list); schSavedRender(); toast(added?`Imported ${added}`:'Nothing new'); }catch{ toast('Invalid JSON'); } }
+
         function ensurePlan(){ try{ const m=JSON.parse(localStorage.getItem('studentPlanV1')||'[]'); if(Array.isArray(m) && m.length) return m; }catch{} return Array.from({length:6},(_,i)=>({year:i+1,items:[]})); }
         function savePlan(m){ localStorage.setItem('studentPlanV1', JSON.stringify(m)); }
-        function addToPlan(text){ const m=ensurePlan(); let year = Number(prompt('Add to which year? (1-6)', '1'))||1; year=Math.max(1,Math.min(6,year)); const idx=year-1; m[idx].items.push(text); savePlan(m); alert(`Added to Year ${year} of your plan`); }
+        function toast(msg){ let t=document.getElementById('toast'); if(!t){ t=document.createElement('div'); t.id='toast'; document.body.appendChild(t); } t.textContent=msg; t.style.display='block'; clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>{ t.style.display='none'; }, 1600); }
+        function addToPlan(text){ const m=ensurePlan(); let year = Number(prompt('Add to which year? (1-6)', '1'))||1; year=Math.max(1,Math.min(6,year)); const idx=year-1; m[idx].items.push(text); savePlan(m); toast(`Added to Year ${year}`); }
 
         const compareSel = new Set();
         function toggleCompare(key){ if(compareSel.has(key)) compareSel.delete(key); else if(compareSel.size<2) compareSel.add(key); updateCompareBar(); }
@@ -237,11 +298,18 @@
                 if(kind==='training') sub.textContent = `${it.provider||''} • ${(it.location&&[it.location.city,it.location.state].filter(Boolean).join(', '))||''}`;
                 if(kind==='apprenticeships') sub.textContent = `${it.provider||''} • ${(it.location&&[it.location.city,it.location.state].filter(Boolean).join(', '))||''}`;
                 if(kind==='local') sub.textContent = (it.location&&[it.location.city,it.location.state,it.location.zip].filter(Boolean).join(', '))||'';
+                if(kind==='scholarships') sub.textContent = `${it.provider||''} • ${(it.location&&it.location.state)||''}`;
                 card.appendChild(sub);
                 if(kind==='occupations'){
                     const tags=document.createElement('div'); tags.className='tags';
                     if (it.riasec) tags.appendChild(tag(`RIASEC: ${it.riasec}`));
                     if (it.job_zone) tags.appendChild(tag(`Job Zone: ${it.job_zone}`));
+                    card.appendChild(tags);
+                }
+                if(kind==='scholarships'){
+                    const tags=document.createElement('div'); tags.className='tags';
+                    if (it.amount) tags.appendChild(tag(`Amount: ${it.amount}`));
+                    if (it.deadline) tags.appendChild(tag(`Deadline: ${it.deadline}`));
                     card.appendChild(tags);
                 }
                 const actions=document.createElement('div'); actions.className='actions';
@@ -260,11 +328,14 @@
         async function run(kind){
             showLoading(true);
             const apiNotice=document.getElementById('apiNotice'); apiNotice.style.display='none';
+            const schNotice=document.getElementById('schNotice'); if(schNotice) schNotice.style.display = (kind==='scholarships') ? 'block' : 'none';
+            const schSavedBar=document.getElementById('schSavedBar'); if(schSavedBar) schSavedBar.style.display = (kind==='scholarships') ? 'flex' : 'none';
             const baseSet = !!localStorage.getItem('apiBase');
             if(kind==='occupations') { const items=await searchOccupations(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
             if(kind==='training') { const items=await searchTraining(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
             if(kind==='apprenticeships') { const items=await searchApprenticeships(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
             if(kind==='local') { const items=await searchLocal(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
+            if(kind==='scholarships') { const items=await searchScholarships(); render(items, kind); if(!items.length && !baseSet) apiNotice.style.display='block'; }
             showLoading(false);
         }
 
@@ -272,9 +343,13 @@
         document.getElementById('riasecChips').addEventListener('click', (e)=>{ const b=e.target.closest('.chip'); if(!b) return; b.classList.toggle('active'); });
         document.querySelectorAll('.tab').forEach(t=> t.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); run(t.getAttribute('data-tab')); }));
         document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter'){ const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); }});
+        // Debounce keyword input
+        (function(){ let t; const el=document.getElementById('q'); el.addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(()=>{ const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); }, 450); }); })();
         document.getElementById('searchBtn').addEventListener('click', ()=>{ const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); });
-        document.getElementById('resetBtn').addEventListener('click', ()=>{ document.getElementById('q').value=''; document.querySelectorAll('#riasecChips .chip').forEach(c=>c.classList.remove('active')); document.getElementById('jobZone').value=''; document.getElementById('wageMin').value=''; document.getElementById('edu').value=''; const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); });
+        document.getElementById('resetBtn').addEventListener('click', ()=>{ document.getElementById('q').value=''; document.querySelectorAll('#riasecChips .chip').forEach(c=>c.classList.remove('active')); document.getElementById('jobZone').value=''; document.getElementById('wageMin').value=''; document.getElementById('edu').value=''; const st=document.getElementById('schState'); if(st) st.value='MD'; const ma=document.getElementById('schMinAmt'); if(ma) ma.value=''; const dl=document.getElementById('schDeadline'); if(dl) dl.value=''; const sb=document.getElementById('schSort'); if(sb) sb.value='amount_desc'; const tab=document.querySelector('.tab.active').getAttribute('data-tab'); run(tab); });
         document.getElementById('compareBtn').addEventListener('click', openCompare);
+        // Saved search events
+        (function(){ const save=document.getElementById('schSaveBtn'); const runBtn=document.getElementById('schSavedRun'); const delBtn=document.getElementById('schSavedDelete'); const sel=document.getElementById('schSaved'); const exp=document.getElementById('schSavedExport'); const imp=document.getElementById('schSavedImport'); if(save) save.addEventListener('click', schSave); if(runBtn) runBtn.addEventListener('click', ()=>{ const id=sel?.value||''; if(id) schApply(id); }); if(delBtn) delBtn.addEventListener('click', ()=>{ const id=sel?.value||''; if(id && confirm('Delete this saved search?')) schDelete(id); }); if(exp) exp.addEventListener('click', schExport); if(imp) imp.addEventListener('click', schImport); schSavedRender(); })();
         document.getElementById('clearCompare').addEventListener('click', ()=>{ compareSel.clear(); updateCompareBar(); });
 
         // Prefill region/zip from Journey and preselect RIASEC chips

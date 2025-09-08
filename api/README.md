@@ -8,6 +8,7 @@ We’ll host a small FastAPI service that proxies and normalizes external career
 - GET /v1/training?keyword=&zipcode=&radius=
 - GET /v1/apprenticeships?keyword=&location=
 - GET /v1/local-help/ajc?zip=
+- GET /v1/scholarships?keyword=&state=
 - GET /v1/suggest?riasec=&colors=&role=  (optional)
 
 ## Response shapes
@@ -16,6 +17,7 @@ We’ll host a small FastAPI service that proxies and normalizes external career
 - Training → { items: [ { name, provider, location{ city,state,zip }, url, type, distance_miles? } ] }
 - Apprenticeships → { items: [ { name, provider, location{...}, url } ] }
 - Local Help (AJC) → { items: [ { name, location{...}, url } ] }
+- Scholarships → { items: [ { name, provider, location{ state }, amount, deadline, url, type } ] }
 
 ## Keys
 - O*NET Web Services: https://services.onetcenter.org/

@@ -63,6 +63,7 @@
       <button class="tab" data-tab="suggestions">Suggestions</button>
       <button class="tab" data-tab="explore">Explore</button>
       <button class="tab" data-tab="plan">6‑Year Plan</button>
+      <button class="tab" data-tab="support">Support</button>
       <button class="tab" data-tab="portfolio">Portfolio/Resume</button>
       <button class="tab" data-tab="data">Data</button>
     </div>
@@ -172,6 +173,91 @@
       </div>
     </section>
 
+    <section id="sec-support" class="section">
+      <div class="grid">
+        <div class="card">
+          <h2>Maryland DORS — Transition Services</h2>
+          <div class="muted">If you have a disability or need support, DORS can help you explore careers, build skills, and plan for life after high school. Learn about eligibility, services, and how to get started.</div>
+          <div class="actions">
+            <a class="btn" href="https://dors.maryland.gov/consumers/specialized/transition/Pages/default.aspx" target="_blank" rel="noopener">Visit DORS Transition</a>
+            <a class="btn-outline" href="https://dors.maryland.gov/" target="_blank" rel="noopener">DORS Home</a>
+            <button id="dors_find" class="btn-outline">Find local DORS office</button>
+          </div>
+          <details style="margin-top:8px;">
+            <summary><strong>Questions to consider</strong></summary>
+            <ul style="margin:6px 0 0 18px;">
+              <li>What are my goals for after high school?</li>
+              <li>What supports or accommodations help me do my best?</li>
+              <li>What training or work experiences fit my interests?</li>
+              <li>Who can I invite to my meeting (family, teachers, counselor)?</li>
+            </ul>
+          </details>
+        </div>
+
+        <div class="card">
+          <h2>My Voice</h2>
+          <div class="muted">Share what matters to you. This helps adults and services (like DORS or your IEP team) understand your strengths, needs, and preferences. Saved only on this device.</div>
+          <div class="row" style="margin-top:6px;">
+            <div class="col"><label class="muted">About Me</label><textarea id="mv_about" placeholder="Strengths, interests, ways I learn best" rows="3"></textarea></div>
+            <div class="col"><label class="muted">My Goals</label><textarea id="mv_goals" placeholder="After high school, I want to…" rows="3"></textarea></div>
+          </div>
+          <div class="row">
+            <div class="col"><label class="muted">What I Need</label><textarea id="mv_needs" placeholder="Supports, accommodations, tools that help" rows="3"></textarea></div>
+            <div class="col"><label class="muted">Questions</label><textarea id="mv_questions" placeholder="Things I want to ask DORS or school" rows="3"></textarea></div>
+          </div>
+          <div class="actions">
+            <button id="mv_save" class="btn">Save</button>
+            <button id="mv_copy" class="btn-outline">Copy</button>
+            <button id="mv_email" class="btn-outline">Email</button>
+            <span id="mv_saved" class="muted" style="margin-left:auto;"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Scholarships & Funding</h2>
+          <div class="muted">Search real scholarships and funding opportunities. Results come from trusted sources via the API (configure keys to enable).</div>
+          <div class="actions" style="margin-top:6px;">
+            <a class="btn" href="https://studentaid.gov/apply-for-aid/fafsa" target="_blank" rel="noopener">Start FAFSA</a>
+            <a class="btn-outline" href="https://studentaid.gov/" target="_blank" rel="noopener">Federal Student Aid</a>
+            <a class="btn-outline" href="https://studentaid.gov/understand-aid/types/scholarships" target="_blank" rel="noopener">About Scholarships</a>
+            <a class="btn-outline" href="https://mhec.maryland.gov/Pages/financialaid/index.aspx" target="_blank" rel="noopener">Maryland State Aid (MHEC)</a>
+          </div>
+          <div class="row" style="margin-top:6px;">
+            <div class="col"><input id="sv_q" type="text" placeholder="Keyword (e.g., nursing, STEM, first-gen)"></div>
+            <div class="col"><input id="sv_state" type="text" placeholder="State (e.g., MD)" value="MD"></div>
+          </div>
+          <div class="row" style="margin-top:6px;">
+            <div class="col"><input id="sv_minAmt" type="text" inputmode="decimal" placeholder="Min Amount ($)"></div>
+            <div class="col"><input id="sv_deadline" type="date" placeholder="Deadline by"></div>
+            <div class="col">
+              <select id="sv_sort">
+                <option value="relevance">Sort: Relevance</option>
+                <option value="deadline_asc">Sort: Deadline (soonest)</option>
+                <option value="amount_desc" selected>Sort: Amount (highest)</option>
+                <option value="name_asc">Sort: Name (A–Z)</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:8px;">
+            <button id="sv_search" class="btn">Search</button>
+            <button id="sv_reset" class="btn-outline">Reset</button>
+            <span id="sv_api" class="muted" style="margin-left:auto;"></span>
+          </div>
+          <div id="sv_savedBar" class="row" style="margin-top:6px; align-items:center;">
+            <div class="col" style="flex:0 1 auto;"><button id="sv_save" class="btn-outline">Save Search</button></div>
+            <div class="col"><select id="sv_saved" style="width:100%"></select></div>
+            <div class="col" style="flex:0 1 auto;"><button id="sv_savedRun" class="btn">Run Saved</button></div>
+            <div class="col" style="flex:0 1 auto;"><button id="sv_savedDelete" class="btn-outline">Delete</button></div>
+            <div class="col" style="flex:0 1 auto;"><button id="sv_export" class="btn-outline">Export</button></div>
+            <div class="col" style="flex:0 1 auto;"><button id="sv_import" class="btn-outline">Import</button></div>
+          </div>
+          <div id="sv_loading" class="muted" style="display:none;margin-top:6px;">Loading…</div>
+          <div id="sv_results" class="grid" style="margin-top:8px;"></div>
+          <div id="sv_empty" class="muted" style="display:none;">No results yet. Try another keyword or state.</div>
+        </div>
+      </div>
+    </section>
+
     <section id="sec-portfolio" class="section">
       <div class="grid">
         <div class="card">
@@ -213,6 +299,7 @@
     const LS_KEY_PROFILE='studentProfileV1';
     const LS_PORT='portfolioV1';
     const LS_RES='resumeV1';
+    const LS_VOICE='myVoiceV1';
     const API_BASE = (localStorage.getItem('apiBase') || '/api').replace(/\/$/, '');
 
     function nowStamp(){ return new Date().toLocaleString(); }
@@ -265,6 +352,40 @@
     async function jxSearch(kind){ jxShowLoading(true); const api=document.getElementById('jx_api'); api.textContent=''; const baseSet=!!localStorage.getItem('apiBase'); const f=jxFilters(); let url=''; if(kind==='occupations') url=`${API_BASE}/v1/occupations/search?q=${encodeURIComponent(f.q)}&riasec=${encodeURIComponent(f.ri)}&job_zone=${encodeURIComponent(f.jobZone)}&region=${encodeURIComponent(f.region)}&radius=${encodeURIComponent(f.radius)}`; if(kind==='training') url=`${API_BASE}/v1/training?keyword=${encodeURIComponent(f.q)}&zipcode=${encodeURIComponent(f.zip)}&radius=${encodeURIComponent(f.radius)}`; if(kind==='apprenticeships') url=`${API_BASE}/v1/apprenticeships?keyword=${encodeURIComponent(f.q)}&location=${encodeURIComponent(f.zip)}`; if(kind==='local') url=`${API_BASE}/v1/local-help/ajc?zip=${encodeURIComponent(f.zip)}`; const data=await jxFetch(url); const items=(data&&Array.isArray(data.items))?data.items:[]; jxRender(items, kind); if(!items.length && !baseSet) api.textContent='Set localStorage.apiBase to your aggregator URL.'; jxShowLoading(false); }
     function jxRender(items, kind){ const root=document.getElementById('jx_results'); root.innerHTML=''; const empty=document.getElementById('jx_empty'); empty.style.display='none'; if(!items.length){ empty.style.display='block'; return; } items.forEach(it=>{ const card=document.createElement('div'); card.className='card'; const h=document.createElement('h2'); h.textContent=it.title||it.name||it.soc||'Result'; card.appendChild(h); const sub=document.createElement('div'); sub.className='muted'; if(kind==='occupations') sub.textContent=it.summary||''; if(kind==='training'||kind==='apprenticeships') sub.textContent=`${it.provider||''} • ${(it.location&&[it.location.city,it.location.state].filter(Boolean).join(', '))||''}`; if(kind==='local') sub.textContent=(it.location&&[it.location.city,it.location.state,it.location.zip].filter(Boolean).join(', '))||''; card.appendChild(sub); const actions=document.createElement('div'); actions.className='actions'; const add=document.createElement('button'); add.className='btn'; add.textContent='Add to Plan'; add.onclick=()=>{ const m=ensurePlan(); const year=Math.max(1,Math.min(6,Number(prompt('Add to which year? (1-6)','1'))||1)); m[year-1].items.push(h.textContent); savePlan(m); renderPlan(); }; const src=document.createElement('a'); src.className='btn-outline'; src.textContent='Open Source'; src.href=it.url||'#'; src.target='_blank'; src.rel='noopener'; actions.appendChild(add); actions.appendChild(src); if(kind==='occupations'){ const det=document.createElement('button'); det.className='btn-outline'; det.textContent='Details'; det.onclick=async()=>{ const soc=(it.soc||''); const d=await jxFetch(`${API_BASE}/v1/occupations/${encodeURIComponent(soc)}`); alert(`${(d&&d.title)||h.textContent}\n\n${(d&&d.description)||''}`); }; actions.appendChild(det);} card.appendChild(actions); root.appendChild(card); }); }
     function initExploreInline(){ try{ const r=JSON.parse(localStorage.getItem('regionSettingsV1')||'{}'); document.getElementById('jx_region').value=r.region||''; document.getElementById('jx_radius').value=r.radius||''; }catch{} try{ const p=JSON.parse(localStorage.getItem('studentProfileV1')||'{}'); document.getElementById('jx_zip').value=p.zip||''; }catch{} try{ const a=JSON.parse(localStorage.getItem('studentAssessmentsV1')||'{}'); const top=(a.riasec&&a.riasec.top)||''; top.split('').forEach(c=>{ const b=document.querySelector(`#jx_riasec [data-code="${c}"]`); if(b) b.classList.add('active'); }); }catch{} document.getElementById('jx_riasec').addEventListener('click',(e)=>{ const b=e.target.closest('[data-code]'); if(!b)return; b.classList.toggle('active'); }); document.getElementById('jx_search').addEventListener('click',()=>{ const t=document.querySelector('.jx_tab.active').getAttribute('data-tab'); jxSearch(t); }); document.getElementById('jx_reset').addEventListener('click',()=>{ document.getElementById('jx_q').value=''; document.getElementById('jx_jobZone').value=''; document.querySelectorAll('#jx_riasec .btn-outline').forEach(b=>b.classList.remove('active')); document.getElementById('jx_results').innerHTML=''; document.getElementById('jx_empty').style.display='none'; }); document.querySelectorAll('.jx_tab').forEach(t=> t.addEventListener('click',()=>{ document.querySelectorAll('.jx_tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); jxSearch(t.getAttribute('data-tab')); })); } }
+    // "My Voice" — save/load/copy/email
+    function saveMyVoice(){ const data={ about:mv_about.value.trim(), goals:mv_goals.value.trim(), needs:mv_needs.value.trim(), questions:mv_questions.value.trim(), savedAt: new Date().toISOString() }; localStorage.setItem(LS_VOICE, JSON.stringify(data)); const el=document.getElementById('mv_saved'); if(el){ el.textContent='Saved'; setTimeout(()=> el.textContent='', 1200); } touchSaved(); }
+    function loadMyVoice(){ try{ const d=JSON.parse(localStorage.getItem(LS_VOICE)||'{}'); if(d.about) mv_about.value=d.about; if(d.goals) mv_goals.value=d.goals; if(d.needs) mv_needs.value=d.needs; if(d.questions) mv_questions.value=d.questions; }catch{} }
+    function buildMyVoiceText(){ const p=JSON.parse(localStorage.getItem(LS_KEY_PROFILE)||'{}'); const lines=[`Student: ${p.first||''}`, '', 'About Me:', mv_about.value||'', '', 'My Goals:', mv_goals.value||'', '', 'What I Need:', mv_needs.value||'', '', 'Questions:', mv_questions.value||'']; return lines.join('\n'); }
+    (function(){ const s=document.getElementById('mv_save'); if(s) s.addEventListener('click', saveMyVoice); const c=document.getElementById('mv_copy'); if(c) c.addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText(buildMyVoiceText()); alert('Copied'); }catch{} }); const e=document.getElementById('mv_email'); if(e) e.addEventListener('click', ()=>{ const subj=encodeURIComponent('My Voice — Learner Summary'); const body=encodeURIComponent(buildMyVoiceText()); window.location.href=`mailto:?subject=${subj}&body=${body}`; }); loadMyVoice(); })();
+
+    // DORS office finder
+    (function(){ const btn=document.getElementById('dors_find'); if(!btn) return; btn.addEventListener('click', ()=>{ let zip=''; try{ const p=JSON.parse(localStorage.getItem(LS_KEY_PROFILE)||'{}'); zip=(p.zip||'').trim(); }catch{} const q = zip ? `DORS office near ${zip}` : 'Maryland DORS office near me'; const url=`https://www.google.com/maps/search/${encodeURIComponent(q)}`; window.open(url, '_blank', 'noopener'); }); })();
+
+    // Scholarships search (Support tab)
+    function svFilters(){ const q=(document.getElementById('sv_q')?.value||'').trim(); const state=(document.getElementById('sv_state')?.value||'').trim(); const minAmt=(document.getElementById('sv_minAmt')?.value||'').trim(); const deadline=(document.getElementById('sv_deadline')?.value||'').trim(); const sort=(document.getElementById('sv_sort')?.value||'amount_desc'); return {q, state, minAmt, deadline, sort}; }
+    function svShowLoading(on){ const el=document.getElementById('sv_loading'); if(el) el.style.display = on?'block':'none'; }
+    async function svFetch(url){ try{ const r=await fetch(url,{headers:{'Accept':'application/json'}}); if(!r.ok) throw new Error('bad'); return await r.json(); }catch{return null} }
+    function svParseAmount(str){ if(!str) return NaN; const nums=String(str).replace(/[,]/g,'').match(/\d+(?:\.\d+)?/g); if(!nums||!nums.length) return NaN; return Math.max.apply(null, nums.map(n=>Number(n))); }
+    function svParseDate(str){ if(!str) return null; const d=new Date(str); if(!isNaN(d)) return d; const m=String(str).match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/); if(m){ const mm=Number(m[1])-1; const dd=Number(m[2]); const yy=Number(m[3]); const year=yy<100?2000+yy:yy; const dt=new Date(year,mm,dd); if(!isNaN(dt)) return dt; } return null; }
+    function svNormalize(items){ return (items||[]).map(it=>({ ...it, amountNum: svParseAmount(it.amount), deadlineDate: svParseDate(it.deadline) })); }
+    function svApplyFilters(items, f){ let out=[...items]; const minAmt=Number(f.minAmt||''); if(!isNaN(minAmt)&&f.minAmt){ out=out.filter(it=> !isNaN(it.amountNum) && it.amountNum>=minAmt ); } if(f.deadline){ const by=svParseDate(f.deadline); if(by){ out=out.filter(it=> it.deadlineDate && it.deadlineDate<=by ); } } if(f.sort==='deadline_asc'){ out.sort((a,b)=>{ const ad=a.deadlineDate? a.deadlineDate.getTime(): Infinity; const bd=b.deadlineDate? b.deadlineDate.getTime(): Infinity; return ad-bd; }); } if(f.sort==='amount_desc'){ out.sort((a,b)=>{ const av=isNaN(a.amountNum)? -Infinity : a.amountNum; const bv=isNaN(b.amountNum)? -Infinity : b.amountNum; return bv-av; }); } if(f.sort==='name_asc'){ out.sort((a,b)=> String(a.name||'').localeCompare(String(b.name||''))); } return out; }
+    async function svSearch(){ svShowLoading(true); const api=document.getElementById('sv_api'); if(api) api.textContent=''; const baseSet=!!localStorage.getItem('apiBase'); const f=svFilters(); const url=`${API_BASE}/v1/scholarships?keyword=${encodeURIComponent(f.q)}&state=${encodeURIComponent(f.state)}`; const data=await svFetch(url); const items=(data&&Array.isArray(data.items))?data.items:[]; const norm=svNormalize(items); const filtered=svApplyFilters(norm, f); svRender(filtered); if(!filtered.length && !baseSet && api) api.textContent='Set localStorage.apiBase to your aggregator URL.'; svShowLoading(false); }
+    function svRender(items){ const root=document.getElementById('sv_results'); if(!root) return; root.innerHTML=''; const empty=document.getElementById('sv_empty'); if(empty) empty.style.display='none'; if(!items.length){ if(empty) empty.style.display='block'; return; } items.forEach(it=>{ const card=document.createElement('div'); card.className='card'; const h=document.createElement('h2'); h.textContent=it.name||it.title||'Scholarship'; card.appendChild(h); const sub=document.createElement('div'); sub.className='muted'; const bits=[]; if(it.provider) bits.push(it.provider); if(it.location&&it.location.state) bits.push(it.location.state); sub.textContent=bits.join(' • '); card.appendChild(sub); const tags=document.createElement('div'); tags.className='tags'; if(it.amount) { const span=document.createElement('span'); span.className='tag'; span.textContent=`Amount: ${it.amount}`; tags.appendChild(span); } if(it.deadline){ const span=document.createElement('span'); span.className='tag'; span.textContent=`Deadline: ${it.deadline}`; tags.appendChild(span); } card.appendChild(tags); const actions=document.createElement('div'); actions.className='actions'; const add=document.createElement('button'); add.className='btn'; add.textContent='Add to Plan'; add.onclick=()=>{ const m=ensurePlan(); const year=Math.max(1,Math.min(6,Number(prompt('Add to which year? (1-6)','1'))||1)); m[year-1].items.push(h.textContent); savePlan(m); renderPlan(); }; const src=document.createElement('a'); src.className='btn-outline'; src.textContent='Open Source'; src.href=it.url||'#'; src.target='_blank'; src.rel='noopener'; actions.appendChild(add); actions.appendChild(src); card.appendChild(actions); root.appendChild(card); }); }
+    (function(){ const s=document.getElementById('sv_search'); if(s) s.addEventListener('click', svSearch); const r=document.getElementById('sv_reset'); if(r) r.addEventListener('click', ()=>{ const q=document.getElementById('sv_q'); if(q) q.value=''; const st=document.getElementById('sv_state'); if(st) st.value='MD'; const ma=document.getElementById('sv_minAmt'); if(ma) ma.value=''; const dl=document.getElementById('sv_deadline'); if(dl) dl.value=''; const sb=document.getElementById('sv_sort'); if(sb) sb.value='amount_desc'; const root=document.getElementById('sv_results'); if(root) root.innerHTML=''; const empty=document.getElementById('sv_empty'); if(empty) empty.style.display='none'; }); })();
+
+    // Saved scholarship searches (shared with Explore)
+    const LS_SCH_SAVED='scholarshipSearchesV1';
+    function svSavedList(){ try{ const a=JSON.parse(localStorage.getItem(LS_SCH_SAVED)||'[]'); return Array.isArray(a)?a:[]; }catch{return []} }
+    function svSavedSaveList(a){ localStorage.setItem(LS_SCH_SAVED, JSON.stringify(a)); }
+    function svSavedRender(){ const sel=document.getElementById('sv_saved'); if(!sel) return; const a=svSavedList(); sel.innerHTML=''; if(!a.length){ const opt=document.createElement('option'); opt.value=''; opt.textContent='No saved searches'; sel.appendChild(opt); return; } a.forEach(it=>{ const opt=document.createElement('option'); opt.value=String(it.id); opt.textContent=it.name; sel.appendChild(opt); }); }
+    function svCurrentParams(){ const f=svFilters(); return { q:f.q, state:f.state, minAmt:f.minAmt, deadline:f.deadline, sort:f.sort }; }
+    function svSave(){ const p=svCurrentParams(); const def=[p.q||'Any', p.state||'MD'].filter(Boolean).join(' • '); const name=prompt('Name this scholarship search', `Scholarships: ${def}`); if(!name) return; const a=svSavedList(); const id=Date.now(); a.push({ id, name, params:p, createdAt:new Date().toISOString() }); svSavedSaveList(a); svSavedRender(); alert('Saved'); }
+    function svApply(id){ const a=svSavedList(); const it=a.find(x=>String(x.id)===String(id)); if(!it) return; const p=it.params||{}; const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v||''; }; set('sv_q', p.q||''); set('sv_state', p.state||'MD'); set('sv_minAmt', p.minAmt||''); set('sv_deadline', p.deadline||''); set('sv_sort', p.sort||'amount_desc'); svSearch(); }
+    function svDelete(id){ const a=svSavedList().filter(x=>String(x.id)!==String(id)); svSavedSaveList(a); svSavedRender(); }
+    function svExport(){ const a=svSavedList(); const payload=a.map(({name, params})=>({name, params})); const txt=JSON.stringify(payload, null, 2); try{ navigator.clipboard.writeText(txt).then(()=>alert('Copied to clipboard')).catch(()=>{ prompt('Copy JSON:', txt); }); }catch{ prompt('Copy JSON:', txt); } }
+    function svImport(){ const txt=prompt('Paste scholarship searches JSON'); if(!txt) return; try{ const raw=JSON.parse(txt); const arr=Array.isArray(raw)?raw:(Array.isArray(raw.searches)?raw.searches:(Array.isArray(raw.items)?raw.items:[raw])); const cleaned=arr.map(x=>({ name:String(x.name||'Scholarships'), params:(x.params||{}) })); let list=svSavedList(); let added=0; cleaned.forEach(it=>{ const key=it.name+JSON.stringify(it.params||{}); const exists=list.some(e=> e.name+JSON.stringify(e.params||{})===key ); if(!exists){ list.push({ id: Date.now()+Math.floor(Math.random()*1000), name: it.name, params: it.params, createdAt:new Date().toISOString() }); added++; } }); svSavedSaveList(list); svSavedRender(); alert(added?`Imported ${added}`:'Nothing new'); }catch{ alert('Invalid JSON'); } }
+    (function(){ const save=document.getElementById('sv_save'); if(save) save.addEventListener('click', svSave); const runBtn=document.getElementById('sv_savedRun'); if(runBtn) runBtn.addEventListener('click', ()=>{ const id=(document.getElementById('sv_saved')?.value)||''; if(id) svApply(id); }); const delBtn=document.getElementById('sv_savedDelete'); if(delBtn) delBtn.addEventListener('click', ()=>{ const id=(document.getElementById('sv_saved')?.value)||''; if(id && confirm('Delete this saved search?')) svDelete(id); }); const exp=document.getElementById('sv_export'); if(exp) exp.addEventListener('click', svExport); const imp=document.getElementById('sv_import'); if(imp) imp.addEventListener('click', svImport); svSavedRender(); })();
+
   </script>
 </body>
 </html>

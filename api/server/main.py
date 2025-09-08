@@ -112,3 +112,48 @@ async def local_help(zip: str = Query("")):
         })
     return {"items": items}
 
+
+@app.get("/v1/scholarships")
+async def scholarships(keyword: str = Query(""), state: str = Query("")):
+    """
+    Proxy to CareerOneStop Scholarship Finder (Financial Aid) API.
+    Note: Requires CAREERONESTOP_KEY and CAREERONESTOP_USERID to be set.
+    """
+    if not (API_CAREERONESTOP_KEY and API_CAREERONESTOP_USERID):
+        raise HTTPException(status_code=501, detail="CareerOneStop credentials not configured")
+    # CareerOneStop Scholarship Finder (API family: Scholarship/Financial Aid)
+    # Endpoint pattern (subject to COS docs):
+    #   https://api.careeronestop.org/v1/scholarship/{apikey}/scholarship
+    # Common params: keyword, state (2-letter), userId
+    url = f"https://api.careeronestop.org/v1/scholarship/{API_CAREERONESTOP_KEY}/scholarship"
+    headers = {"Authorization": f"Bearer {API_CAREERONESTOP_KEY}", "Accept": "application/json"}
+    # Fallback to 'MD' if state omitted to reduce result noise
+    params = {"keyword": keyword, "state": (state or "MD"), "userId": API_CAREERONESTOP_USERID}
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        try:
+            r = await client.get(url, params=params, headers=headers)
+            r.raise_for_status()
+            data = r.json()
+        except httpx.HTTPError as e:
+            raise HTTPException(status_code=502, detail=f"CareerOneStop error: {e}")
+    items = []
+    # Normalize likely COS fields if present; ignore if shape differs.
+    rows = []
+    if isinstance(data, dict):
+        # COS responses often wrap lists, try common keys
+        for key in ("Scholarships", "FinancialAid", "Results", "items"):
+            if isinstance(data.get(key), list):
+                rows = data.get(key)
+                break
+    if isinstance(rows, list):
+        for row in rows:
+            items.append({
+                "name": row.get("Title") or row.get("Name") or row.get("ProgramName"),
+                "provider": row.get("Provider") or row.get("Sponsor") or row.get("Organization"),
+                "location": {"state": row.get("State") or row.get("StateCode")},
+                "amount": row.get("AwardAmount") or row.get("Amount"),
+                "deadline": row.get("Deadline") or row.get("DueDate"),
+                "url": row.get("Url") or row.get("URL") or row.get("Website"),
+                "type": "Scholarship"
+            })
+    return {"items": items}

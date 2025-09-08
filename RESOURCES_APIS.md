@@ -11,13 +11,14 @@ These APIs provide free access to occupation, skills, wage, and job information.
 
 ## CareerOneStop APIs (US DOL; Free API)
 - Site: https://www.careeronestop.org/Developers/WebAPI/web-api.aspx
-- Data: Occupation profiles, wages, training finder, local help (AJC/youth), certifications, skills.
+- Data: Occupation profiles, wages, training finder, local help (AJC/youth), certifications, skills, scholarships/financial aid.
 - Auth: API Key (free registration).
 - Notes: Great complement to O*NET for local services and training.
 - Examples:
   - Occupation Profile: /v1/occupation/{apikey}/profile?onetcode=15-1252.00&location=21201
   - Training Finder: /v1/training/{apikey}/training?keyword=data&zipcode=21201
   - Local Help (AJC): /v1/ajc/locations/{apikey}/{zipcode}
+  - Scholarship Finder: /v1/scholarship/{apikey}/scholarship?keyword=nursing&state=MD
 
 ## USAJOBS (US OPM; Free API)
 - Site: https://developer.usajobs.gov/
@@ -40,3 +41,5 @@ These APIs provide free access to occupation, skills, wage, and job information.
 - Use Student Journey inputs (RIASEC, team role, colors) to map to O*NET SOCs, then enrich with CareerOneStop and optional job feeds.
 - When the AI branch is live, cache/normalize selected occupation snapshots per tenant to keep latency low and ensure consistent UX.
 
+## Funding Resources (Non-API)
+- Federal Student Aid (studentaid.gov): FAFSA application, Pell Grants, Work‑Study, and comprehensive funding guidance. Useful as a pinned resource link in Scholarships UI.
