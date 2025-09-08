@@ -60,14 +60,16 @@ async def occupations_search(
     auth = (API_ONET_USER, API_ONET_PASS)
     params = {"keyword": q or riasec or "", "start": 1}
     items = []
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        try:
-            resp = await client.get(url, auth=auth, params=params)
-            resp.raise_for_status()
-            data = xmltodict.parse(resp.text)
-            _collect_occupations(data, items)
-        except httpx.HTTPError as e:
-            raise HTTPException(status_code=502, detail=f"O*NET error: {e}")
+    try:
+        resp = await cached_get_json(url, auth=auth, params=params, timeout=10.0)
+        # resp is text (XML); parse
+        if isinstance(resp, str):
+            data = xmltodict.parse(resp)
+        else:
+            data = resp
+        _collect_occupations(data, items)
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"O*NET error: {e}")
     return {"items": items}
 
 
@@ -78,13 +80,14 @@ async def occupation_detail(soc: str):
     # Attempt to fetch a summary endpoint if available
     url = f"https://services.onetcenter.org/ws/online/occupations/{soc}/summary/"
     auth = (API_ONET_USER, API_ONET_PASS)
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        try:
-            r = await client.get(url, auth=auth)
-            r.raise_for_status()
-            data = xmltodict.parse(r.text)
-        except httpx.HTTPError as e:
-            raise HTTPException(status_code=502, detail=f"O*NET error: {e}")
+    try:
+        rtext = await cached_get_json(url, auth=auth, timeout=10.0)
+        if isinstance(rtext, str):
+            data = xmltodict.parse(rtext)
+        else:
+            data = rtext
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"O*NET error: {e}")
     # Heuristic extraction
     detail = {"soc": soc, "title": "", "description": "", "riasec": "", "job_zone": None, "tasks": [], "skills": {}}
     def walk(n):
@@ -125,13 +128,10 @@ async def training(keyword: str = Query(""), zipcode: str = Query(""), radius: s
     url = f"https://api.careeronestop.org/v1/training/{API_CAREERONESTOP_KEY}/training"
     headers = {"Authorization": f"Bearer {API_CAREERONESTOP_KEY}", "Accept": "application/json"}
     params = {"keyword": keyword, "zipcode": zipcode, "radius": radius or 25, "userId": API_CAREERONESTOP_USERID}
-    async with httpx.AsyncClient(timeout=15.0) as client:
-        try:
-            r = await client.get(url, params=params, headers=headers)
-            r.raise_for_status()
-            data = r.json()
-        except httpx.HTTPError as e:
-            raise HTTPException(status_code=502, detail=f"CareerOneStop error: {e}")
+    try:
+        data = await cached_get_json(url, params=params, headers=headers, timeout=15.0)
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"CareerOneStop error: {e}")
     items = []
     for row in (data.get("Schools", []) if isinstance(data, dict) else []):
         items.append({
@@ -146,8 +146,55 @@ async def training(keyword: str = Query(""), zipcode: str = Query(""), radius: s
 
 @app.get("/v1/apprenticeships")
 async def apprenticeships(keyword: str = Query(""), location: str = Query("")):
-    # Placeholder: apprenticeship.gov scraperless API is limited; integrate when available.
-    return {"items": []}
+    """Approximate apprenticeships by filtering training results for 'apprentice' terms.
+    This uses CareerOneStop Training Finder until a dedicated apprenticeship endpoint is integrated.
+    """
+    if not (API_CAREERONESTOP_KEY and API_CAREERONESTOP_USERID):
+        raise HTTPException(status_code=501, detail="CareerOneStop credentials not configured")
+    # Reuse training API and filter by apprenticeship terms
+    url = f"https://api.careeronestop.org/v1/training/{API_CAREERONESTOP_KEY}/training"
+    headers = {"Authorization": f"Bearer {API_CAREERONESTOP_KEY}", "Accept": "application/json"}
+    params = {"keyword": keyword, "zipcode": location, "radius": 25, "userId": API_CAREERONESTOP_USERID}
+    try:
+        data = await cached_get_json(url, params=params, headers=headers, timeout=15.0)
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"CareerOneStop error: {e}")
+    terms = (keyword or "").lower() + " apprentice"
+    items = []
+    for row in (data.get("Schools", []) if isinstance(data, dict) else []):
+        name = row.get("ProgramName") or row.get("SchoolName") or ""
+        if any(t in (name or "").lower() for t in ["apprentice", "apprenticeship"]):
+            items.append({
+                "name": name,
+                "provider": row.get("SchoolName"),
+                "location": {"city": row.get("City"), "state": row.get("State"), "zip": row.get("ZIP")},
+                "url": row.get("Website") or row.get("SchoolUrl"),
+                "type": "Apprenticeship"
+            })
+    return {"items": items}
+
+# -------- Simple in-memory cache (TTL) --------
+from time import time
+_CACHE = {}
+_TTL = int(os.getenv("CACHE_TTL_SECONDS", "600"))
+
+async def cached_get_json(url: str, *, params=None, headers=None, auth=None, timeout=10.0):
+    key = (url, tuple(sorted((params or {}).items())), tuple(sorted((headers or {}).items())) )
+    now = time()
+    if key in _CACHE:
+        exp, data = _CACHE[key]
+        if now < exp:
+            return data
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        r = await client.get(url, params=params, headers=headers, auth=auth)
+        r.raise_for_status()
+        # Try JSON first, else return text
+        try:
+            data = r.json()
+        except ValueError:
+            data = r.text
+    _CACHE[key] = (now + _TTL, data)
+    return data
 
 
 @app.get("/v1/local-help/ajc")
