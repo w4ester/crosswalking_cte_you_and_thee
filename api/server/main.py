@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
+import xmltodict
 
 API_ONET_USER = os.getenv("ONET_USER")
 API_ONET_PASS = os.getenv("ONET_PASS")
@@ -19,6 +20,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+def _extract_text(d, *keys):
+    for k in keys:
+        if k in d and isinstance(d[k], (str, int)):
+            return str(d[k])
+        if ("@"+k) in d and isinstance(d["@"+k], (str, int)):
+            return str(d["@"+k])
+    return ""
+
+def _collect_occupations(node, out):
+    if isinstance(node, list):
+        for n in node:
+            _collect_occupations(n, out)
+        return
+    if not isinstance(node, dict):
+        return
+    # Heuristic: many O*NET lists have elements like occupation/career/result with code/title
+    code = _extract_text(node, "code", "soc", "onetcode", "id")
+    title = _extract_text(node, "title", "name")
+    if code and title:
+        out.append({"soc": code, "title": title, "summary": _extract_text(node, "description", "summary")})
+    for v in node.values():
+        _collect_occupations(v, out)
 
 @app.get("/v1/occupations/search")
 async def occupations_search(
@@ -40,8 +64,8 @@ async def occupations_search(
         try:
             resp = await client.get(url, auth=auth, params=params)
             resp.raise_for_status()
-            # NOTE: O*NET returns XML by default; in production parse XML to JSON
-            # For scaffold, return empty until parser added
+            data = xmltodict.parse(resp.text)
+            _collect_occupations(data, items)
         except httpx.HTTPError as e:
             raise HTTPException(status_code=502, detail=f"O*NET error: {e}")
     return {"items": items}
@@ -51,8 +75,45 @@ async def occupations_search(
 async def occupation_detail(soc: str):
     if not (API_ONET_USER and API_ONET_PASS):
         raise HTTPException(status_code=501, detail="O*NET credentials not configured")
-    # Placeholder detail fetch; requires XML parsing
-    return {"soc": soc, "title": soc, "description": "", "riasec": "", "job_zone": None, "tasks": [], "skills": {}}
+    # Attempt to fetch a summary endpoint if available
+    url = f"https://services.onetcenter.org/ws/online/occupations/{soc}/summary/"
+    auth = (API_ONET_USER, API_ONET_PASS)
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            r = await client.get(url, auth=auth)
+            r.raise_for_status()
+            data = xmltodict.parse(r.text)
+        except httpx.HTTPError as e:
+            raise HTTPException(status_code=502, detail=f"O*NET error: {e}")
+    # Heuristic extraction
+    detail = {"soc": soc, "title": "", "description": "", "riasec": "", "job_zone": None, "tasks": [], "skills": {}}
+    def walk(n):
+        if isinstance(n, list):
+            for x in n: walk(x)
+            return
+        if not isinstance(n, dict): return
+        t = _extract_text(n, "title", "name")
+        if t and not detail["title"]: detail["title"] = t
+        d = _extract_text(n, "description", "summary")
+        if d and not detail["description"]: detail["description"] = d
+        rz = _extract_text(n, "riasec")
+        if rz and not detail["riasec"]: detail["riasec"] = rz
+        jz = _extract_text(n, "jobzone", "job_zone")
+        if jz and not detail["job_zone"]:
+            try: detail["job_zone"] = int(jz)
+            except: detail["job_zone"] = jz
+        # tasks list
+        if "task" in n:
+            tasks = n["task"] if isinstance(n["task"], list) else [n["task"]]
+            for t in tasks:
+                if isinstance(t, dict):
+                    txt = _extract_text(t, "description", "name")
+                else:
+                    txt = str(t)
+                if txt: detail["tasks"].append(txt)
+        for v in n.values(): walk(v)
+    walk(data)
+    return detail
 
 
 @app.get("/v1/training")
@@ -111,4 +172,3 @@ async def local_help(zip: str = Query("")):
             "url": row.get("Website")
         })
     return {"items": items}
-
