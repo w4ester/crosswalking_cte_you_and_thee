@@ -74,7 +74,7 @@ async def occupations_search(
 
 
 @app.get("/v1/occupations/{soc}")
-async def occupation_detail(soc: str):
+async def occupation_detail(soc: str, location: Optional[str] = Query("", description="ZIP/state for wage context (optional)")):
     if not (API_ONET_USER and API_ONET_PASS):
         raise HTTPException(status_code=501, detail="O*NET credentials not configured")
     # Attempt to fetch a summary endpoint if available
@@ -116,7 +116,55 @@ async def occupation_detail(soc: str):
                 if txt: detail["tasks"].append(txt)
         for v in n.values(): walk(v)
     walk(data)
+    # Enrich with wages via CareerOneStop Occupation Profile (if keys configured)
+    if API_CAREERONESTOP_KEY and API_CAREERONESTOP_USERID:
+        try:
+            loc = (location or 'US').strip()
+            prof_url = f"https://api.careeronestop.org/v1/occupation/{API_CAREERONESTOP_KEY}/profile"
+            headers = {"Authorization": f"Bearer {API_CAREERONESTOP_KEY}", "Accept": "application/json"}
+            params = {"onetcode": soc, "location": loc, "userId": API_CAREERONESTOP_USERID}
+            pdata = await cached_get_json(prof_url, params=params, headers=headers, timeout=15.0)
+            wages = _extract_wages(pdata)
+            if wages:
+                wages["area"] = loc
+                wages["source"] = "CareerOneStop"
+                detail["wages"] = wages
+        except Exception:
+            pass
     return detail
+
+def _extract_wages(node):
+    """Heuristic extraction of wages from CareerOneStop Occupation Profile JSON."""
+    # Try common known shapes first
+    if isinstance(node, dict):
+        # Look for keys that often contain wage info
+        for k in ("WageInfo", "Wages", "Wage"):
+            if k in node and isinstance(node[k], (dict, list)):
+                res = _extract_wages(node[k])
+                if res: return res
+        # Direct median keys
+        cand = {}
+        for key, val in node.items():
+            lk = str(key).lower()
+            if any(m in lk for m in ("median", "percentile50")):
+                try:
+                    num = float(str(val).replace(",",""))
+                    cand[lk] = num
+                except:  # not numeric
+                    pass
+        if cand:
+            # Return the first found median
+            median = cand.get("median") or next(iter(cand.values()))
+            return {"median": median}
+        # Recurse
+        for v in node.values():
+            res = _extract_wages(v)
+            if res: return res
+    elif isinstance(node, list):
+        for it in node:
+            res = _extract_wages(it)
+            if res: return res
+    return None
 
 
 @app.get("/v1/training")
