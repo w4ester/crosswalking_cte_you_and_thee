@@ -123,7 +123,45 @@
     </section>
 
     <section id="sec-explore" class="section">
-      <div class="card"><h2>Explore</h2><p class="muted">For full search and filters, open Explore. We will embed this here in a later step.</p><div class="actions"><a class="btn" href="explore.html">Open Explore</a></div></div>
+      <div class="card">
+        <h2>Explore</h2>
+        <p class="muted">Search occupations, training, apprenticeships, and local help — add items to your plan.</p>
+        <div class="row" style="margin-top:8px;">
+          <div class="col"><label>Keyword</label><input id="jx_q" type="text" placeholder="e.g., data, nurse, electrician"></div>
+          <div class="col"><label>Job Zone</label><select id="jx_jobZone"><option value="">Any</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+        </div>
+        <div class="row" style="margin-top:8px; align-items:center;">
+          <div class="col">
+            <div class="muted" style="margin-bottom:6px;">RIASEC</div>
+            <div id="jx_riasec" style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn-outline" data-code="R">R</button>
+              <button class="btn-outline" data-code="I">I</button>
+              <button class="btn-outline" data-code="A">A</button>
+              <button class="btn-outline" data-code="S">S</button>
+              <button class="btn-outline" data-code="E">E</button>
+              <button class="btn-outline" data-code="C">C</button>
+            </div>
+          </div>
+          <div class="col">
+            <div class="muted">Region/Radius/ZIP from Journey</div>
+            <div class="row">
+              <div class="col"><input id="jx_region" type="text" readonly placeholder="Region"></div>
+              <div class="col"><input id="jx_radius" type="text" readonly placeholder="Radius"></div>
+              <div class="col"><input id="jx_zip" type="text" readonly placeholder="ZIP"></div>
+            </div>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:8px;"><button id="jx_search" class="btn">Search</button><button id="jx_reset" class="btn-outline">Reset</button><span id="jx_api" class="muted" style="margin-left:auto;"></span></div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn-outline jx_tab active" data-tab="occupations">Occupations</button>
+          <button class="btn-outline jx_tab" data-tab="training">Training</button>
+          <button class="btn-outline jx_tab" data-tab="apprenticeships">Apprenticeships</button>
+          <button class="btn-outline jx_tab" data-tab="local">Local Help</button>
+        </div>
+        <div id="jx_loading" class="muted" style="display:none;margin-top:6px;">Loading…</div>
+        <div id="jx_results" class="grid" style="margin-top:8px;"></div>
+        <div id="jx_empty" class="muted" style="display:none;">No results. Adjust filters or keyword.</div>
+      </div>
     </section>
 
     <section id="sec-plan" class="section">
@@ -175,6 +213,7 @@
     const LS_KEY_PROFILE='studentProfileV1';
     const LS_PORT='portfolioV1';
     const LS_RES='resumeV1';
+    const API_BASE = (localStorage.getItem('apiBase') || '/api').replace(/\/$/, '');
 
     function nowStamp(){ return new Date().toLocaleString(); }
     function touchSaved(){ document.getElementById('lastSaved').textContent = nowStamp(); }
@@ -217,8 +256,15 @@
     document.getElementById('resumeJourney').addEventListener('click', ()=>{ document.querySelector('.tab[data-tab="interests"]').click(); });
 
     // Init
-    window.addEventListener('DOMContentLoaded', ()=>{ loadProfile(); recalcRIASEC(); renderSuggestions(); renderPlan(); renderSnapshots(); });
+    window.addEventListener('DOMContentLoaded', ()=>{ loadProfile(); recalcRIASEC(); renderSuggestions(); renderPlan(); renderSnapshots(); initExploreInline(); });
+
+    // ---------- Explore Inline ----------
+    function jxFilters(){ const q=document.getElementById('jx_q').value.trim(); const ri=Array.from(document.querySelectorAll('#jx_riasec .btn-outline.active')).map(b=>b.getAttribute('data-code')).join(''); const jobZone=document.getElementById('jx_jobZone').value; const region=document.getElementById('jx_region').value.trim(); const radius=document.getElementById('jx_radius').value.trim(); const zip=document.getElementById('jx_zip').value.trim(); return {q,ri,jobZone,region,radius,zip}; }
+    function jxShowLoading(on){ document.getElementById('jx_loading').style.display = on?'block':'none'; }
+    async function jxFetch(url){ try{ const r=await fetch(url,{headers:{'Accept':'application/json'}}); if(!r.ok) throw new Error('bad'); return await r.json(); }catch{return null} }
+    async function jxSearch(kind){ jxShowLoading(true); const api=document.getElementById('jx_api'); api.textContent=''; const baseSet=!!localStorage.getItem('apiBase'); const f=jxFilters(); let url=''; if(kind==='occupations') url=`${API_BASE}/v1/occupations/search?q=${encodeURIComponent(f.q)}&riasec=${encodeURIComponent(f.ri)}&job_zone=${encodeURIComponent(f.jobZone)}&region=${encodeURIComponent(f.region)}&radius=${encodeURIComponent(f.radius)}`; if(kind==='training') url=`${API_BASE}/v1/training?keyword=${encodeURIComponent(f.q)}&zipcode=${encodeURIComponent(f.zip)}&radius=${encodeURIComponent(f.radius)}`; if(kind==='apprenticeships') url=`${API_BASE}/v1/apprenticeships?keyword=${encodeURIComponent(f.q)}&location=${encodeURIComponent(f.zip)}`; if(kind==='local') url=`${API_BASE}/v1/local-help/ajc?zip=${encodeURIComponent(f.zip)}`; const data=await jxFetch(url); const items=(data&&Array.isArray(data.items))?data.items:[]; jxRender(items, kind); if(!items.length && !baseSet) api.textContent='Set localStorage.apiBase to your aggregator URL.'; jxShowLoading(false); }
+    function jxRender(items, kind){ const root=document.getElementById('jx_results'); root.innerHTML=''; const empty=document.getElementById('jx_empty'); empty.style.display='none'; if(!items.length){ empty.style.display='block'; return; } items.forEach(it=>{ const card=document.createElement('div'); card.className='card'; const h=document.createElement('h2'); h.textContent=it.title||it.name||it.soc||'Result'; card.appendChild(h); const sub=document.createElement('div'); sub.className='muted'; if(kind==='occupations') sub.textContent=it.summary||''; if(kind==='training'||kind==='apprenticeships') sub.textContent=`${it.provider||''} • ${(it.location&&[it.location.city,it.location.state].filter(Boolean).join(', '))||''}`; if(kind==='local') sub.textContent=(it.location&&[it.location.city,it.location.state,it.location.zip].filter(Boolean).join(', '))||''; card.appendChild(sub); const actions=document.createElement('div'); actions.className='actions'; const add=document.createElement('button'); add.className='btn'; add.textContent='Add to Plan'; add.onclick=()=>{ const m=ensurePlan(); const year=Math.max(1,Math.min(6,Number(prompt('Add to which year? (1-6)','1'))||1)); m[year-1].items.push(h.textContent); savePlan(m); renderPlan(); }; const src=document.createElement('a'); src.className='btn-outline'; src.textContent='Open Source'; src.href=it.url||'#'; src.target='_blank'; src.rel='noopener'; actions.appendChild(add); actions.appendChild(src); if(kind==='occupations'){ const det=document.createElement('button'); det.className='btn-outline'; det.textContent='Details'; det.onclick=async()=>{ const soc=(it.soc||''); const d=await jxFetch(`${API_BASE}/v1/occupations/${encodeURIComponent(soc)}`); alert(`${(d&&d.title)||h.textContent}\n\n${(d&&d.description)||''}`); }; actions.appendChild(det);} card.appendChild(actions); root.appendChild(card); }); }
+    function initExploreInline(){ try{ const r=JSON.parse(localStorage.getItem('regionSettingsV1')||'{}'); document.getElementById('jx_region').value=r.region||''; document.getElementById('jx_radius').value=r.radius||''; }catch{} try{ const p=JSON.parse(localStorage.getItem('studentProfileV1')||'{}'); document.getElementById('jx_zip').value=p.zip||''; }catch{} try{ const a=JSON.parse(localStorage.getItem('studentAssessmentsV1')||'{}'); const top=(a.riasec&&a.riasec.top)||''; top.split('').forEach(c=>{ const b=document.querySelector(`#jx_riasec [data-code="${c}"]`); if(b) b.classList.add('active'); }); }catch{} document.getElementById('jx_riasec').addEventListener('click',(e)=>{ const b=e.target.closest('[data-code]'); if(!b)return; b.classList.toggle('active'); }); document.getElementById('jx_search').addEventListener('click',()=>{ const t=document.querySelector('.jx_tab.active').getAttribute('data-tab'); jxSearch(t); }); document.getElementById('jx_reset').addEventListener('click',()=>{ document.getElementById('jx_q').value=''; document.getElementById('jx_jobZone').value=''; document.querySelectorAll('#jx_riasec .btn-outline').forEach(b=>b.classList.remove('active')); document.getElementById('jx_results').innerHTML=''; document.getElementById('jx_empty').style.display='none'; }); document.querySelectorAll('.jx_tab').forEach(t=> t.addEventListener('click',()=>{ document.querySelectorAll('.jx_tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); jxSearch(t.getAttribute('data-tab')); })); } }
   </script>
 </body>
 </html>
-

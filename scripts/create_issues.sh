@@ -29,10 +29,7 @@ echo "Creating milestones..."
 echo "Creating issues from $file ..."
 tail -n +2 "$file" | while IFS=$'\t' read -r title labels milestone body; do
   echo "- $title"
-  # Create issue
-  number=$(gh issue create --repo "$repo" --title "$title" --body "$body" --label "$labels" --milestone "$milestone" --json number -q .number)
-  echo "  -> #$number"
+  gh issue create --repo "$repo" --title "$title" --body "$body" --label "$labels"
 done
 
 echo "Done."
-
