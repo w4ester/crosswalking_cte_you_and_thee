@@ -21,10 +21,14 @@ tail -n +2 "$tsv" | while IFS=$'\t' read -r title labels milestone body; do
   echo "- $title -> $milestone"
   num=$(gh issue list --repo "$repo" --search "$title" --state all --limit 1 | awk 'NR==1{print $1}' | tr -d '#') || true
   if [[ -n "${num}" ]]; then
-    gh issue edit "$num" --repo "$repo" --milestone "$milestone" || echo "  (warn) could not set milestone"
+    mnum=$(gh api repos/"$repo"/milestones --jq '.[] | select(.title=="'"$milestone"'") | .number' | head -n1) || true
+    if [[ -n "${mnum}" ]]; then
+      gh api repos/"$repo"/issues/"$num" -X PATCH -f milestone="$mnum" >/dev/null || echo "  (warn) could not set milestone via API"
+    else
+      echo "  (warn) milestone not found: $milestone"
+    fi
   else
     echo "  (warn) could not find issue for title"
   fi
 done
 echo "Done."
-
