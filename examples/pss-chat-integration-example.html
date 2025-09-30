@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSS Crosswalk with Edu Pilot Chat - Example</title>
+
+    <!-- Include the chat styles -->
+    <link rel="stylesheet" href="edu-pilot-chat-styles.css">
+
+    <style>
+        /* Minimal page styling for example */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin: 0 0 10px;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #BD0934, #FFC838);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            color: #231F20;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .crosswalk-content {
+            background: #f9fafb;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .program-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .program-card h3 {
+            margin: 0 0 8px;
+            color: #111827;
+        }
+        .program-card p {
+            margin: 4px 0;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Public Safety & Services Cluster Crosswalk</h1>
+        <p class="subtitle">Maryland Postsecondary Programs & Credentials</p>
+
+        <!-- Example crosswalk content -->
+        <div class="crosswalk-content">
+            <h2>Example Programs</h2>
+
+            <div class="program-card">
+                <h3>Emergency Medical Services (EMT)</h3>
+                <p><strong>Institution:</strong> Baltimore City Community College</p>
+                <p><strong>Credential:</strong> <span class="badge">Certificate</span></p>
+                <p><strong>Pathway:</strong> Health Science & Emergency Services</p>
+            </div>
+
+            <div class="program-card">
+                <h3>Criminal Justice</h3>
+                <p><strong>Institution:</strong> Community College of Baltimore County</p>
+                <p><strong>Credential:</strong> <span class="badge">Associate Degree</span></p>
+                <p><strong>Pathway:</strong> Law Enforcement & Legal Services</p>
+            </div>
+
+            <div class="program-card">
+                <h3>Fire Science Technology</h3>
+                <p><strong>Institution:</strong> Frederick Community College</p>
+                <p><strong>Credential:</strong> <span class="badge">Certificate</span> <span class="badge">Associate Degree</span></p>
+                <p><strong>Pathway:</strong> Emergency & Fire Management Services</p>
+            </div>
+
+            <div class="program-card">
+                <h3>Homeland Security</h3>
+                <p><strong>Institution:</strong> University of Maryland</p>
+                <p><strong>Credential:</strong> <span class="badge">Bachelor's Degree</span></p>
+                <p><strong>Pathway:</strong> Security & Protective Services</p>
+            </div>
+        </div>
+
+        <!-- Chat Section - This is where the Edu Pilot chat will be inserted -->
+        <div id="chatSection"></div>
+    </div>
+
+    <!-- Include the chat client script -->
+    <script src="edu-pilot-chat-client.js"></script>
+
+    <!-- Initialize the chat -->
+    <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Edu Pilot Chat for PSS crosswalk
+            const chat = new EduPilotChat({
+                // Use localhost for local development
+                proxyUrl: 'http://localhost:8080/api/v1/proxy/chat',
+
+                // For production/tunnel, use:
+                // proxyUrl: 'https://your-subdomain.ngrok.io/api/v1/proxy/chat',
+
+                // Or let it auto-detect from localStorage
+                // proxyUrl: localStorage.getItem('edu_pilot_proxy_url') || 'http://localhost:8080/api/v1/proxy/chat',
+
+                containerId: 'chatSection',
+                pageFilter: 'pss',
+
+                // Optional: custom error handler
+                onError: function(error) {
+                    console.error('PSS Chat Error:', error);
+                    // Could show a user-friendly notification here
+                }
+            });
+
+            // Initialize the chat UI
+            chat.init();
+
+            // Optional: Add suggested questions
+            setTimeout(function() {
+                const suggestions = document.getElementById('eduPilotSuggestions');
+                if (suggestions) {
+                    suggestions.innerHTML = `
+                        <div class="suggestion-chip" onclick="askSuggestion('What EMT programs are available in Maryland?')">
+                            EMT Programs
+                        </div>
+                        <div class="suggestion-chip" onclick="askSuggestion('Tell me about criminal justice pathways')">
+                            Criminal Justice
+                        </div>
+                        <div class="suggestion-chip" onclick="askSuggestion('What credentials can I earn in fire science?')">
+                            Fire Science
+                        </div>
+                        <div class="suggestion-chip" onclick="askSuggestion('How do I become a police officer in Maryland?')">
+                            Law Enforcement
+                        </div>
+                    `;
+                }
+            }, 500);
+
+            // Helper function for suggestion chips
+            window.askSuggestion = function(question) {
+                const input = document.getElementById('eduPilotInput');
+                if (input) {
+                    input.value = question;
+                    input.focus();
+                    // Auto-send (optional)
+                    document.getElementById('eduPilotSend').click();
+                }
+            };
+
+            // Optional: Configure proxy URL via console
+            console.log('💬 Edu Pilot Chat initialized for PSS crosswalk');
+            console.log('To change proxy URL, use: localStorage.setItem("edu_pilot_proxy_url", "http://your-url:8080/api/v1/proxy/chat")');
+        });
+    </script>
+</body>
+</html>

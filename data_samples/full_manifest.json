@@ -1,0 +1,40 @@
+{
+  "extraction_date": "2025-09-29T16:56:26.948676+00:00",
+  "sources": [
+    {
+      "file": "index.html",
+      "records": 15,
+      "sha256": "4a14c98ca243677b1d0dd91fbf1187153afc1f194816aa1dff2163c587c41393"
+    },
+    {
+      "file": "pss_crosswalk.html",
+      "records": 88,
+      "sha256": "c34cb9ee33f972454e194d918afbbde3871ad52b4d3a3f0c42e3ff97cb41293e"
+    },
+    {
+      "file": "003_ed_crosswalk-table.html",
+      "records": 50,
+      "sha256": "bf422498782d7245e78474e167fd72f72677411b4d25abe4034930d5c5fe8f54"
+    },
+    {
+      "file": "dt-crosswalk-table.html",
+      "records": 72,
+      "sha256": "3059c2fdc733f95b1a591edd1d9b71f4d8f65231395a1cce7d714702ad6a77aa"
+    },
+    {
+      "file": "enr-crosswalk-table.html",
+      "records": 16,
+      "sha256": "cfe279162b7069af1329aa58cf1e75799780a5e0e0911a37efc9f521e3ee06d7"
+    },
+    {
+      "file": "003_table_enr_renewable_energy_crosswalk_table.html",
+      "records": 19,
+      "sha256": "d4c906f7e8e157c7c32003945cade458a237d968a92abaffe646e66ff78b4977"
+    }
+  ],
+  "total_records": 260,
+  "output": {
+    "file": "data_samples/full_dataset.jsonl",
+    "sha256": "e6734252dc31db198214793c4254f7fc4c983027ef769ad45c2a4882faa40de5"
+  }
+}

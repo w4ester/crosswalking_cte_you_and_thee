@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PSS Cluster Crosswalk - Maryland Postsecondary Programs</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Calibri', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #BD0934 0%, #FFC838 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      font-size: 1.2em;
+      opacity: 0.95;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .chat-section {
+      max-width: 1000px;
+      margin: 40px auto 0;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .chat-header h3 {
+      color: #231F20;
+      font-size: 1.5em;
+    }
+
+    .btn-clear {
+      padding: 8px 16px;
+      background: #64748b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-clear:hover {
+      background: #475569;
+      transform: translateY(-2px);
+    }
+
+    .chat-messages {
+      min-height: 400px;
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .chat-message {
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      max-width: 80%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-message-user {
+      background: linear-gradient(135deg, #BD0934, #FFC838);
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .chat-message-assistant {
+      background: white;
+      border: 1px solid #e2e8f0;
+      color: #231F20;
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      gap: 10px;
+    }
+
+    #chatInput {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+    }
+
+    #chatInput:focus {
+      outline: none;
+      border-color: #BD0934;
+      box-shadow: 0 0 0 3px rgba(189, 9, 52, 0.1);
+    }
+
+    .btn-send {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #BD0934, #FFC838);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(189, 9, 52, 0.4);
+    }
+
+    .btn-send:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(189, 9, 52, 0.5);
+    }
+
+    .btn-send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 8px;
+    }
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #BD0934;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    .error-message {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .suggestions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .suggestion-chip {
+      padding: 8px 16px;
+      background: white;
+      border: 2px solid #BD0934;
+      border-radius: 20px;
+      color: #BD0934;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .suggestion-chip:hover {
+      background: #BD0934;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .intro-section {
+      background: #f8f9fa;
+      border-left: 4px solid #BD0934;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .intro-section h2 {
+      color: #231F20;
+      margin-bottom: 10px;
+    }
+
+    .intro-section p {
+      color: #64748b;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Public Safety & Security Cluster</h1>
+      <p>Maryland CTE Postsecondary Programs & Credentials</p>
+    </div>
+
+    <div class="content">
+      <div class="intro-section">
+        <h2>About This Cluster</h2>
+        <p>The Public Safety & Security cluster includes programs in Criminal Justice, Emergency Medical Services, Fire Science, and related fields. Explore postsecondary pathways across Maryland's community colleges and universities.</p>
+      </div>
+
+      <!-- Chat Interface -->
+      <div class="chat-section">
+        <div class="chat-header">
+          <h3>Ask About Programs</h3>
+          <button class="btn-clear" id="clearBtn">Clear Chat</button>
+        </div>
+
+        <div class="suggestions" id="suggestions">
+          <div class="suggestion-chip" data-q="What EMT programs are available in Maryland?">EMT Programs</div>
+          <div class="suggestion-chip" data-q="Tell me about criminal justice pathways">Criminal Justice</div>
+          <div class="suggestion-chip" data-q="Which colleges offer fire science degrees?">Fire Science</div>
+          <div class="suggestion-chip" data-q="What certifications can I earn?">Certifications</div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input-wrapper">
+          <input
+            type="text"
+            id="chatInput"
+            placeholder="Ask about programs, credentials, or pathways..."
+            aria-label="Chat input"
+          >
+          <button class="btn-send" id="sendBtn">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration - calls local proxy server (keeps API key secure)
+    const PROXY_URL = 'http://localhost:3001/api/chat';
+
+    // UI Elements
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const suggestions = document.getElementById('suggestions');
+
+    let messageCounter = 0;
+    let conversationHistory = [];
+
+    // Initialize
+    function init() {
+      sendBtn.addEventListener('click', handleSend);
+      clearBtn.addEventListener('click', clearChat);
+      chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSend();
+      });
+
+      suggestions.addEventListener('click', (e) => {
+        if (e.target.classList.contains('suggestion-chip')) {
+          const question = e.target.getAttribute('data-q');
+          chatInput.value = question;
+          handleSend();
+        }
+      });
+
+      showWelcomeMessage();
+    }
+
+    function showWelcomeMessage() {
+      appendMessage('assistant', '<p><strong>Welcome to the PSS Cluster Program Assistant!</strong></p><p>Ask me about Criminal Justice, EMT, Fire Science programs and more. Click a suggestion above or type your question below.</p>');
+    }
+
+    function clearChat() {
+      if (!confirm('Clear chat history?')) return;
+      chatMessages.innerHTML = '';
+      conversationHistory = [];
+      messageCounter = 0;
+      showWelcomeMessage();
+    }
+
+    async function handleSend() {
+      const question = chatInput.value.trim();
+      if (!question) return;
+
+      chatInput.value = '';
+      chatInput.disabled = true;
+      sendBtn.disabled = true;
+
+      appendMessage('user', question);
+      const loadingId = appendMessage('assistant', '<div class="typing-indicator"><span></span><span></span><span></span></div>', true);
+
+      try {
+        const answer = await askAI(question);
+        replaceMessage(loadingId, answer);
+      } catch (err) {
+        console.error('Error:', err);
+        replaceMessage(loadingId, '<span class="error-message">Sorry, the assistant is unavailable. Please make sure the proxy server is running.</span>');
+      } finally {
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    async function askAI(question) {
+      const response = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          question: question,
+          conversationHistory: conversationHistory
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Server error');
+      }
+
+      const data = await response.json();
+      
+      // Update conversation history
+      conversationHistory.push({
+        role: 'user',
+        content: question
+      });
+      conversationHistory.push({
+        role: 'assistant',
+        content: data.answer
+      });
+
+      return formatAnswer(data.answer);
+    }
+
+    function appendMessage(role, content, isLoading = false) {
+      const id = `msg-${++messageCounter}`;
+      const div = document.createElement('div');
+      div.id = id;
+      div.className = `chat-message chat-message-${role}`;
+      div.innerHTML = content;
+
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      return id;
+    }
+
+    function replaceMessage(id, content) {
+      const msg = document.getElementById(id);
+      if (msg) {
+        msg.innerHTML = content;
+      }
+    }
+
+    function formatAnswer(text) {
+      let html = escapeHtml(text);
+      html = html.replace(/\n\n/g, '</p><p>');
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      html = html.replace(/\n/g, '<br>');
+      return `<p>${html}</p>`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    init();
+  </script>
+</body>
+</html>
