@@ -401,11 +401,27 @@
 
     function formatAnswer(text) {
       let html = escapeHtml(text);
-      html = html.replace(/\n\n/g, '</p><p>');
-      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+      // Format headers (lines starting with ##)
+      html = html.replace(/^## (.+)$/gm, '<h3 style="color: #BD0934; margin: 16px 0 8px 0; font-size: 1.1em;">$1</h3>');
+
+      // Format bullet lists (lines starting with -)
+      html = html.replace(/^- (.+)$/gm, '<li style="margin: 4px 0; line-height: 1.6;">$1</li>');
+
+      // Wrap consecutive list items in <ul>
+      html = html.replace(/(<li[^>]*>.*?<\/li>(\s*<li[^>]*>.*?<\/li>)*)/gs, '<ul style="margin: 8px 0; padding-left: 20px; list-style-type: disc;">$1</ul>');
+
+      // Format bold text
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong style="color: #231F20;">$1</strong>');
+
+      // Format italic text
       html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+      // Format paragraphs
+      html = html.replace(/\n\n/g, '</p><p style="margin: 8px 0; line-height: 1.6;">');
       html = html.replace(/\n/g, '<br>');
-      return `<p>${html}</p>`;
+
+      return `<div style="line-height: 1.7;"><p style="margin: 8px 0; line-height: 1.6;">${html}</p></div>`;
     }
 
     function escapeHtml(text) {
