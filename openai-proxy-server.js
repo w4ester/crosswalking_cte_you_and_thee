@@ -43,11 +43,18 @@ loadEnv();
 const PORT = process.env.PORT || 3001;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+const MAX_COMPLETION_TOKENS = parseInt(process.env.MAX_COMPLETION_TOKENS || '500');
+const MAX_CONVERSATION_LENGTH = parseInt(process.env.MAX_CONVERSATION_LENGTH || '20');
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 10;
 
 if (!OPENAI_API_KEY || OPENAI_API_KEY === 'sk-your-openai-api-key-here') {
   console.error('❌ Error: OPENAI_API_KEY not set in .env file');
   process.exit(1);
 }
+
+// Rate limiting tracker
+const rateLimitMap = new Map();
 
 // Program data context
 const PROGRAM_CONTEXT = `
@@ -87,9 +94,37 @@ function handleCORS(res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
+// Rate limiting check
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const userRequests = rateLimitMap.get(ip) || [];
+
+  // Remove old requests outside the window
+  const recentRequests = userRequests.filter(time => now - time < RATE_LIMIT_WINDOW_MS);
+
+  if (recentRequests.length >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+
+  recentRequests.push(now);
+  rateLimitMap.set(ip, recentRequests);
+  return true;
+}
+
 // Proxy handler
 async function handleChatRequest(req, res) {
   let body = '';
+
+  // Get client IP for rate limiting
+  const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+  // Check rate limit
+  if (!checkRateLimit(clientIP)) {
+    handleCORS(res);
+    res.writeHead(429, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Too many requests. Please wait a minute.' }));
+    return;
+  }
 
   req.on('data', chunk => {
     body += chunk.toString();
@@ -105,13 +140,16 @@ async function handleChatRequest(req, res) {
         return;
       }
 
+      // Limit conversation history length to save tokens
+      const limitedHistory = conversationHistory.slice(-MAX_CONVERSATION_LENGTH);
+
       // Build messages for OpenAI
       const messages = [
         {
           role: 'system',
           content: `You are a helpful assistant for Maryland Career and Technical Education (CTE) programs in the Public Safety & Security cluster. Use the following program data to answer questions accurately:\n\n${PROGRAM_CONTEXT}\n\nProvide specific information about programs, institutions, degrees, certificates, and credentials. Be concise and helpful. Only answer based on the provided data.`
         },
-        ...conversationHistory,
+        ...limitedHistory,
         {
           role: 'user',
           content: question
@@ -140,7 +178,7 @@ function callOpenAI(messages) {
     const postData = JSON.stringify({
       model: OPENAI_MODEL,
       messages: messages,
-      max_completion_tokens: 800
+      max_completion_tokens: MAX_COMPLETION_TOKENS
     });
 
     const options = {
