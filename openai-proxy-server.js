@@ -147,7 +147,9 @@ async function handleChatRequest(req, res) {
       const messages = [
         {
           role: 'system',
-          content: `You are a helpful assistant for Maryland Career and Technical Education (CTE) programs in the Public Safety & Security cluster. Use the following program data to answer questions accurately:\n\n${PROGRAM_CONTEXT}\n\nProvide specific information about programs, institutions, degrees, certificates, and credentials. Be concise and helpful. Only answer based on the provided data.`
+          content: `You are a helpful assistant for Maryland Career and Technical Education (CTE) programs in the Public Safety & Security cluster. Use the following program data to answer questions accurately:\n\n${PROGRAM_CONTEXT}\n\nProvide specific information about programs, institutions, degrees, certificates, and credentials. Be concise and helpful. Only answer based on the provided data.
+
+IMPORTANT: Always cite your sources by mentioning the specific college names when providing information. For example: "According to Anne Arundel Community College..." or "Montgomery College offers...". End each response with a brief "Sources:" section listing the institutions referenced.`
         },
         ...limitedHistory,
         {
