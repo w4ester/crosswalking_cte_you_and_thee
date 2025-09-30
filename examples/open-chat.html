@@ -402,20 +402,38 @@
     function formatAnswer(text) {
       let html = escapeHtml(text);
 
-      // Format headers (lines starting with ##)
-      html = html.replace(/^## (.+)$/gm, '<h3 style="color: #BD0934; margin: 16px 0 8px 0; font-size: 1.1em;">$1</h3>');
-
-      // Format bullet lists (lines starting with -)
-      html = html.replace(/^- (.+)$/gm, '<li style="margin: 4px 0; line-height: 1.6;">$1</li>');
-
-      // Wrap consecutive list items in <ul>
-      html = html.replace(/(<li[^>]*>.*?<\/li>(\s*<li[^>]*>.*?<\/li>)*)/gs, '<ul style="margin: 8px 0; padding-left: 20px; list-style-type: disc;">$1</ul>');
-
-      // Format bold text
+      // Format bold text first
       html = html.replace(/\*\*(.+?)\*\*/g, '<strong style="color: #231F20;">$1</strong>');
 
       // Format italic text
       html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+      // Format headers (lines starting with ##)
+      html = html.replace(/^## (.+)$/gm, '<h3 style="color: #BD0934; margin: 16px 0 8px 0; font-size: 1.1em;">$1</h3>');
+
+      // Format bullet lists (lines starting with -)
+      const lines = html.split('\n');
+      let inList = false;
+      let result = [];
+
+      for (let line of lines) {
+        if (line.trim().startsWith('- ')) {
+          if (!inList) {
+            result.push('<ul style="margin: 8px 0; padding-left: 20px; list-style-type: disc;">');
+            inList = true;
+          }
+          result.push('<li style="margin: 4px 0; line-height: 1.6;">' + line.substring(2) + '</li>');
+        } else {
+          if (inList) {
+            result.push('</ul>');
+            inList = false;
+          }
+          result.push(line);
+        }
+      }
+      if (inList) result.push('</ul>');
+
+      html = result.join('\n');
 
       // Format paragraphs
       html = html.replace(/\n\n/g, '</p><p style="margin: 8px 0; line-height: 1.6;">');
