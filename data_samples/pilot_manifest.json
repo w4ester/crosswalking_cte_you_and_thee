@@ -1,0 +1,20 @@
+{
+  "extraction_date": "2025-09-29T16:36:21.350923+00:00",
+  "sources": [
+    {
+      "file": "index.html",
+      "records": 15,
+      "sha256": "4a14c98ca243677b1d0dd91fbf1187153afc1f194816aa1dff2163c587c41393"
+    },
+    {
+      "file": "pss_crosswalk.html",
+      "records": 88,
+      "sha256": "c34cb9ee33f972454e194d918afbbde3871ad52b4d3a3f0c42e3ff97cb41293e"
+    }
+  ],
+  "total_records": 103,
+  "output": {
+    "file": "data_samples/pilot_sample.jsonl",
+    "sha256": "aca50835292c867b95a9823ce60d513923a7600e9bf36c3c35ed129c23f61c25"
+  }
+}

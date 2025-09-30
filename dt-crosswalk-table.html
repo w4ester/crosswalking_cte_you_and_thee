@@ -381,6 +381,34 @@
         .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
         .modal-close { border:none; background:transparent; font-size:1.5rem; cursor:pointer; color:#231F20; }
 
+        .chat-answer {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 10px;
+            color: #231F20;
+        }
+
+        .chat-answer p {
+            margin: 0 0 8px;
+        }
+
+        .chat-answer p:last-child {
+            margin-bottom: 0;
+        }
+
+        .chat-citation {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0 2px;
+        }
+
+        .chat-citation:hover,
+        .chat-citation:focus {
+            text-decoration: underline;
+        }
+
         @media (max-width: 900px){
             .top-nav{ justify-content:space-between; }
             .menu-toggle{ display:inline-block; }
@@ -558,6 +586,66 @@
 
     <script>
 
+        const PROXY_URL = window.CROSSWALK_PROXY_URL || '/api/v1/proxy/chat';
+
+        async function readSSEStream(stream) {
+            const reader = stream.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer = '';
+            let content = '';
+            let citations = null;
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                const events = buffer.split('\n\n');
+                buffer = events.pop();
+                for (const event of events) {
+                    const lines = event.split('\n');
+                    for (const line of lines) {
+                        if (!line.startsWith('data:')) continue;
+                        const payload = line.slice(5).trim();
+                        if (!payload || payload === '[DONE]') continue;
+                        try {
+                            const parsed = JSON.parse(payload);
+                            const choice = parsed.choices && parsed.choices[0];
+                            if (choice?.delta) {
+                                if (choice.delta.content) content += choice.delta.content;
+                                const cite = choice.delta.citations || choice.delta.metadata?.citations;
+                                if (cite) citations = cite;
+                            }
+                            if (choice?.message) {
+                                if (choice.message.content) content = choice.message.content;
+                                const cite = choice.message.metadata?.citations || choice.message.citations;
+                                if (cite) citations = cite;
+                            }
+                            if (parsed.citations) citations = parsed.citations;
+                        } catch (err) {
+                            console.error('Failed to parse SSE chunk', err, payload);
+                        }
+                    }
+                }
+            }
+            return { answer: content.trim(), citations };
+        }
+
+        async function fetchAssistantResponse(question, filters) {
+            const response = await fetch(PROXY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question, filters })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || 'Assistant request failed');
+            }
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('text/event-stream') && response.body) {
+                return await readSSEStream(response.body);
+            }
+            return await response.json();
+        }
+
         // Lightweight page-scoped retrieval and chat UI
         function dtBuildRecords() {
             const rows = document.querySelectorAll('#tableBody tr');
@@ -619,14 +707,65 @@
                 card.appendChild(btn); wrap.appendChild(card);
             }); box.appendChild(wrap); box.scrollTop=box.scrollHeight;
         }
+
+        function dtAppendAnswer(response) {
+            const box = document.getElementById('chatMsgs');
+            const div = document.createElement('div');
+            div.className = 'chat-answer';
+
+            const answer = (response && typeof response.answer === 'string') ? response.answer.trim() : '';
+            const citations = Array.isArray(response?.citations) ? response.citations : [];
+            const citationMap = {};
+            citations.forEach((cite, idx) => {
+                const key = String(cite?.index ?? (idx + 1));
+                citationMap[key] = cite;
+            });
+
+            const html = answer
+                ? answer.split(/\n{2,}/).map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`).join('')
+                : '<p>I don’t have that information yet.</p>';
+
+            div.innerHTML = html.replace(/\[(\d+)\]/g, (match, num) => {
+                const cite = citationMap[num];
+                if (!cite) return match;
+                const url = cite.url || cite.source || cite.href || cite.source_url || '#';
+                const label = cite.citation_label || cite.label || `Source ${num}`;
+                const aria = cite.aria_label || label;
+                if (!url || url === '#') {
+                    return `<span class="chat-citation" role="text" aria-label="${aria}">${match}</span>`;
+                }
+                return `<a class="chat-citation" href="${url}" target="_blank" rel="noopener" aria-label="${aria}">${match}</a>`;
+            });
+
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
         (function dtChatInit(){
             const open=document.getElementById('chatLauncher'); const panel=document.getElementById('chatPanel'); const closeBtn=document.getElementById('chatClose');
             const sendBtn=document.getElementById('chatSend'); const input=document.getElementById('chatInput');
             open.addEventListener('click',()=>{ panel.style.display='flex'; }); closeBtn.addEventListener('click',()=>{ panel.style.display='none'; });
-            function handle(q){ dtAppendMsg(q,true); const recsNow=dtBuildRecords(); const rs=dtSearchRecords(recsNow,q.toLowerCase()); dtAppendResults(rs);} 
-            sendBtn.addEventListener('click',()=>{ const q=input.value; if(q.trim()){ input.value=''; handle(q);} });
-            input.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendBtn.click(); }});
-            document.querySelectorAll('.chat-suggest').forEach(b=> b.addEventListener('click', ()=> handle(b.getAttribute('data-q')) ));
+            async function handle(q){
+                dtAppendMsg(q,true);
+                try {
+                    const response = await fetch('/api/v1/proxy/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ question: q, filters: { cluster: 'digital-technology', page: 'digital-technology' } })
+                    });
+                    if (!response.ok) {
+                        const text = await response.text();
+                        throw new Error(text || 'Request failed');
+                    }
+                    const data = await response.json();
+                    dtAppendAnswer(data);
+                } catch (err) {
+                    console.error(err);
+                    dtAppendMsg('Sorry, I couldn’t reach the assistant.', false);
+                }
+            }
+            sendBtn.addEventListener('click', async ()=>{ const q=input.value; if(q.trim()){ input.value=''; await handle(q);} });
+            input.addEventListener('keydown', async (e)=>{ if(e.key==='Enter'){ e.preventDefault(); const q=input.value; if(q.trim()){ input.value=''; await handle(q);} }});
+            document.querySelectorAll('.chat-suggest').forEach(b=> b.addEventListener('click', ()=>{ const q=b.getAttribute('data-q'); if(q){ input.value=''; handle(q);} }));
         })();
         const programData = [
             // Computer Programming I - Community Colleges
@@ -1645,5 +1784,19 @@
         })();
     </script>
     <script>(function(){ const t=document.getElementById('menuToggle'); const m=document.getElementById('site-menu'); if(t&&m){ t.addEventListener('click', ()=>{ const o=m.classList.toggle('open'); t.setAttribute('aria-expanded', o?'true':'false'); }); } })();</script>
+
+    <!-- Edu Pilot Chat Integration -->
+    <link rel="stylesheet" href="examples/edu-pilot-chat-styles.css">
+    <div id="chatSection"></div>
+    <script src="examples/edu-pilot-chat-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new EduPilotChat({
+                proxyUrl: 'http://localhost:8080/api/v1/proxy/chat',
+                containerId: 'chatSection',
+                pageFilter: 'dt'
+            }).init();
+        });
+    </script>
 </body>
 </html>
