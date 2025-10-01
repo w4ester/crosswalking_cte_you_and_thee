@@ -50,6 +50,3 @@ This repository can be hosted directly using GitHub Pages. The HTML files will w
 
 ## License
 Educational use - Maryland State Department of Education
-
-## Copyright
-© 2025 Maryland State Department of Education. All rights reserved.
