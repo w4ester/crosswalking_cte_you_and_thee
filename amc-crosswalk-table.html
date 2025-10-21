@@ -1,148 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Arts, Media & Communication – Crosswalk</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root{ --gap:.75rem; --b:#e5e7eb; --muted:#555; --bg:#fff; }
-    *{ box-sizing:border-box; }
-    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; background:#f8fafc; color:#111; }
-    a{ color:#0f62fe; text-decoration:none; }
-    header, main{ max-width:1100px; margin:0 auto; padding:0 1rem; }
-    nav.top{ background:#0b1220; color:white; }
-    nav.top .wrap{ max-width:1100px; margin:0 auto; display:flex; gap:1rem; align-items:center; padding:.6rem 1rem; flex-wrap:wrap; }
-    nav.top a{ color:white; opacity:.95; }
-    nav.top a:hover{ opacity:1; text-decoration:underline; }
-    header{ padding:1rem 0 0; }
-    .crumbs{ color:var(--muted); font-size:.9rem; margin:.25rem 0 1rem; }
-    h1{ font-size:1.7rem; margin:.2rem 0 .5rem; }
-    .chips{ display:flex; flex-wrap:wrap; gap:.35rem; margin:.25rem 0 1rem; }
-    .chip{ border:1px solid var(--b); border-radius:999px; padding:.18rem .6rem; font-size:.78rem; background:white; }
-    .metrics{ display:grid; grid-template-columns: repeat(5,minmax(130px,1fr)); gap:var(--gap); margin: .5rem 0 1rem; }
-    .card{ border:1px solid var(--b); border-radius:10px; background:var(--bg); padding:.8rem; }
-    .card h3{ margin:0 0 .25rem; font-size:1.05rem; }
-    .muted{ color:var(--muted); }
-    .controls{ display:flex; flex-wrap:wrap; gap:.6rem .9rem; align-items:flex-end; margin:.25rem 0 1rem; }
-    .controls label{ font-size:.9rem; display:flex; flex-direction:column; gap:.25rem; }
-    .btn{ display:inline-block; padding:.45rem .7rem; border-radius:6px; border:1px solid #c7c9cc; background:#f3f4f6; cursor:pointer; font-size:.9rem; }
-    .btn.primary{ background:#0f62fe; color:white; border-color:#0f62fe; }
-    table{ width:100%; border-collapse:collapse; background:white; }
-    th,td{ text-align:left; padding:.6rem .5rem; border-bottom:1px solid #eef2f7; vertical-align:top; }
-    thead th{ position:sticky; top:0; background:#f9fbff; z-index:1; }
-    .tag{ background:#eef4ff; border:1px solid #dbe6ff; border-radius:4px; padding:.12rem .35rem; font-size:.76rem; margin-right:.25rem; white-space:nowrap; display:inline-block;}
-    .src a{ margin-right:.55rem; }
-    @media (max-width:950px){ .metrics{ grid-template-columns:repeat(2,1fr);} }
-  </style>
+<meta charset="utf-8" />
+<title>Arts, Media & Communication — Crosswalk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    --bg: #fff;
+    --ink:#1f2937;
+    --muted:#576071;
+    --line:#e6e6ea;
+    --pill-bg:#eef2ff;
+    --pill-bd:#dbe3ff;
+    --chip-bg:#eef4ff;
+    --chip-bd:#dbe6ff;
+    --hot1:#b91c1c;  /* deep red */
+    --hot2:#f59e0b;  /* amber */
+    --btn:#0f62fe;  /* IBM blue */
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#faf7f5; color:var(--ink); font: 16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+
+  /* Top gradient masthead (like PSS) */
+  .masthead{
+    background: linear-gradient(135deg, var(--hot1) 0%, #e24a1f 40%, var(--hot2) 100%);
+    color:#fff; padding: 18px 0 28px;
+    border-bottom: 1px solid rgba(255,255,255,.25);
+  }
+  .wrap{ max-width: 1200px; margin:0 auto; padding:0 14px; }
+
+  /* Nav pills */
+  .nav{
+    display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px;
+  }
+  .pill{
+    display:inline-block; padding:6px 12px; border-radius:999px;
+    background: rgba(255,255,255,.12); color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.25);
+  }
+  .pill:hover{ background: rgba(255,255,255,.2); }
+  .pill.active{ background:#fff; color:#000; border-color:#fff; }
+
+  h1{ margin:6px 0 0; font-size: 1.75rem; }
+
+  /* Chips under title */
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .chip{ border:1px solid rgba(255,255,255,.65); color:#fff; background:transparent; border-radius:999px; padding:2px 10px; font-size:.82rem; }
+
+  /* Metric cards (like PSS counters) */
+  .metrics{
+    display:grid; grid-template-columns: repeat(5, minmax(140px,1fr));
+    gap: 12px; margin-top: 16px;
+  }
+  .metric{
+    background:#fff; color:#000; border-radius:10px; padding:12px; border:1px solid #f0f0f1;
+    box-shadow: 0 1px 0 rgba(0,0,0,.05);
+  }
+  .metric h3{ margin:0; font-size:1.8rem; }
+  .metric .label{ color:#6b7280; font-size:.9rem; margin-top:2px; }
+
+  main{ max-width:1200px; margin: 14px auto; padding: 0 14px 40px; }
+
+  /* Controls row */
+  .controls{
+    display:flex; flex-wrap:wrap; gap:10px 14px; align-items:flex-end; margin: 14px 0;
+  }
+  .controls label{ font-size:.92rem; color:#2e3440; display:flex; flex-direction:column; gap:6px; }
+  select,input[type="search"]{
+    min-height: 36px; border:1px solid var(--line); border-radius:8px; padding:6px 10px; background:#fff; min-width: 220px;
+  }
+  .btn{ display:inline-block; padding:8px 12px; border-radius:8px; border:1px solid #cbd5e1; background:#f3f4f6; cursor:pointer; font-size:.95rem; }
+  .btn.primary{ background: var(--btn); border-color: var(--btn); color:#fff; }
+  .btn.warn{ background: #ef4444; border-color:#ef4444; color:#fff; }
+
+  /* Table */
+  .table-wrap{ background:#fff; border:1px solid #ececf1; border-radius:12px; overflow:hidden; }
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
+    position:sticky; top:0; background:#f9fbff; z-index:1; border-bottom:1px solid #e8ecf3; padding:10px 8px; text-align:left; font-weight:700;
+  }
+  tbody td{ border-bottom:1px solid #f1f3f6; padding:10px 8px; vertical-align:top; }
+  tbody tr:nth-child(2n){ background:#fcfdff; }
+  .muted{ color: var(--muted); }
+  .badge{
+    display:inline-block; padding:2px 8px; border-radius:6px; font-size:.78rem; font-weight:700; letter-spacing:.02em;
+  }
+  .badge.cc{ background:#e6f0ff; color:#0b4bdb; border:1px solid #d5e4ff; }
+  .badge.univ{ background:#efe9ff; color:#6a2fda; border:1px solid #e4dbff; }
+  .badge.priv{ background:#fff2e5; color:#b45309; border:1px solid #ffe6cc; }
+  .tag{
+    background:var(--chip-bg); border:1px solid var(--chip-bd); border-radius:4px; padding:2px 6px; font-size:.78rem; margin-right:6px; white-space:nowrap; display:inline-block;
+  }
+
+  /* “Source / View” link */
+  .view-link{
+    display:inline-block; padding:6px 10px; border-radius:8px; background:#eef2ff; border:1px solid #dbe3ff; text-decoration:none; font-weight:600;
+  }
+
+  @media (max-width:980px){
+    .metrics{ grid-template-columns: repeat(2, 1fr); }
+    select,input[type="search"]{ min-width: 160px; }
+  }
+
+  @media print{
+    .masthead, .controls { display:none !important; }
+    body{ background:#fff; }
+    .table-wrap{ border:0; }
+    thead th{ position:static; }
+  }
+</style>
 </head>
 <body>
-  <!-- top nav (match existing links) -->
-  <nav class="top">
-    <div class="wrap">
-      <strong>Menu</strong>
-      <a href="./index.html">Home</a>
-      <a href="./dt-crosswalk-table.html">Digital Technology</a>
-      <a href="./003_ed_crosswalk-table.html">Education</a>
-      <a href="./enr-crosswalk-table.html">ENR</a>
-      <a href="./pss_crosswalk.html">PSS</a>
-      <a href="./amc-crosswalk-table.html" aria-current="page" style="text-decoration:underline;">AMC</a>
-    </div>
-  </nav>
 
-  <header>
-    <div class="crumbs"><a href="./index.html">Home</a> › Arts, Media &amp; Communication</div>
-    <h1>Arts, Media &amp; Communication (Animation &amp; Game, Graphic Comms, Video &amp; Audio)</h1>
+<!-- MASTHEAD: gradient like PSS -->
+<div class="masthead">
+  <div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a class="pill" href="./index.html">Home</a>
+      <a class="pill" href="./dt-crosswalk-table.html">Digital Technology</a>
+      <a class="pill" href="./003_ed_crosswalk-table.html">Education</a>
+      <a class="pill" href="./enr-crosswalk-table.html">ENR</a>
+      <a class="pill" href="./pss_crosswalk.html">PSS</a>
+      <a class="pill active" href="./amc-crosswalk-table.html" aria-current="page">Arts, Media &amp; Communication</a>
+    </nav>
+
+    <h1>Arts, Media &amp; Communication</h1>
     <div class="chips">
-      <div class="chip">Animation &amp; Game Dev</div>
-      <div class="chip">Graphic Communications</div>
-      <div class="chip">Video &amp; Audio</div>
+      <span class="chip">Animation &amp; Game Development</span>
+      <span class="chip">Graphic Communications</span>
+      <span class="chip">Video &amp; Audio Production</span>
     </div>
-  </header>
 
-  <main>
-    <section class="metrics">
-      <div class="card"><h3 id="m-total">0</h3><div class="muted">Total Programs</div></div>
-      <div class="card"><h3 id="m-cc">0</h3><div class="muted">Community Colleges</div></div>
-      <div class="card"><h3 id="m-univ">0</h3><div class="muted">Universities</div></div>
-      <div class="card"><h3 id="m-private">0</h3><div class="muted">Private</div></div>
-      <div class="card"><h3 id="m-cert">0</h3><div class="muted">LDC Certificates</div></div>
-    </section>
+    <!-- COUNTERS (like PSS) -->
+    <div class="metrics" role="region" aria-label="Summary metrics">
+      <div class="metric"><h3 id="m-total">0</h3><div class="label">Total Programs</div></div>
+      <div class="metric"><h3 id="m-cc">0</h3><div class="label">Community Colleges</div></div>
+      <div class="metric"><h3 id="m-univ">0</h3><div class="label">Universities</div></div>
+      <div class="metric"><h3 id="m-private">0</h3><div class="label">Private</div></div>
+      <div class="metric"><h3 id="m-cert">0</h3><div class="label">With Certificates (LDC)</div></div>
+    </div>
+  </div>
+</div>
 
-    <section class="controls">
-      <label>Pathway
-        <select id="pathway">
-          <option value="">All</option>
-          <option>Animation &amp; Game Dev</option>
-          <option>Graphic Communications</option>
-          <option>Video &amp; Audio</option>
-        </select>
-      </label>
-      <label>Institution Type
-        <select id="itype">
-          <option value="">All</option>
-          <option>Community College</option>
-          <option>University</option>
-          <option>Private</option>
-        </select>
-      </label>
-      <label>Credential Tag
-        <select id="cred">
-          <option value="">Any</option>
-          <option>Adobe ACP</option>
-          <option>Avid</option>
-          <option>Blackmagic</option>
-          <option>Unity</option>
-          <option>Unreal</option>
-          <option>Autodesk</option>
-          <option>Blender</option>
-          <option>Apple FCP</option>
-        </select>
-      </label>
-      <label>Search
-        <input id="q" type="search" placeholder="Institution, program, notes…" />
-      </label>
-      <button id="btn-reset" class="btn">Reset</button>
-      <button id="btn-export" class="btn">Export to CSV</button>
-    </section>
+<main class="wrap">
+  <!-- CONTROLS: Reset | Export to Excel | Print (parity with others) -->
+  <div class="controls">
+    <label>Pathway
+      <select id="pathway">
+        <option value="">All</option>
+        <option>Animation &amp; Game Dev</option>
+        <option>Graphic Communications</option>
+        <option>Video &amp; Audio</option>
+      </select>
+    </label>
 
-    <table id="tbl">
+    <label>Institution Type
+      <select id="itype">
+        <option value="">All</option>
+        <option>Community College</option>
+        <option>University</option>
+        <option>Private</option>
+      </select>
+    </label>
+
+    <label>Credential Tag
+      <select id="cred">
+        <option value="">Any</option>
+        <option>Adobe ACP</option>
+        <option>Avid</option>
+        <option>Blackmagic</option>
+        <option>Unity</option>
+        <option>Unreal</option>
+        <option>Autodesk</option>
+        <option>Blender</option>
+        <option>Apple FCP</option>
+      </select>
+    </label>
+
+    <label>Search
+      <input id="q" type="search" placeholder="Institution, program, notes…" />
+    </label>
+
+    <button id="btn-reset" class="btn">Reset Filters</button>
+    <button id="btn-export" class="btn primary">Export to Excel</button>
+    <button id="btn-print" class="btn">🖨️ Print</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table id="tbl" aria-describedby="table-caption">
+      <caption id="table-caption" class="visually-hidden">Arts, Media & Communication crosswalk table</caption>
       <thead>
         <tr>
           <th>Pathway</th>
           <th>Institution</th>
-          <th>Type</th>
-          <th>Program (Award)</th>
-          <th>Credentials</th>
-          <th>Direct?</th>
+          <th>Sector</th>
+          <th>Degree</th>
+          <th>Program/Major</th>
+          <th>Lower Division Certificates</th>
+          <th>Credential Content in Major?</th>
           <th>Source</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
-  </main>
+  </div>
+</main>
 
 <script>
 (async function(){
-  // ---- config ----
-  const dataUrl = 'AMC_Cluster_Crosswalk.csv'; // CSV lives at repo root
+  const DATA_URL = 'AMC_Cluster_Crosswalk.csv'; // CSV at repo root
 
-  // ---- load CSV ----
-  const csvText = await fetch(dataUrl).then(r => {
-    if (!r.ok) throw new Error('CSV not found at ' + dataUrl);
+  // --- Load CSV ---
+  const csvText = await fetch(DATA_URL).then(r=>{
+    if(!r.ok) throw new Error('CSV not found: '+DATA_URL);
     return r.text();
   });
-  const rows = parseCSV(csvText);
-  const records = toObjects(rows).map(normalizeBooleans);
 
-  // ---- elements ----
+  const rows = parseCSV(csvText);
+  const records = toObjects(rows).map(normalize);
+
+  // --- Elements ---
   const els = {
     tbody: document.querySelector('#tbl tbody'),
-    pathway: document.querySelector('#pathway'),
-    itype: document.querySelector('#itype'),
-    cred: document.querySelector('#cred'),
-    q: document.querySelector('#q'),
-    resetBtn: document.querySelector('#btn-reset'),
-    exportBtn: document.querySelector('#btn-export'),
+    pathway: document.getElementById('pathway'),
+    itype: document.getElementById('itype'),
+    cred: document.getElementById('cred'),
+    q: document.getElementById('q'),
+    resetBtn: document.getElementById('btn-reset'),
+    exportBtn: document.getElementById('btn-export'),
+    printBtn: document.getElementById('btn-print'),
     mTotal: document.getElementById('m-total'),
     mCC: document.getElementById('m-cc'),
     mUniv: document.getElementById('m-univ'),
@@ -150,112 +237,145 @@
     mCert: document.getElementById('m-cert'),
   };
 
-  // ---- read URL params for prefilters (supports index "cards") ----
+  // --- Prefilter from index cards (query params) ---
   const params = new URLSearchParams(location.search);
-  const paramPathway = params.get('pathway');
-  const paramType = params.get('type');
-  const paramCred = params.get('credential');
-  const paramQ = params.get('q');
-  if (paramPathway) els.pathway.value = paramPathway;
-  if (paramType) els.itype.value = paramType;
-  if (paramCred) els.cred.value = paramCred;
-  if (paramQ) els.q.value = paramQ;
+  if(params.get('pathway')) els.pathway.value = params.get('pathway');
+  if(params.get('type')) els.itype.value = params.get('type');
+  if(params.get('credential')) els.cred.value = params.get('credential');
+  if(params.get('q')) els.q.value = params.get('q');
 
-  // ---- render ----
-  const render = () => {
+  // --- Render ---
+  function render(){
     const q = els.q.value.trim().toLowerCase();
-    const filt = records.filter(r => {
-      if (els.pathway.value && r.Pathway !== els.pathway.value) return false;
-      if (els.itype.value && r.Institution_Type !== els.itype.value) return false;
-      if (els.cred.value) {
-        const tags = String(r.Credential_Tags || '').split('|').map(s => s.trim());
-        if (!tags.includes(els.cred.value)) return false;
+
+    const filt = records.filter(r=>{
+      if(els.pathway.value && r.Pathway !== els.pathway.value) return false;
+      if(els.itype.value && r.Institution_Type !== els.itype.value) return false;
+      if(els.cred.value){
+        const tags = (r.Credential_Tags||'').split('|').map(x=>x.trim());
+        if(!tags.includes(els.cred.value)) return false;
       }
-      if (q) {
-        const hay = (r.Institution + ' ' + r.Program_Name + ' ' + (r.Notes||'')).toLowerCase();
-        if (!hay.includes(q)) return false;
+      if(q){
+        const hay = (r.Institution+' '+r.Program_Name+' '+(r.Notes||'')).toLowerCase();
+        if(!hay.includes(q)) return false;
       }
       return true;
     });
 
-    // metrics
+    // Counters
     els.mTotal.textContent = filt.length;
-    els.mCC.textContent = filt.filter(r => r.Institution_Type === 'Community College').length;
-    els.mUniv.textContent = filt.filter(r => r.Institution_Type === 'University').length;
-    els.mPriv.textContent = filt.filter(r => r.Institution_Type === 'Private').length;
-    els.mCert.textContent = filt.filter(r => String(r.Award||'').toLowerCase().includes('certificate')).length;
+    els.mCC.textContent = filt.filter(r=>r.Institution_Type==='Community College').length;
+    els.mUniv.textContent = filt.filter(r=>r.Institution_Type==='University').length;
+    els.mPriv.textContent = filt.filter(r=>r.Institution_Type==='Private').length;
+    els.mCert.textContent = filt.filter(r =>
+      (r.Has_LDC_Certificate===true) ||
+      (String(r.Award||'').toLowerCase().includes('certificate'))
+    ).length;
 
-    // table
+    // Rows
     els.tbody.innerHTML = '';
-    for (const r of filt) {
+    for(const r of filt){
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${safe(r.Pathway)}</td>
         <td>${safe(r.Institution)}</td>
-        <td>${safe(r.Institution_Type)}</td>
-        <td><div><strong>${safe(r.Program_Name)}</strong> <span class="muted">(${safe(r.Award)})</span></div></td>
-        <td>${renderTags(r.Credential_Tags)}</td>
-        <td>${r.Direct_Program ? 'Yes' : 'No'}</td>
-        <td class="src">${renderSource(r)}</td>
+        <td>${sectorBadge(r.Institution_Type)}</td>
+        <td>${safe(r.Award)}</td>
+        <td><strong>${safe(r.Program_Name)}</strong></td>
+        <td>${ldcCell(r)}</td>
+        <td>${credCell(r.Credential_Tags)}</td>
+        <td>${sourceCell(r)}</td>
       `;
       els.tbody.appendChild(tr);
     }
-  };
+  }
 
-  // ---- events ----
-  ['change','keyup'].forEach(ev => {
+  // Events
+  ['change','keyup'].forEach(ev=>{
     els.pathway.addEventListener(ev, render);
     els.itype.addEventListener(ev, render);
     els.cred.addEventListener(ev, render);
     els.q.addEventListener(ev, render);
   });
-  els.resetBtn.addEventListener('click', () => {
+
+  els.resetBtn.addEventListener('click', ()=>{
     els.pathway.value = '';
     els.itype.value = '';
     els.cred.value = '';
     els.q.value = '';
-    history.replaceState({}, '', location.pathname); // clear query params
+    history.replaceState({}, '', location.pathname); // clear params
     render();
   });
 
-  // export visible table to CSV
-  els.exportBtn.addEventListener('click', () => {
-    const header = ['Pathway','Institution','Type','Program (Award)','Credentials','Direct?','Source'];
-    const rows = Array.from(document.querySelectorAll('#tbl tbody tr')).map(tr =>
-      Array.from(tr.children).map(td => td.innerText.replace(/\s*\n\s*/g,' ').trim())
-    );
-    const csv = [header].concat(rows).map(r => r.map(csvEscape).join(',')).join('\n');
-    download('AMC_Cluster_Crosswalk_filtered.csv', csv);
-  });
+  els.exportBtn.addEventListener('click', exportToExcel);
+  els.printBtn.addEventListener('click', ()=> window.print());
 
   render();
 
-  // ---- helpers ----
-  function normalizeBooleans(o){
+  // --- Helpers ---
+  function normalize(o){
     const t = x => String(x||'').trim().toUpperCase();
     return {
       ...o,
-      Direct_Program: t(o.Direct_Program) === 'TRUE',
-      Has_LDC_Certificate: t(o.Has_LDC_Certificate) === 'TRUE'
+      Direct_Program: t(o.Direct_Program)==='TRUE',
+      Has_LDC_Certificate: t(o.Has_LDC_Certificate)==='TRUE'
     };
   }
-  function renderSource(r){
+  function ldcCell(r){
+    const yes = (r.Has_LDC_Certificate===true) || (String(r.Award||'').toLowerCase().includes('certificate'));
+    return yes ? '<span class="badge cc">Yes</span>' : '<span class="muted">—</span>';
+  }
+  function credCell(tags){
+    if(!tags) return '<span class="muted">—</span>';
+    return String(tags).split('|').map(s=>`<span class="tag">${safe(s.trim())}</span>`).join(' ');
+  }
+  function sourceCell(r){
     const p = (r.Program_URL||'').trim();
     const e = (r.Evidence_URL||'').trim();
-    const a = [];
-    if (p) a.push(`<a href="${safeAttr(p)}" target="_blank" rel="noopener">Program</a>`);
-    if (e) a.push(`<a href="${safeAttr(e)}" target="_blank" rel="noopener">Evidence</a>`);
-    return a.length ? a.join(' · ') : '<span class="muted">—</span>';
+    const first = p || e;
+    if(!first) return '<span class="muted">—</span>';
+    return `<a class="view-link" href="${safeAttr(first)}" target="_blank" rel="noopener">View</a>`;
   }
-  function renderTags(s){
-    if(!s) return '<span class="muted">—</span>';
-    return String(s).split('|').map(x => `<span class="tag">${safe(x.trim())}</span>`).join('');
+  function sectorBadge(s){
+    const v = String(s||'').trim();
+    if(v === 'Community College') return `<span class="badge cc">COMMUNITY COLLEGE</span>`;
+    if(v === 'University') return `<span class="badge univ">4‑YEAR UNIVERSITY</span>`;
+    if(v === 'Private') return `<span class="badge priv">PRIVATE</span>`;
+    return `<span class="badge">${safe(v)}</span>`;
   }
-  function safe(s){ return String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  function safe(s){ return String(s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   function safeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
-  function csvEscape(s){ if(/[",\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`; return s; }
 
-  // robust CSV parser
+  // Excel export (matching your other pages’ behavior; no libs)
+  function exportToExcel(){
+    // make a shallow clone of the visible table (so we don’t mutate UI)
+    const table = document.getElementById('tbl').cloneNode(true);
+    // remove Source buttons to keep it clean in Excel (turn into plain URLs if present)
+    for(const td of table.querySelectorAll('td:last-child')){
+      const a = td.querySelector('a'); if(a){ td.textContent = a.href; }
+    }
+    const html = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <!--[if gte mso 9]><xml>
+        <x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+        <x:Name>AMC Crosswalk</x:Name>
+        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+        </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>
+        </xml><![endif]-->
+        <meta charset="utf-8" />
+      </head>
+      <body>${table.outerHTML}</body></html>`;
+    const blob = new Blob([html], {type:'application/vnd.ms-excel'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'AMC_Crosswalk.xls';
+    document.body.appendChild(a); a.click(); URL.revokeObjectURL(a.href); a.remove();
+  }
+
+  // CSV parsing
   function parseCSV(str){
     const rows=[]; let row=[]; let cell=''; let inQ=false;
     for(let i=0;i<str.length;i++){
@@ -283,12 +403,6 @@
       out.push(o);
     }
     return out;
-  }
-  function download(name, text){
-    const blob = new Blob([text], {type:'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = Object.assign(document.createElement('a'), { href:url, download:name });
-    document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove();
   }
 })();
 </script>
