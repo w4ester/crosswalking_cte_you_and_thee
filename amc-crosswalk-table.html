@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Arts, Media & Communication – Crosswalk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{ --gap:.75rem; --b:#e5e7eb; --muted:#555; --bg:#fff; }
+    *{ box-sizing:border-box; }
+    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; background:#f8fafc; color:#111; }
+    a{ color:#0f62fe; text-decoration:none; }
+    header, main{ max-width:1100px; margin:0 auto; padding:0 1rem; }
+    nav.top{ background:#0b1220; color:white; }
+    nav.top .wrap{ max-width:1100px; margin:0 auto; display:flex; gap:1rem; align-items:center; padding:.6rem 1rem; flex-wrap:wrap; }
+    nav.top a{ color:white; opacity:.95; }
+    nav.top a:hover{ opacity:1; text-decoration:underline; }
+    header{ padding:1rem 0 0; }
+    .crumbs{ color:var(--muted); font-size:.9rem; margin:.25rem 0 1rem; }
+    h1{ font-size:1.7rem; margin:.2rem 0 .5rem; }
+    .chips{ display:flex; flex-wrap:wrap; gap:.35rem; margin:.25rem 0 1rem; }
+    .chip{ border:1px solid var(--b); border-radius:999px; padding:.18rem .6rem; font-size:.78rem; background:white; }
+    .metrics{ display:grid; grid-template-columns: repeat(5,minmax(130px,1fr)); gap:var(--gap); margin: .5rem 0 1rem; }
+    .card{ border:1px solid var(--b); border-radius:10px; background:var(--bg); padding:.8rem; }
+    .card h3{ margin:0 0 .25rem; font-size:1.05rem; }
+    .muted{ color:var(--muted); }
+    .controls{ display:flex; flex-wrap:wrap; gap:.6rem .9rem; align-items:flex-end; margin:.25rem 0 1rem; }
+    .controls label{ font-size:.9rem; display:flex; flex-direction:column; gap:.25rem; }
+    .btn{ display:inline-block; padding:.45rem .7rem; border-radius:6px; border:1px solid #c7c9cc; background:#f3f4f6; cursor:pointer; font-size:.9rem; }
+    .btn.primary{ background:#0f62fe; color:white; border-color:#0f62fe; }
+    table{ width:100%; border-collapse:collapse; background:white; }
+    th,td{ text-align:left; padding:.6rem .5rem; border-bottom:1px solid #eef2f7; vertical-align:top; }
+    thead th{ position:sticky; top:0; background:#f9fbff; z-index:1; }
+    .tag{ background:#eef4ff; border:1px solid #dbe6ff; border-radius:4px; padding:.12rem .35rem; font-size:.76rem; margin-right:.25rem; white-space:nowrap; display:inline-block;}
+    .src a{ margin-right:.55rem; }
+    @media (max-width:950px){ .metrics{ grid-template-columns:repeat(2,1fr);} }
+  </style>
+</head>
+<body>
+  <!-- top nav (match existing links) -->
+  <nav class="top">
+    <div class="wrap">
+      <strong>Menu</strong>
+      <a href="./index.html">Home</a>
+      <a href="./dt-crosswalk-table.html">Digital Technology</a>
+      <a href="./003_ed_crosswalk-table.html">Education</a>
+      <a href="./enr-crosswalk-table.html">ENR</a>
+      <a href="./pss_crosswalk.html">PSS</a>
+      <a href="./amc-crosswalk-table.html" aria-current="page" style="text-decoration:underline;">AMC</a>
+    </div>
+  </nav>
+
+  <header>
+    <div class="crumbs"><a href="./index.html">Home</a> › Arts, Media &amp; Communication</div>
+    <h1>Arts, Media &amp; Communication (Animation &amp; Game, Graphic Comms, Video &amp; Audio)</h1>
+    <div class="chips">
+      <div class="chip">Animation &amp; Game Dev</div>
+      <div class="chip">Graphic Communications</div>
+      <div class="chip">Video &amp; Audio</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="metrics">
+      <div class="card"><h3 id="m-total">0</h3><div class="muted">Total Programs</div></div>
+      <div class="card"><h3 id="m-cc">0</h3><div class="muted">Community Colleges</div></div>
+      <div class="card"><h3 id="m-univ">0</h3><div class="muted">Universities</div></div>
+      <div class="card"><h3 id="m-private">0</h3><div class="muted">Private</div></div>
+      <div class="card"><h3 id="m-cert">0</h3><div class="muted">LDC Certificates</div></div>
+    </section>
+
+    <section class="controls">
+      <label>Pathway
+        <select id="pathway">
+          <option value="">All</option>
+          <option>Animation &amp; Game Dev</option>
+          <option>Graphic Communications</option>
+          <option>Video &amp; Audio</option>
+        </select>
+      </label>
+      <label>Institution Type
+        <select id="itype">
+          <option value="">All</option>
+          <option>Community College</option>
+          <option>University</option>
+          <option>Private</option>
+        </select>
+      </label>
+      <label>Credential Tag
+        <select id="cred">
+          <option value="">Any</option>
+          <option>Adobe ACP</option>
+          <option>Avid</option>
+          <option>Blackmagic</option>
+          <option>Unity</option>
+          <option>Unreal</option>
+          <option>Autodesk</option>
+          <option>Blender</option>
+          <option>Apple FCP</option>
+        </select>
+      </label>
+      <label>Search
+        <input id="q" type="search" placeholder="Institution, program, notes…" />
+      </label>
+      <button id="btn-reset" class="btn">Reset</button>
+      <button id="btn-export" class="btn">Export to CSV</button>
+    </section>
+
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th>Pathway</th>
+          <th>Institution</th>
+          <th>Type</th>
+          <th>Program (Award)</th>
+          <th>Credentials</th>
+          <th>Direct?</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+<script>
+(async function(){
+  // ---- config ----
+  const dataUrl = 'AMC_Cluster_Crosswalk.csv'; // CSV lives at repo root
+
+  // ---- load CSV ----
+  const csvText = await fetch(dataUrl).then(r => {
+    if (!r.ok) throw new Error('CSV not found at ' + dataUrl);
+    return r.text();
+  });
+  const rows = parseCSV(csvText);
+  const records = toObjects(rows).map(normalizeBooleans);
+
+  // ---- elements ----
+  const els = {
+    tbody: document.querySelector('#tbl tbody'),
+    pathway: document.querySelector('#pathway'),
+    itype: document.querySelector('#itype'),
+    cred: document.querySelector('#cred'),
+    q: document.querySelector('#q'),
+    resetBtn: document.querySelector('#btn-reset'),
+    exportBtn: document.querySelector('#btn-export'),
+    mTotal: document.getElementById('m-total'),
+    mCC: document.getElementById('m-cc'),
+    mUniv: document.getElementById('m-univ'),
+    mPriv: document.getElementById('m-private'),
+    mCert: document.getElementById('m-cert'),
+  };
+
+  // ---- read URL params for prefilters (supports index "cards") ----
+  const params = new URLSearchParams(location.search);
+  const paramPathway = params.get('pathway');
+  const paramType = params.get('type');
+  const paramCred = params.get('credential');
+  const paramQ = params.get('q');
+  if (paramPathway) els.pathway.value = paramPathway;
+  if (paramType) els.itype.value = paramType;
+  if (paramCred) els.cred.value = paramCred;
+  if (paramQ) els.q.value = paramQ;
+
+  // ---- render ----
+  const render = () => {
+    const q = els.q.value.trim().toLowerCase();
+    const filt = records.filter(r => {
+      if (els.pathway.value && r.Pathway !== els.pathway.value) return false;
+      if (els.itype.value && r.Institution_Type !== els.itype.value) return false;
+      if (els.cred.value) {
+        const tags = String(r.Credential_Tags || '').split('|').map(s => s.trim());
+        if (!tags.includes(els.cred.value)) return false;
+      }
+      if (q) {
+        const hay = (r.Institution + ' ' + r.Program_Name + ' ' + (r.Notes||'')).toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    // metrics
+    els.mTotal.textContent = filt.length;
+    els.mCC.textContent = filt.filter(r => r.Institution_Type === 'Community College').length;
+    els.mUniv.textContent = filt.filter(r => r.Institution_Type === 'University').length;
+    els.mPriv.textContent = filt.filter(r => r.Institution_Type === 'Private').length;
+    els.mCert.textContent = filt.filter(r => String(r.Award||'').toLowerCase().includes('certificate')).length;
+
+    // table
+    els.tbody.innerHTML = '';
+    for (const r of filt) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${safe(r.Pathway)}</td>
+        <td>${safe(r.Institution)}</td>
+        <td>${safe(r.Institution_Type)}</td>
+        <td><div><strong>${safe(r.Program_Name)}</strong> <span class="muted">(${safe(r.Award)})</span></div></td>
+        <td>${renderTags(r.Credential_Tags)}</td>
+        <td>${r.Direct_Program ? 'Yes' : 'No'}</td>
+        <td class="src">${renderSource(r)}</td>
+      `;
+      els.tbody.appendChild(tr);
+    }
+  };
+
+  // ---- events ----
+  ['change','keyup'].forEach(ev => {
+    els.pathway.addEventListener(ev, render);
+    els.itype.addEventListener(ev, render);
+    els.cred.addEventListener(ev, render);
+    els.q.addEventListener(ev, render);
+  });
+  els.resetBtn.addEventListener('click', () => {
+    els.pathway.value = '';
+    els.itype.value = '';
+    els.cred.value = '';
+    els.q.value = '';
+    history.replaceState({}, '', location.pathname); // clear query params
+    render();
+  });
+
+  // export visible table to CSV
+  els.exportBtn.addEventListener('click', () => {
+    const header = ['Pathway','Institution','Type','Program (Award)','Credentials','Direct?','Source'];
+    const rows = Array.from(document.querySelectorAll('#tbl tbody tr')).map(tr =>
+      Array.from(tr.children).map(td => td.innerText.replace(/\s*\n\s*/g,' ').trim())
+    );
+    const csv = [header].concat(rows).map(r => r.map(csvEscape).join(',')).join('\n');
+    download('AMC_Cluster_Crosswalk_filtered.csv', csv);
+  });
+
+  render();
+
+  // ---- helpers ----
+  function normalizeBooleans(o){
+    const t = x => String(x||'').trim().toUpperCase();
+    return {
+      ...o,
+      Direct_Program: t(o.Direct_Program) === 'TRUE',
+      Has_LDC_Certificate: t(o.Has_LDC_Certificate) === 'TRUE'
+    };
+  }
+  function renderSource(r){
+    const p = (r.Program_URL||'').trim();
+    const e = (r.Evidence_URL||'').trim();
+    const a = [];
+    if (p) a.push(`<a href="${safeAttr(p)}" target="_blank" rel="noopener">Program</a>`);
+    if (e) a.push(`<a href="${safeAttr(e)}" target="_blank" rel="noopener">Evidence</a>`);
+    return a.length ? a.join(' · ') : '<span class="muted">—</span>';
+  }
+  function renderTags(s){
+    if(!s) return '<span class="muted">—</span>';
+    return String(s).split('|').map(x => `<span class="tag">${safe(x.trim())}</span>`).join('');
+  }
+  function safe(s){ return String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  function safeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
+  function csvEscape(s){ if(/[",\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`; return s; }
+
+  // robust CSV parser
+  function parseCSV(str){
+    const rows=[]; let row=[]; let cell=''; let inQ=false;
+    for(let i=0;i<str.length;i++){
+      const ch=str[i], nx=str[i+1];
+      if(inQ){
+        if(ch === '"' && nx === '"'){ cell+='"'; i++; }
+        else if(ch === '"'){ inQ=false; }
+        else { cell+=ch; }
+      }else{
+        if(ch === '"'){ inQ=true; }
+        else if(ch === ','){ row.push(cell); cell=''; }
+        else if(ch === '\n'){ row.push(cell); rows.push(row); row=[]; cell=''; }
+        else if(ch === '\r'){ /* ignore */ }
+        else { cell+=ch; }
+      }
+    }
+    if(cell.length || row.length){ row.push(cell); rows.push(row); }
+    if(rows.length && rows[0].length){ rows[0][0]=rows[0][0].replace(/^\uFEFF/,''); }
+    return rows.filter(r => r.some(c => String(c).trim().length));
+  }
+  function toObjects(rows){
+    const header=rows[0]; const out=[];
+    for(let i=1;i<rows.length;i++){
+      const o={}; header.forEach((k,idx)=>{ o[k]=rows[i][idx] ?? ''; });
+      out.push(o);
+    }
+    return out;
+  }
+  function download(name, text){
+    const blob = new Blob([text], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement('a'), { href:url, download:name });
+    document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove();
+  }
+})();
+</script>
+</body>
+</html>
