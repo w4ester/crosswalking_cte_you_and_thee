@@ -1,0 +1,40 @@
+Pathway,Institution,Institution_Type,Program_Name,Award,Direct_Program,Has_LDC_Certificate,Credential_Tags,Explicit_or_Implicit,Program_URL,Evidence_URL,Notes
+Animation & Game Dev,Anne Arundel Community College,Community College,Game Development,AAS,TRUE,TRUE,"Unity|Unreal|Adobe ACP|Autodesk|Blender",Explicit,,,"Includes Game Development Certificate (LDC)"
+Animation & Game Dev,Anne Arundel Community College,Community College,Game Development Certificate,Certificate (LDC),TRUE,TRUE,"Unity|Unreal|Adobe ACP|Autodesk|Blender",Explicit,,,
+Animation & Game Dev,Montgomery College,Community College,Computer Gaming & Simulation,AAS,TRUE,TRUE,"Unity|Unreal|Adobe ACP|Autodesk|Blender",Explicit,,,
+Animation & Game Dev,Montgomery College,Community College,Computer Gaming & Simulation,Certificate (LDC),TRUE,TRUE,"Unity|Unreal|Adobe ACP|Autodesk|Blender",Explicit,,,
+Animation & Game Dev,Howard Community College,Community College,Game & Simulation Development,AA,TRUE,FALSE,"Unity|Unreal|Autodesk|Blender",Implicit,,,
+Animation & Game Dev,Hagerstown Community College,Community College,Interactive Design & Game Development,AAS,TRUE,FALSE,"Unity|Unreal|Adobe ACP|Blender",Implicit,,,
+Animation & Game Dev,Cecil College,Community College,Simulation Design & Gaming,AAS,TRUE,FALSE,"Unity|Unreal|Autodesk|Blender",Implicit,,,
+Animation & Game Dev,University of Baltimore @ USG,University,Simulation & Game Design,BS,TRUE,FALSE,"Unity|Unreal|Autodesk|Blender",Explicit,,,"UBalt @ Universities at Shady Grove"
+Animation & Game Dev,UMD–College Park,University,Immersive Media Design,BA/BS,TRUE,FALSE,"Unity|Unreal|Autodesk|Blender|Adobe ACP",Implicit,,,"Art- and Comp-oriented tracks"
+Animation & Game Dev,UMBC,University,Visual Arts – Animation,BFA,TRUE,FALSE,"Autodesk|Blender|Adobe ACP",Implicit,,,"MHEC‑approved program"
+Animation & Game Dev,Towson University,University,Art + Design – Digital Art & Design,BFA,TRUE,FALSE,"Adobe ACP|Avid|Blackmagic",Explicit,,,"Animation/motion graphics content"
+Animation & Game Dev,Morgan State University,University,SWAN – Computer Animation / Game Art & Design,BA/BFA,TRUE,FALSE,"Adobe ACP|Autodesk|Blender|Unity|Unreal",Implicit,,,
+Animation & Game Dev,MICA (private),Private,Animation,BFA,TRUE,FALSE,"Adobe ACP|Autodesk|Blender|Unity|Unreal",Implicit,,,"Game Design minor available"
+Graphic Communications,Montgomery College,Community College,Graphic Design,AAS,TRUE,TRUE,"Adobe ACP",Explicit,,,
+Graphic Communications,Montgomery College,Community College,Graphic Design with Digital Tools,Certificate (LDC),TRUE,TRUE,"Adobe ACP",Explicit,,,
+Graphic Communications,Community College of Baltimore County,Community College,Art & Design – Graphic Design Path,AA/AFA,TRUE,TRUE,"Adobe ACP",Explicit,,,
+Graphic Communications,Anne Arundel Community College,Community College,Graphic Design,AAS,TRUE,FALSE,"Adobe ACP",Explicit,,,
+Graphic Communications,Prince George’s Community College,Community College,Visual Communication/Graphic Design,AAS,TRUE,TRUE,"Adobe ACP",Explicit,,,
+Graphic Communications,Harford Community College,Community College,Art + Design – Graphic Design,AA/AFA,TRUE,FALSE,"Adobe ACP",Implicit,,,
+Graphic Communications,Cecil College,Community College,Art & Design – Graphic Design,AA/AFA,TRUE,TRUE,"Adobe ACP",Explicit,,,
+Graphic Communications,Garrett College,Community College,Graphic/Web Design,AAS (conc.),TRUE,FALSE,"Adobe ACP",Implicit,,,
+Graphic Communications,College of Southern Maryland,Community College,Graphic Design,Certificate (LDC),TRUE,TRUE,"Adobe ACP",Explicit,,,
+Graphic Communications,Towson University,University,Graphic Design,BFA,TRUE,FALSE,"Adobe ACP",Implicit,,,
+Graphic Communications,Salisbury University @ USG,University,Graphic Design,BFA,TRUE,FALSE,"Adobe ACP",Implicit,,,"SU delivers Art/Design at USG"
+Graphic Communications,UMBC,University,Design – Graphic Design,BFA,TRUE,FALSE,"Adobe ACP",Implicit,,,
+Graphic Communications,Bowie State University,University,VCDMA – Advertising Design / Animation & Motion Graphics,BA/BS,TRUE,FALSE,"Adobe ACP|Avid|Blackmagic",Implicit,,,
+Graphic Communications,MICA (private),Private,Graphic Design,BFA,TRUE,FALSE,"Adobe ACP",Implicit,,,
+Video & Audio,Community College of Baltimore County,Community College,Digital Media Production,Certificate (LDC),TRUE,TRUE,"Avid|Adobe ACP|Blackmagic",Explicit,,,
+Video & Audio,College of Southern Maryland,Community College,Digital Media Production,AA/AA pathway,TRUE,FALSE,"Adobe ACP",Explicit,,,"Page notes editing on Adobe Premiere Pro"
+Video & Audio,Anne Arundel Community College,Community College,Media Production & Film Studies (Visual Arts),AA/AS,TRUE,TRUE,"Adobe ACP|Avid|Blackmagic",Implicit,,,"Media Production Certificate (LDC) available"
+Video & Audio,Montgomery College,Community College,Media Production,AA,TRUE,TRUE,"Adobe ACP|Avid|Blackmagic",Explicit,,,"Plus Video Production Certificate (LDC)"
+Video & Audio,Various (Harford/Frederick/Hagerstown),Community College,Digital Media/Film/Audio coursework,Certificate (varies),FALSE,FALSE,"Avid|Adobe ACP|Blackmagic|Apple FCP",Implicit,,,"Offerings vary by college"
+Video & Audio,Towson University,University,Electronic Media & Film,BA/BS,TRUE,FALSE,"Avid|Adobe ACP|Blackmagic|Pro Tools",Explicit,,,"Facilities list Media Composer, Pro Tools, Resolve"
+Video & Audio,UMBC,University,Visual Arts – Cinematic Arts,BA,TRUE,FALSE,"Adobe ACP|Blackmagic|Avid",Implicit,,,
+Video & Audio,Salisbury University,University,Communication – Media Production,BA,TRUE,FALSE,"Adobe ACP|Blackmagic|Avid",Implicit,,,
+Video & Audio,UMD–College Park,University,Journalism (broadcast/video courses),BA,TRUE,FALSE,"Adobe ACP|Avid|Blackmagic",Implicit,,,
+Video & Audio,Morgan State University,University,SWAN – film/TV writing & production,BA/BFA,TRUE,FALSE,"Avid|Adobe ACP|Blackmagic",Implicit,,,
+Video & Audio,Bowie State University,University,VCDMA – Digital Cinema & Time‑Based Media,BA/BS,TRUE,FALSE,"Adobe ACP|Avid|Blackmagic",Implicit,,,
+Video & Audio,Stevenson University (private),Private,Film & Moving Image,BS,TRUE,FALSE,"Adobe ACP|Avid|Blackmagic",Implicit,,,
