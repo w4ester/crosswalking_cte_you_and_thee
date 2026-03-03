@@ -1,8 +1,5 @@
 # CTE Cluster Crosswalk Interactive Tables
 
-## Repository
-https://github.com/w4ester/crosswalking_cte_you_and_thee
-
 ## Overview
 Interactive web tables for Maryland Career and Technical Education (CTE) cluster crosswalks, showing the alignment between educational programs, industry credentials, and career pathways.
 
